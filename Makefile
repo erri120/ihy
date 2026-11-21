@@ -25,6 +25,12 @@ build:
 DB_UI_INIT := /tmp/ihy-duckdb-init.sql
 db-ui:
 	@docker compose -f docker-compose.dev.yml up -d --wait testdb >/dev/null 2>&1
+	@# DuckDB UI workaround: the UI issues "SET schema ihy.main" when the
+	@# ihy catalog is selected, but attached Postgres catalogs only have
+	@# "public". Creating an empty "main" schema satisfies the UI's
+	@# assumption; it holds nothing and the dev database is ephemeral.
+	@docker compose -f docker-compose.dev.yml exec -T testdb \
+		psql -U ihy -d postgres -c "CREATE SCHEMA IF NOT EXISTS main" >/dev/null
 	@if ! curl -sf http://127.0.0.1:7731/healthz >/dev/null; then \
 		$(MAKE) build >/dev/null; \
 		nohup env DB_HOST=127.0.0.1 DB_PORT=5433 DB_USER=ihy DB_PASSWORD=ihy \
