@@ -139,7 +139,12 @@ CREATE TABLE file (
     size_bytes     bigint NOT NULL,
     format         text NOT NULL,          -- flac | mp3 | ...
     release_mbid   uuid REFERENCES release,
-    recording_mbid uuid REFERENCES recording
+    recording_mbid uuid REFERENCES recording,
+    -- Raw tag evidence from the scanner: the complete tag map with
+    -- multi-valued tags as JSON arrays. Evidence, not truth: the
+    -- resolver links files into the graph from MBIDs, the raw map
+    -- stays for conflict reporting and debugging.
+    tags           jsonb NOT NULL DEFAULT '{}'
 );
 
 CREATE TABLE track (
