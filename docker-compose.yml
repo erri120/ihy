@@ -1,0 +1,49 @@
+# The app binary connects over TCP; the postgres data dir is a plain
+# named volume here. On the NFS-based homelab deployment the volume is
+# backed by the NFS mount instead; postgres documents the requirements
+# (hard client mount, sync server export).
+services:
+  app:
+    build: .
+    ports:
+      - "7731:7731"
+    environment:
+      IHY_DSN: postgres://ihy:ihy@db:5432/ihy?sslmode=disable
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ihy
+      POSTGRES_PASSWORD: ihy
+      POSTGRES_DB: ihy
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ihy -d ihy"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+  # Throwaway server for migration tests only: make test-db
+  testdb:
+    image: postgres:17-alpine
+    profiles: ["test"]
+    environment:
+      POSTGRES_USER: ihy
+      POSTGRES_PASSWORD: ihy
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ihy -d postgres"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  dbdata:

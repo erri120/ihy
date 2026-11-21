@@ -1,0 +1,6 @@
+examples/
+docs/
+.git/
+data/
+ihy
+*.test
