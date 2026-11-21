@@ -1,0 +1,22 @@
+# Dev/e2e infrastructure for local work; not for user deployment.
+# The database is ephemeral (tmpfs): every restart starts empty, which
+# keeps dev and e2e runs deterministic.
+#
+#   make dev      # ephemeral Postgres + ihy in dev mode
+#   make test-e2e # real-Postgres test suite
+services:
+  testdb:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ihy
+      POSTGRES_PASSWORD: ihy
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ihy -d postgres"]
+      interval: 1s
+      timeout: 3s
+      retries: 30

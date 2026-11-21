@@ -1,53 +1,65 @@
-# The app binary connects over TCP; the postgres data dir is a plain
-# named volume here. On the NFS-based homelab deployment the volume is
-# backed by the NFS mount instead; postgres documents the requirements
-# (hard client mount, sync server export).
+# User deployment for ihy.
+#
+# Configure by creating a .env file next to this file, then run
+# `docker compose up -d`:
+#
+#   DB_HOST=db                    # keep: the database service below
+#   DB_USER=ihy
+#   DB_PASSWORD=<your password>
+#   DB_DATABASE=ihy
+#   IHY_LIBRARY=/mnt/nfs/music    # host path of your (read-only) library
+#
+# Optional variables:
+#   DB_PORT (5432), DB_SSLMODE (disable), IHY_PORT (7731)
+#
+# Notes:
+#   * The library is mounted READ-ONLY; the app never writes to it.
+#     Multiple roots: add more :ro volume lines and extend IHY_LIBRARIES.
+#   * Album art is stored as server-generated thumbnails (never
+#     full-size); transcode output is a disposable cache.
+#   * If the postgres data volume lives on NFS, use a `hard` client
+#     mount and export it with `sync` on the server; postgres supports
+#     NFS under exactly those conditions.
+
 services:
   app:
     build: .
+    restart: unless-stopped
     ports:
-      - "7731:7731"
+      - "${IHY_PORT:-7731}:7731"
     environment:
-      DB_HOST: db
-      DB_PORT: "5432"
-      DB_USER: ihy
-      DB_PASSWORD: ihy
-      DB_DATABASE: ihy
+      DB_HOST: ${DB_HOST:?set in .env}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:?set in .env}
+      DB_PASSWORD: ${DB_PASSWORD:?set in .env}
+      DB_DATABASE: ${DB_DATABASE:?set in .env}
+      IHY_LIBRARIES: ${IHY_LIBRARIES:-/music}
+      IHY_ARTWORK_DIR: /data/artwork
+      IHY_TRANSCODE_DIR: /data/transcode
+    volumes:
+      - ${IHY_LIBRARY:?set in .env}:/music:ro
+      - artwork:/data/artwork
+      - transcode:/data/transcode
     depends_on:
       db:
         condition: service_healthy
 
   db:
     image: postgres:17-alpine
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: ihy
-      POSTGRES_PASSWORD: ihy
-      POSTGRES_DB: ihy
+      POSTGRES_USER: ${DB_USER:?set in .env}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set in .env}
+      POSTGRES_DB: ${DB_DATABASE:?set in .env}
     volumes:
       - dbdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ihy -d ihy"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_DATABASE}"]
       interval: 2s
       timeout: 3s
       retries: 15
 
-  # Throwaway server for migration tests only: make test-db
-  testdb:
-    image: postgres:17-alpine
-    profiles: ["test"]
-    environment:
-      POSTGRES_USER: ihy
-      POSTGRES_PASSWORD: ihy
-      POSTGRES_DB: postgres
-    ports:
-      - "5433:5432"
-    tmpfs:
-      - /var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ihy -d postgres"]
-      interval: 1s
-      timeout: 3s
-      retries: 30
-
 volumes:
   dbdata:
+  artwork:
+  transcode:
