@@ -10,14 +10,21 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strings"
 )
 
 // Config is the bootstrap configuration of ihy.
 type Config struct {
-	// DSN is the Postgres connection string (IHY_DSN, required).
-	DSN string
+	// Postgres connection settings (DB_HOST, DB_DATABASE required;
+	// DB_USER, DB_PASSWORD, DB_PORT, DB_SSLMODE optional).
+	DBHost     string
+	DBPort     string
+	DBUser     string
+	DBPassword string
+	DBName     string
+	DBSSLMode  string
 	// Addr is the HTTP listen address (IHY_ADDR, default ":7731").
 	Addr string
 	// Libraries optionally seeds library roots (IHY_LIBRARIES,
@@ -31,14 +38,34 @@ type Config struct {
 	TranscodeDir string
 }
 
+// DSN builds the Postgres connection string from the DB_* settings.
+func (c Config) DSN() string {
+	u := url.URL{
+		Scheme: "postgres",
+		Host:   c.DBHost + ":" + c.DBPort,
+		Path:   "/" + c.DBName,
+	}
+	if c.DBUser != "" || c.DBPassword != "" {
+		u.User = url.UserPassword(c.DBUser, c.DBPassword)
+	}
+	u.RawQuery = "sslmode=" + c.DBSSLMode
+	return u.String()
+}
+
 // FromEnv builds Config from the process environment.
 func FromEnv() (Config, error) {
 	var c Config
 
-	c.DSN = os.Getenv("IHY_DSN")
-	if c.DSN == "" {
-		return c, fmt.Errorf("IHY_DSN is required (e.g. postgres://ihy:ihy@db:5432/ihy?sslmode=disable)")
+	c.DBHost = os.Getenv("DB_HOST")
+	c.DBName = os.Getenv("DB_DATABASE")
+	if c.DBHost == "" || c.DBName == "" {
+		return c, fmt.Errorf("DB_HOST and DB_DATABASE are required")
 	}
+
+	c.DBUser = os.Getenv("DB_USER")
+	c.DBPassword = os.Getenv("DB_PASSWORD")
+	c.DBPort = envDefault("DB_PORT", "5432")
+	c.DBSSLMode = envDefault("DB_SSLMODE", "disable")
 
 	c.Addr = os.Getenv("IHY_ADDR")
 	if c.Addr == "" {

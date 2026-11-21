@@ -22,7 +22,7 @@ func main() {
 		log.Fatalf("config: %v", err)
 	}
 
-	schemaVersion, err := db.Migrate(cfg.DSN)
+	schemaVersion, err := db.Migrate(cfg.DSN())
 	if err != nil {
 		log.Fatalf("migrate: %v", err)
 	}

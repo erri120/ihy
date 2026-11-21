@@ -8,7 +8,11 @@ services:
     ports:
       - "7731:7731"
     environment:
-      IHY_DSN: postgres://ihy:ihy@db:5432/ihy?sslmode=disable
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: ihy
+      DB_PASSWORD: ihy
+      DB_DATABASE: ihy
     depends_on:
       db:
         condition: service_healthy
