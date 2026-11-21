@@ -19,4 +19,20 @@ dev:
 build:
 	CGO_ENABLED=0 go build -o ihy ./cmd/ihy
 
-.PHONY: test test-e2e dev build
+# Open the DuckDB UI against the dev database. Starts the dev stack if
+# it is not running; the app is then left running in the background
+# (logs in /tmp/ihy-dev.log) so the UI can browse live data.
+DB_UI_INIT := /tmp/ihy-duckdb-init.sql
+db-ui:
+	@docker compose -f docker-compose.dev.yml up -d --wait testdb >/dev/null 2>&1
+	@if ! curl -sf http://127.0.0.1:7731/healthz >/dev/null; then \
+		$(MAKE) build >/dev/null; \
+		nohup env DB_HOST=127.0.0.1 DB_PORT=5433 DB_USER=ihy DB_PASSWORD=ihy \
+			DB_DATABASE=postgres IHY_LIBRARIES=$(IHY_LIBRARIES) \
+			$(CURDIR)/ihy >/tmp/ihy-dev.log 2>&1 & \
+	fi
+	@until curl -sf http://127.0.0.1:7731/healthz >/dev/null; do sleep 0.5; done
+	@printf "INSTALL postgres;\nLOAD postgres;\nINSTALL json;\nLOAD json;\nATTACH 'dbname=postgres host=127.0.0.1 port=5433 user=ihy password=ihy' AS ihy (TYPE postgres, READ_ONLY);\nUSE ihy.public;\n" > $(DB_UI_INIT)
+	duckdb -init $(DB_UI_INIT) -ui
+
+.PHONY: test test-e2e dev build db-ui
