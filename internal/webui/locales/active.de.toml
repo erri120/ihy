@@ -1,0 +1,67 @@
+[LogIn]
+other = "Anmelden"
+
+[LogOut]
+other = "Abmelden"
+
+[Username]
+other = "Benutzername"
+
+[Password]
+other = "Passwort"
+
+[LoginFailed]
+other = "Falscher Benutzername oder falsches Passwort."
+
+[Library]
+other = "Bibliothek"
+
+[SearchPlaceholder]
+other = "Titel, Künstler, Aliasse durchsuchen ..."
+
+[NothingFound]
+other = "Nichts gefunden."
+
+[KindArtist]
+other = "Künstler"
+
+[KindAlbum]
+other = "Album"
+
+[KindRelease]
+other = "Veröffentlichung"
+
+[KindTrack]
+other = "Titel"
+
+[Canonical]
+other = "Originalname:"
+
+[Albums]
+other = "Alben"
+
+[NoAlbums]
+other = "Noch keine Alben in der Bibliothek."
+
+[FeaturedOnTracks]
+one = "featured in einem Track"
+other = "featured in {{.PluralCount}} Tracks"
+
+[StatsFiles]
+one = "{{.PluralCount}} Datei"
+other = "{{.PluralCount}} Dateien"
+
+[StatsArtists]
+one = "{{.PluralCount}} Künstler"
+other = "{{.PluralCount}} Künstler"
+
+[StatsAlbums]
+one = "{{.PluralCount}} Album"
+other = "{{.PluralCount}} Alben"
+
+[StatsRecordings]
+one = "{{.PluralCount}} Titel"
+other = "{{.PluralCount}} Titel"
+
+[ComingSoon]
+other = "Diese Seite kommt mit dem Player-Meilenstein."

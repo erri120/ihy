@@ -2,9 +2,9 @@
 // updates. Design of record: docs/architecture.md §7.
 package webui
 
-templ Layout(title string) {
+templ Layout(t *T, title string) {
 	<!DOCTYPE html>
-	<html lang="en">
+	<html lang={ t.Lang.String() }>
 		<head>
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>

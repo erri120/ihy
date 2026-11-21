@@ -1,20 +1,20 @@
 package webui
 
-templ HomePage(stats StatsVM) {
-	@Layout("Library") {
+templ HomePage(t *T, stats StatsVM) {
+	@Layout(t, t.Msg("Library")) {
 		<header class="page-head">
-			<h1>Library</h1>
+			<h1>{ t.Msg("Library") }</h1>
 			<form method="post" action="/logout" class="logout">
-				<button type="submit">Log out</button>
+				<button type="submit">{ t.Msg("LogOut") }</button>
 			</form>
 		</header>
 		<p class="muted">
-			{ stats.Files } files · { stats.Artists } artists · { stats.ReleaseGroups } albums · { stats.Recordings } recordings
+			{ t.Plural("StatsFiles", stats.Files) } · { t.Plural("StatsArtists", stats.Artists) } · { t.Plural("StatsAlbums", stats.ReleaseGroups) } · { t.Plural("StatsRecordings", stats.Recordings) }
 		</p>
 		<input
 			type="search"
 			name="q"
-			placeholder="Search titles, artists, aliases..."
+			placeholder={ t.Msg("SearchPlaceholder") }
 			autofocus
 			hx-get="/ui/search"
 			hx-trigger="input changed delay:300ms, search"
@@ -24,14 +24,14 @@ templ HomePage(stats StatsVM) {
 	}
 }
 
-templ SearchResults(results []SearchResultVM) {
+templ SearchResults(t *T, results []SearchResultVM) {
 	if len(results) == 0 {
-		<p class="muted">Nothing found.</p>
+		<p class="muted">{ t.Msg("NothingFound") }</p>
 	} else {
 		<ul class="results">
 			for _, r := range results {
 				<li class={ "hit", "hit-"+r.Type }>
-					<span class="kind">{ r.Type }</span>
+					<span class="kind">{ t.Msg(r.KindID()) }</span>
 					<a href={ templ.URL(r.Href()) }>{ r.Name }</a>
 					if r.Canonical != "" && r.Canonical != r.Name {
 						<span class="muted"> ({ r.Canonical })</span>

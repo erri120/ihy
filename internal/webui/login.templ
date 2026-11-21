@@ -1,7 +1,7 @@
 package webui
 
-templ LoginPage(errMsg string) {
-	@Layout("Log in") {
+templ LoginPage(t *T, errMsg string) {
+	@Layout(t, t.Msg("LogIn")) {
 		<div class="login">
 			<h1>ihy</h1>
 			if errMsg != "" {
@@ -9,14 +9,14 @@ templ LoginPage(errMsg string) {
 			}
 			<form method="post" action="/login">
 				<label>
-					Username
+					{ t.Msg("Username") }
 					<input type="text" name="username" required autocomplete="username"/>
 				</label>
 				<label>
-					Password
+					{ t.Msg("Password") }
 					<input type="password" name="password" required autocomplete="current-password"/>
 				</label>
-				<button type="submit">Log in</button>
+				<button type="submit">{ t.Msg("LogIn") }</button>
 			</form>
 		</div>
 	}

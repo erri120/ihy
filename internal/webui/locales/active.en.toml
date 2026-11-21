@@ -1,0 +1,69 @@
+# Source of truth for UI strings. Other locales translate these IDs.
+
+[LogIn]
+other = "Log in"
+
+[LogOut]
+other = "Log out"
+
+[Username]
+other = "Username"
+
+[Password]
+other = "Password"
+
+[LoginFailed]
+other = "Wrong username or password."
+
+[Library]
+other = "Library"
+
+[SearchPlaceholder]
+other = "Search titles, artists, aliases..."
+
+[NothingFound]
+other = "Nothing found."
+
+[KindArtist]
+other = "Artist"
+
+[KindAlbum]
+other = "Album"
+
+[KindRelease]
+other = "Release"
+
+[KindTrack]
+other = "Track"
+
+[Canonical]
+other = "Canonical:"
+
+[Albums]
+other = "Albums"
+
+[NoAlbums]
+other = "No albums in the library yet."
+
+[FeaturedOnTracks]
+one = "featured on {{.PluralCount}} track"
+other = "featured on {{.PluralCount}} tracks"
+
+[StatsFiles]
+one = "{{.PluralCount}} file"
+other = "{{.PluralCount}} files"
+
+[StatsArtists]
+one = "{{.PluralCount}} artist"
+other = "{{.PluralCount}} artists"
+
+[StatsAlbums]
+one = "{{.PluralCount}} album"
+other = "{{.PluralCount}} albums"
+
+[StatsRecordings]
+one = "{{.PluralCount}} recording"
+other = "{{.PluralCount}} recordings"
+
+[ComingSoon]
+other = "This page lands with the player milestone."

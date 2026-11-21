@@ -1,13 +1,13 @@
 package webui
 
-templ ComingSoonPage(title string) {
-	@Layout(title) {
+templ ComingSoonPage(t *T, title string) {
+	@Layout(t, title) {
 		<header class="page-head">
 			<h1>{ title }</h1>
 			<form method="post" action="/logout" class="logout">
-				<button type="submit">Log out</button>
+				<button type="submit">{ t.Msg("LogOut") }</button>
 			</form>
 		</header>
-		<p class="muted">This page lands with the player milestone.</p>
+		<p class="muted">{ t.Msg("ComingSoon") }</p>
 	}
 }

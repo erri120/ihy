@@ -12,6 +12,7 @@ require (
 )
 
 require (
+	github.com/BurntSushi/toml v1.6.0 // indirect
 	github.com/a-h/parse v0.0.42 // indirect
 	github.com/a-h/templ v0.3.1118 // indirect
 	github.com/andybalholm/brotli v1.3.0 // indirect
@@ -30,6 +31,7 @@ require (
 	github.com/mattn/go-colorable v0.1.16 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/natefinch/atomic v1.0.1 // indirect
+	github.com/nicksnyder/go-i18n/v2 v2.7.0 // indirect
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
 	github.com/tetratelabs/wazero v1.12.0 // indirect
 	go.yaml.in/yaml/v4 v4.0.0 // indirect

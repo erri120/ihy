@@ -40,6 +40,10 @@ type SearchResultVM struct {
 	Canonical string
 }
 
+func (r SearchResultVM) KindID() string {
+	return kindID(r.Type)
+}
+
 func (r SearchResultVM) Href() string {
 	switch r.Type {
 	case "artist":
@@ -143,7 +147,7 @@ func (s *Server) LoginPage(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("error") != "" {
 		msg = "Wrong username or password."
 	}
-	render(w, http.StatusOK, LoginPage(msg))
+	render(w, http.StatusOK, LoginPage(NewTranslator(r.Header.Get("Accept-Language")), msg))
 }
 
 // Login handles the login form. Failures redirect back to the form
@@ -200,11 +204,13 @@ func (s *Server) Home(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	render(w, http.StatusOK, HomePage(stats))
+	t := NewTranslator(r.Header.Get("Accept-Language"))
+	render(w, http.StatusOK, HomePage(t, stats))
 }
 
 // Search serves the live results fragment.
 func (s *Server) Search(w http.ResponseWriter, r *http.Request) {
+	t := NewTranslator(r.Header.Get("Accept-Language"))
 	user, ok := userFrom(r.Context())
 	if !ok {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -212,7 +218,7 @@ func (s *Server) Search(w http.ResponseWriter, r *http.Request) {
 	}
 	q := strings.TrimSpace(r.URL.Query().Get("q"))
 	if q == "" {
-		render(w, http.StatusOK, SearchResults(nil))
+		render(w, http.StatusOK, SearchResults(t, nil))
 		return
 	}
 	prefs, err := display.PrefsFor(r.Context(), s.db, user.ID)
@@ -235,7 +241,7 @@ func (s *Server) Search(w http.ResponseWriter, r *http.Request) {
 			Canonical: h.Name,
 		})
 	}
-	render(w, http.StatusOK, SearchResults(out))
+	render(w, http.StatusOK, SearchResults(t, out))
 }
 
 type hit struct {
@@ -287,6 +293,7 @@ func (s *Server) search(q string) ([]hit, error) {
 
 // Artist renders an artist page with albums.
 func (s *Server) Artist(w http.ResponseWriter, r *http.Request) {
+	t := NewTranslator(r.Header.Get("Accept-Language"))
 	user, ok := userFrom(r.Context())
 	if !ok {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -400,7 +407,7 @@ func (s *Server) Artist(w http.ResponseWriter, r *http.Request) {
 		}
 		vm.Albums = append(vm.Albums, avm)
 	}
-	render(w, http.StatusOK, ArtistPage(vm))
+	render(w, http.StatusOK, ArtistPage(t, vm))
 }
 
 // nonEmpty filters out blank strings.
@@ -416,9 +423,11 @@ func nonEmpty(ss ...string) []string {
 
 // ReleaseGroup and Recording are stubs for the player milestone.
 func (s *Server) ReleaseGroup(w http.ResponseWriter, r *http.Request) {
-	render(w, http.StatusOK, ComingSoonPage("Album"))
+	t := NewTranslator(r.Header.Get("Accept-Language"))
+	render(w, http.StatusOK, ComingSoonPage(t, t.Msg("KindAlbum")))
 }
 
 func (s *Server) Recording(w http.ResponseWriter, r *http.Request) {
-	render(w, http.StatusOK, ComingSoonPage("Track"))
+	t := NewTranslator(r.Header.Get("Accept-Language"))
+	render(w, http.StatusOK, ComingSoonPage(t, t.Msg("KindTrack")))
 }
