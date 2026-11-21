@@ -19,7 +19,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
+	"sync"
+	"time"
 
 	"ihy/internal/musicbrainz"
 )
@@ -65,12 +68,62 @@ func New(db *sql.DB, fetcher Fetcher) *Resolver {
 	return &Resolver{db: db, fetcher: fetcher}
 }
 
-// resolve run state: wanted entities and fetched data.
+// resolve run state: wanted entities and fetched data. mu guards the
+// progress counters, which the periodic logger reads concurrently.
 type run struct {
 	r        *Resolver
 	res      Result
 	wanted   map[string][]musicbrainz.MBID
 	confRows []conflictRow
+
+	mu      sync.Mutex
+	started time.Time
+	done    int // completed lookups
+}
+
+// progressInterval is how often the resolver logs progress; a var so
+// tests can shorten it.
+var progressInterval = time.Minute
+
+func (st *run) markDone() {
+	st.mu.Lock()
+	st.done++
+	st.mu.Unlock()
+}
+
+// totalKnown returns the number of currently known lookups; the set
+// grows while relationships are traversed, so this is a floor.
+func (st *run) totalKnown() int {
+	st.mu.Lock()
+	defer st.mu.Unlock()
+	n := 0
+	for _, list := range st.wanted {
+		n += len(list)
+	}
+	return n
+}
+
+// progressUntil runs the periodic progress logger until done is
+// closed.
+func (st *run) progressUntil(done <-chan struct{}) {
+	ticker := time.NewTicker(progressInterval)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-done:
+			return
+		case <-ticker.C:
+			st.mu.Lock()
+			d, elapsed := st.done, time.Since(st.started)
+			st.mu.Unlock()
+			total := st.totalKnown()
+			if total == 0 {
+				continue
+			}
+			log.Printf("resolver: progress: %d/%d lookups (~%.0f%%) after %s",
+				d, total, float64(d)/float64(total)*100, elapsed.Round(time.Second))
+		}
+	}
 }
 
 type conflictRow struct {
@@ -81,28 +134,40 @@ type conflictRow struct {
 }
 
 // Resolve runs one full pass. Idempotent: every write is an upsert.
+// It logs when it starts, every minute with a rough completion
+// estimate, and when it ends (with the summary) or fails.
 func (r *Resolver) Resolve(ctx context.Context) (Result, error) {
-	st := &run{r: r, wanted: map[string][]musicbrainz.MBID{}}
+	st := &run{r: r, wanted: map[string][]musicbrainz.MBID{}, started: time.Now()}
 
 	files, err := r.loadFiles(ctx)
 	if err != nil {
-		return st.res, err
+		return st.res, fmt.Errorf("resolve failed after %s: %w", time.Since(st.started).Round(time.Second), err)
 	}
 	st.res.Files = len(files)
 	st.collect(files)
+	log.Printf("resolver: starting: %d files, %d known lookups (the set grows as relationships are traversed)",
+		st.res.Files, st.totalKnown())
+
+	done := make(chan struct{})
+	defer close(done)
+	go st.progressUntil(done)
 
 	if err := st.fetch(ctx); err != nil {
-		return st.res, err
+		return st.res, fmt.Errorf("resolve failed after %s: %w", time.Since(st.started).Round(time.Second), err)
 	}
 	if err := st.linkFiles(ctx, files); err != nil {
-		return st.res, err
+		return st.res, fmt.Errorf("resolve failed after %s: %w", time.Since(st.started).Round(time.Second), err)
 	}
 	if err := st.persistConflicts(ctx); err != nil {
-		return st.res, err
+		return st.res, fmt.Errorf("resolve failed after %s: %w", time.Since(st.started).Round(time.Second), err)
 	}
 	if err := st.buildSearchVectors(ctx); err != nil {
-		return st.res, err
+		return st.res, fmt.Errorf("resolve failed after %s: %w", time.Since(st.started).Round(time.Second), err)
 	}
+	log.Printf("resolver: finished in %s: %d artists, %d release-groups, %d releases, %d recordings, %d works, %d credits, %d aliases, %d conflicts, %d stale MBIDs",
+		time.Since(st.started).Round(time.Second),
+		st.res.Artists, st.res.Groups, st.res.Releases, st.res.Recordings,
+		st.res.Works, st.res.Credits, st.res.Aliases, st.res.Conflicts, st.res.NotFound)
 	return st.res, nil
 }
 

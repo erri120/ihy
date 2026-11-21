@@ -24,11 +24,13 @@ func (st *run) fetch(ctx context.Context) error {
 		rec, err := st.r.fetcher.Recording(ctx, m)
 		if notFound(err) {
 			st.res.NotFound++
+			st.markDone()
 			continue
 		}
 		if err != nil {
 			return fmt.Errorf("recording %s: %w", m, err)
 		}
+		st.markDone()
 		recordings = append(recordings, rec)
 		st.wantedArtists(rec.Relations)
 		st.wantedWorks(rec.Relations)
@@ -37,11 +39,13 @@ func (st *run) fetch(ctx context.Context) error {
 		w, err := st.r.fetcher.Work(ctx, m)
 		if notFound(err) {
 			st.res.NotFound++
+			st.markDone()
 			continue
 		}
 		if err != nil {
 			return fmt.Errorf("work %s: %w", m, err)
 		}
+		st.markDone()
 		works = append(works, w)
 		st.wantedArtists(w.Relations)
 	}
@@ -49,11 +53,13 @@ func (st *run) fetch(ctx context.Context) error {
 		a, err := st.r.fetcher.Artist(ctx, m)
 		if notFound(err) {
 			st.res.NotFound++
+			st.markDone()
 			continue
 		}
 		if err != nil {
 			return fmt.Errorf("artist %s: %w", m, err)
 		}
+		st.markDone()
 		if err := st.r.upsertArtist(ctx, a); err != nil {
 			return err
 		}
@@ -64,11 +70,13 @@ func (st *run) fetch(ctx context.Context) error {
 		rg, err := st.r.fetcher.ReleaseGroup(ctx, m)
 		if notFound(err) {
 			st.res.NotFound++
+			st.markDone()
 			continue
 		}
 		if err != nil {
 			return fmt.Errorf("release-group %s: %w", m, err)
 		}
+		st.markDone()
 		if err := st.r.upsertReleaseGroup(ctx, rg); err != nil {
 			return err
 		}
@@ -84,11 +92,13 @@ func (st *run) fetch(ctx context.Context) error {
 		rel, err := st.r.fetcher.Release(ctx, m)
 		if notFound(err) {
 			st.res.NotFound++
+			st.markDone()
 			continue
 		}
 		if err != nil {
 			return fmt.Errorf("release %s: %w", m, err)
 		}
+		st.markDone()
 		if err := st.r.upsertRelease(ctx, rel); err != nil {
 			return err
 		}

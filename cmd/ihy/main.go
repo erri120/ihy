@@ -57,13 +57,9 @@ func main() {
 				musicbrainz.UserAgent("0.0.1", musicbrainz.DefaultContactURL),
 				musicbrainz.NewCachingTransport(conn, live))
 			res := resolver.New(conn, fetcher)
-			out, err := res.Resolve(context.Background())
-			if err != nil {
+			if _, err := res.Resolve(context.Background()); err != nil {
 				log.Printf("resolver: %v", err)
-				return
 			}
-			log.Printf("resolver: %d artists, %d release-groups, %d releases, %d recordings, %d works, %d credits, %d aliases, %d conflicts, %d stale MBIDs",
-				out.Artists, out.Groups, out.Releases, out.Recordings, out.Works, out.Credits, out.Aliases, out.Conflicts, out.NotFound)
 		}()
 	}
 	log.Printf("artwork dir: %s | transcode dir: %s", cfg.ArtworkDir, cfg.TranscodeDir)
