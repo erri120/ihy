@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -37,9 +38,18 @@ func setup(t *testing.T) (*Auth, *httptest.Server) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /auth/login", a.Login)
 	mux.HandleFunc("POST /auth/logout", a.Logout)
-	mux.Handle("POST /auth/tokens", a.Middleware(http.HandlerFunc(a.CreateToken)))
+	mux.Handle("POST /auth/tokens", a.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		a.CreateToken(w, r)
+	})))
 	mux.Handle("GET /auth/tokens", a.Middleware(http.HandlerFunc(a.ListTokens)))
-	mux.Handle("DELETE /auth/tokens/{id}", a.Middleware(http.HandlerFunc(a.RevokeToken)))
+	mux.Handle("DELETE /auth/tokens/{id}", a.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+		if err != nil {
+			writeError(w, http.StatusBadRequest, "invalid token id")
+			return
+		}
+		a.RevokeToken(w, r, id)
+	})))
 	return a, httptest.NewServer(mux)
 }
 

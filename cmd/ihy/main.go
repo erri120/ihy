@@ -17,6 +17,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 
 	"ihy/internal/api"
+	"ihy/internal/api/gen"
 	"ihy/internal/auth"
 	"ihy/internal/config"
 	"ihy/internal/db"
@@ -42,7 +43,6 @@ func main() {
 		log.Fatalf("open database: %v", err)
 	}
 	defer conn.Close()
-
 	// Bootstrap the single admin account (first boot only).
 	created, err := auth.EnsureAdminUser(context.Background(), conn, "admin", cfg.AdminPassword)
 	switch {
@@ -78,12 +78,6 @@ func main() {
 	log.Printf("artwork dir: %s | transcode dir: %s", cfg.ArtworkDir, cfg.TranscodeDir)
 
 	mux := http.NewServeMux()
-	a := api.NewAuth(conn)
-	mux.HandleFunc("POST /auth/login", a.Login)
-	mux.HandleFunc("POST /auth/logout", a.Logout)
-	mux.Handle("POST /auth/tokens", a.Middleware(http.HandlerFunc(a.CreateToken)))
-	mux.Handle("GET /auth/tokens", a.Middleware(http.HandlerFunc(a.ListTokens)))
-	mux.Handle("DELETE /auth/tokens/{id}", a.Middleware(http.HandlerFunc(a.RevokeToken)))
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]any{
@@ -92,6 +86,12 @@ func main() {
 			"schema_version": schemaVersion,
 		})
 	})
+
+	// Generated API handlers, wrapped in the auth middleware: the
+	// public auth routes (login/logout) pass through, everything else
+	// requires a session or API token.
+	server := api.NewServer(conn)
+	mux.Handle("/", api.NewAuth(conn).Middleware(gen.Handler(server)))
 
 	log.Printf("ihy listening on %s", cfg.Addr)
 	log.Fatal(http.ListenAndServe(cfg.Addr, mux))

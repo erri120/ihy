@@ -1,0 +1,9 @@
+# oapi-codegen configuration for the ihy API (std net/http server).
+package: gen
+output: internal/api/gen/gen.go
+generate:
+  std-http-server: true
+  models: true
+  embedded-spec: true
+output-options:
+  skip-prune: false

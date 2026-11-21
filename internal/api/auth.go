@@ -8,7 +8,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -129,19 +128,13 @@ func (a *Auth) ListTokens(w http.ResponseWriter, r *http.Request) {
 }
 
 // RevokeToken handles DELETE /auth/tokens/{id} (authenticated).
-func (a *Auth) RevokeToken(w http.ResponseWriter, r *http.Request) {
+func (a *Auth) RevokeToken(w http.ResponseWriter, r *http.Request, id int64) {
 	user, ok := UserFromContext(r.Context())
 	if !ok {
 		writeError(w, http.StatusUnauthorized, "authentication required")
 		return
 	}
-	pathID := strings.TrimPrefix(r.URL.Path, "/auth/tokens/")
-	id, err := strconv.ParseInt(pathID, 10, 64)
-	if err != nil {
-		writeError(w, http.StatusBadRequest, "invalid token id")
-		return
-	}
-	if err = auth.RevokeToken(r.Context(), a.db, user.ID, id); err != nil {
+	if err := auth.RevokeToken(r.Context(), a.db, user.ID, id); err != nil {
 		writeError(w, http.StatusNotFound, "token not found")
 		return
 	}

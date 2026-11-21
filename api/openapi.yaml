@@ -1,0 +1,395 @@
+openapi: 3.1.0
+info:
+  title: ihy API
+  version: 0.1.0
+  description: >-
+    First-party API for the ihy music streaming server. Names are
+    returned as display names computed from the user's preferences
+    (locale chain, artist name history policy); canonical_name carries
+    the MusicBrainz canonical name alongside.
+servers:
+  - url: /
+tags:
+  - name: auth
+  - name: user
+  - name: library
+paths:
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Credentials' }
+      responses:
+        '200':
+          description: Session cookie set.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Status' }
+        '401':
+          description: Invalid credentials.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      responses:
+        '200':
+          description: Cookie cleared.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Status' }
+  /auth/tokens:
+    get:
+      operationId: listTokens
+      tags: [auth]
+      security: [{ sessionOrToken: [] }]
+      responses:
+        '200':
+          description: The user's API tokens.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ApiToken' }
+    post:
+      operationId: createToken
+      tags: [auth]
+      security: [{ sessionOrToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TokenRequest' }
+      responses:
+        '201':
+          description: Raw token, returned exactly once.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiTokenCreated' }
+  /auth/tokens/{id}:
+    delete:
+      operationId: revokeToken
+      tags: [auth]
+      security: [{ sessionOrToken: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Revoked.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Status' }
+        '404':
+          description: Token not found.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /me/display-prefs:
+    get:
+      operationId: getDisplayPrefs
+      tags: [user]
+      security: [{ sessionOrToken: [] }]
+      responses:
+        '200':
+          description: Display-name preferences per entity type.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/DisplayPref' }
+    put:
+      operationId: putDisplayPrefs
+      tags: [user]
+      security: [{ sessionOrToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: { $ref: '#/components/schemas/DisplayPref' }
+      responses:
+        '200':
+          description: Stored.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/DisplayPref' }
+  /search:
+    get:
+      operationId: search
+      tags: [library]
+      security: [{ sessionOrToken: [] }]
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema: { type: string, minLength: 1 }
+      responses:
+        '200':
+          description: >-
+            Recordings matching by title, aliases, or linked work
+            names, plus artists, release-groups and releases matching
+            by name or alias. Every hit carries its display name.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/SearchHit' }
+  /artists/{mbid}:
+    get:
+      operationId: getArtist
+      tags: [library]
+      security: [{ sessionOrToken: [] }]
+      parameters:
+        - name: mbid
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: >-
+            The artist with display name, aliases, and the albums the
+            artist appears on: primary (release-group level credit) or
+            featured (track-level only).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Artist' }
+        '404':
+          description: Unknown artist.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /release-groups/{mbid}:
+    get:
+      operationId: getReleaseGroup
+      tags: [library]
+      security: [{ sessionOrToken: [] }]
+      parameters:
+        - name: mbid
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: >-
+            The release-group: primary artists (all release-group
+            level credits), the concrete releases, and the recordings
+            with credits.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReleaseGroupDetail' }
+        '404':
+          description: Unknown release-group.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /recordings/{mbid}:
+    get:
+      operationId: getRecording
+      tags: [library]
+      security: [{ sessionOrToken: [] }]
+      parameters:
+        - name: mbid
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: >-
+            The recording: display name, credits with roles and
+            attributes, and the work behind it.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RecordingDetail' }
+        '404':
+          description: Unknown recording.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+components:
+  securitySchemes:
+    sessionOrToken:
+      type: http
+      description: >-
+        Session cookie (ihy_session) or Authorization: Bearer <api
+        token>.
+      scheme: bearer
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+    Status:
+      type: object
+      required: [status]
+      properties:
+        status: { type: string }
+    Credentials:
+      type: object
+      required: [username, password]
+      properties:
+        username: { type: string }
+        password: { type: string }
+    ApiToken:
+      type: object
+      required: [id, name, created_at]
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        created_at: { type: string, format: date-time }
+    TokenRequest:
+      type: object
+      properties:
+        name: { type: string }
+    ApiTokenCreated:
+      type: object
+      required: [token, name]
+      properties:
+        token: { type: string }
+        name: { type: string }
+    DisplayPref:
+      type: object
+      required: [entity_type, locale_chain, history_policy]
+      properties:
+        entity_type:
+          type: string
+          enum: [artist, release_group, release, recording, work]
+        locale_chain:
+          type: array
+          items: { type: string }
+          description: Ordered locale chain; empty = canonical names.
+        history_policy:
+          type: string
+          enum: [current, at_release]
+          description: >-
+            How renamed artists display: current name or the name used
+            when the release came out.
+    SearchHit:
+      type: object
+      required: [type, mbid, name]
+      properties:
+        type:
+          type: string
+          enum: [recording, artist, release_group, release]
+        mbid: { type: string, format: uuid }
+        name: { type: string, description: Display name }
+        canonical_name: { type: string }
+        sub:
+          type: string
+          description: >-
+            Context line, e.g. the artist names of a recording.
+    Alias:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string }
+        locale: { type: string }
+        primary: { type: boolean }
+        begin: { type: string }
+        end: { type: string }
+    Credit:
+      type: object
+      required: [artist_mbid, artist_name, role, position]
+      properties:
+        artist_mbid: { type: string, format: uuid }
+        artist_name: { type: string, description: Display name of the artist }
+        role: { type: string, description: Raw MusicBrainz relationship type }
+        details: { type: string, description: Attributes, e.g. "guitar" }
+        position: { type: integer }
+        joinphrase: { type: string }
+    NamedRef:
+      type: object
+      required: [mbid, name]
+      properties:
+        mbid: { type: string, format: uuid }
+        name: { type: string, description: Display name }
+        canonical_name: { type: string }
+    Artist:
+      type: object
+      required: [mbid, name, albums]
+      properties:
+        mbid: { type: string, format: uuid }
+        name: { type: string, description: Display name }
+        canonical_name: { type: string }
+        sort_name: { type: string }
+        type: { type: string }
+        country: { type: string }
+        begin: { type: string }
+        end: { type: string }
+        aliases:
+          type: array
+          items: { $ref: '#/components/schemas/Alias' }
+        albums:
+          type: array
+          items: { $ref: '#/components/schemas/AlbumAppearance' }
+    AlbumAppearance:
+      type: object
+      required: [mbid, name, relationship]
+      properties:
+        mbid: { type: string, format: uuid }
+        name: { type: string, description: Display name }
+        canonical_name: { type: string }
+        first_release_date: { type: string }
+        relationship:
+          type: string
+          enum: [primary, featured]
+          description: >-
+            primary = the artist holds a release-group level credit;
+            featured = the artist appears only on tracks.
+        featured_tracks:
+          type: integer
+          description: Number of tracks the artist appears on (featured only).
+    ReleaseGroupDetail:
+      type: object
+      required: [mbid, name, primary_artists, releases]
+      properties:
+        mbid: { type: string, format: uuid }
+        name: { type: string, description: Display name }
+        canonical_name: { type: string }
+        primary_type: { type: string }
+        secondary_types:
+          type: array
+          items: { type: string }
+        first_release_date: { type: string }
+        primary_artists:
+          type: array
+          items: { $ref: '#/components/schemas/NamedRef' }
+          description: All release-group level credits; several for joint works.
+        releases:
+          type: array
+          items: { $ref: '#/components/schemas/NamedRef' }
+    RecordingDetail:
+      type: object
+      required: [mbid, name, credits]
+      properties:
+        mbid: { type: string, format: uuid }
+        name: { type: string, description: Display name }
+        canonical_name: { type: string }
+        length_ms: { type: integer }
+        aliases:
+          type: array
+          items: { $ref: '#/components/schemas/Alias' }
+        credits:
+          type: array
+          items: { $ref: '#/components/schemas/Credit' }
+        work:
+          allOf:
+            - $ref: '#/components/schemas/NamedRef'
+            - type: object
+              properties:
+                composers:
+                  type: array
+                  items: { type: string }
+                  description: Display names of the work's composer credits.
