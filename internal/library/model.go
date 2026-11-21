@@ -76,11 +76,17 @@ type Work struct {
 // carries ordered performer credits [Eskimo Callboy, The BossHoss] at
 // positions 0,1. Soundtrack recordings carry composer, arranger and
 // mixer credits tied to artists by MBIDs (MUSICBRAINZ_COMPOSERID).
+//
+// Role is the raw MusicBrainz relationship type string, stored
+// verbatim on purpose: the vocabulary is upstream-maintained and
+// grows, so a local fixed enum would only add tech debt. Instrument
+// and vocal attributes ("guitar", "lead vocals") live in Details.
 type Credit struct {
 	SubjectType SubjectType
 	SubjectMBID MBID
 	ArtistMBID  MBID
-	Role        string // performer | composer | arranger | mixer | producer | …
+	Role        string // raw MB relationship type, verbatim
+	Details     string // attributes: "guitar", "lead vocals", ...
 	Position    int
 	DisplayName string // credit name as MB recorded it for this credit
 	JoinPhrase  string // e.g. " feat. ", "", ", "

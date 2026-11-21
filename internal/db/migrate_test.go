@@ -139,18 +139,19 @@ func TestConstraintShape(t *testing.T) {
 
 	// The credit primary key encodes the ordered-rows principle: same
 	// artist can hold several roles, same role several artists, order
-	// comes from position.
+	// comes from position. Role stays a raw MusicBrainz type string;
+	// attributes go into details.
 	if _, err := conn.Exec(`
 		INSERT INTO artist (mbid, name, sort_name) VALUES
 		  ('00000000-0000-0000-0000-000000000001', 'A', 'A'),
 		  ('00000000-0000-0000-0000-000000000002', 'B', 'B');
-		INSERT INTO credit (subject_type, subject_mbid, artist_mbid, role, position, display_name)
+		INSERT INTO credit (subject_type, subject_mbid, artist_mbid, role, details, position, display_name)
 		VALUES ('recording', '00000000-0000-0000-0000-000000000009',
-		        '00000000-0000-0000-0000-000000000001', 'performer', 0, 'A'),
+		        '00000000-0000-0000-0000-000000000001', 'performance', 'lead vocals', 0, 'A'),
 		       ('recording', '00000000-0000-0000-0000-000000000009',
-		        '00000000-0000-0000-0000-000000000002', 'performer', 1, 'B feat. '),
+		        '00000000-0000-0000-0000-000000000002', 'performance', '', 1, 'B feat. '),
 		       ('recording', '00000000-0000-0000-0000-000000000009',
-		        '00000000-0000-0000-0000-000000000001', 'composer', 0, 'A');
+		        '00000000-0000-0000-0000-000000000001', 'writing', '', 0, 'A');
 	`); err != nil {
 		t.Fatalf("insert multi-role credits: %v", err)
 	}
@@ -159,9 +160,74 @@ func TestConstraintShape(t *testing.T) {
 	if _, err := conn.Exec(`
 		INSERT INTO credit (subject_type, subject_mbid, artist_mbid, role, position, display_name)
 		VALUES ('recording', '00000000-0000-0000-0000-000000000009',
-		        '00000000-0000-0000-0000-000000000001', 'performer', 0, 'A again');
+		        '00000000-0000-0000-0000-000000000001', 'performance', 0, 'A again');
 	`); err == nil {
 		t.Error("duplicate credit row was accepted; primary key not enforced")
+	}
+}
+
+// The search UX property: a user searches for the English work title
+// ("Weight of the World") and the Japanese-titled recording surfaces;
+// a recording whose own title matches ranks above it.
+func TestSearchSurfacesWorkTitles(t *testing.T) {
+	dsn, cleanup := testDatabase(t)
+	defer cleanup()
+
+	if err := Migrate(dsn); err != nil {
+		t.Fatalf("up: %v", err)
+	}
+	conn, err := sql.Open("pgx", dsn)
+	if err != nil {
+		t.Fatalf("connect: %v", err)
+	}
+	defer conn.Close()
+
+	// Resolver behavior, staged by hand here: weights A (recording
+	// title), B (recording aliases), C (work titles), D (work aliases).
+	if _, err := conn.Exec(`
+		INSERT INTO work (mbid, title) VALUES
+		  ('00000000-0000-0000-0000-00000000000a', 'Weight of the World');
+		INSERT INTO recording (mbid, title, search_vector) VALUES
+		  ('00000000-0000-0000-0000-00000000000b', 'Weight of the World / English Version',
+		    setweight(to_tsvector('simple', 'Weight of the World / English Version'), 'A') ||
+		    setweight(to_tsvector('simple', 'Weight of the World'), 'C')),
+		  ('00000000-0000-0000-0000-00000000000c', '穏ヤカナ眠リ',
+		    setweight(to_tsvector('simple', '穏ヤカナ眠リ'), 'A') ||
+		    setweight(to_tsvector('simple', 'Weight of the World'), 'C'));
+	`); err != nil {
+		t.Fatalf("insert search fixtures: %v", err)
+	}
+
+	rows, err := conn.Query(`
+		SELECT mbid, ts_rank_cd(search_vector, query) AS rank
+		FROM recording, websearch_to_tsquery('simple', 'Weight of the World') query
+		WHERE search_vector @@ query
+		ORDER BY rank DESC
+	`)
+	if err != nil {
+		t.Fatalf("search query: %v", err)
+	}
+	defer rows.Close()
+	var got []string
+	for rows.Next() {
+		var mbid string
+		var rank float64
+		if err := rows.Scan(&mbid, &rank); err != nil {
+			t.Fatalf("scan: %v", err)
+		}
+		if rank <= 0 {
+			t.Errorf("hit with non-positive rank: %s", mbid)
+		}
+		got = append(got, mbid)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatalf("rows: %v", err)
+	}
+	if len(got) != 2 {
+		t.Fatalf("search returned %d recordings, want 2 (both must surface)", len(got))
+	}
+	if got[0] != "00000000-0000-0000-0000-00000000000b" {
+		t.Errorf("direct title match must outrank work-title-only match; got order %v", got)
 	}
 }
 

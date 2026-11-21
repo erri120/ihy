@@ -55,8 +55,15 @@ CREATE TABLE recording (
     title               text NOT NULL,
     length_ms           integer,
     disambiguation      text NOT NULL DEFAULT '',
-    first_release_date  date
+    first_release_date  date,
+    -- Search document, maintained by the resolver: recording title,
+    -- recording aliases, linked work titles and work aliases. Weighted
+    -- (title > aliases > work) so a track's own name outranks the
+    -- composition behind it. Users search for what they know and see
+    -- the track.
+    search_vector       tsvector NOT NULL DEFAULT to_tsvector('simple', '')
 );
+CREATE INDEX recording_search_idx ON recording USING GIN (search_vector);
 
 -- The composition behind a recording ("Weight of the World" performed
 -- by multiple recordings). Recording→work is a performance relation.
@@ -76,20 +83,26 @@ CREATE TABLE recording_work (
 -- Ordered role credits on any named subject. One row per (subject,
 -- artist, role, position). Covers "Eskimo Callboy feat. The BossHoss"
 -- (two ordered performer credits, positions 0/1) as well as composer/
--- arranger/mixer credits common on soundtrack recordings. display_name
+-- arranger/mixer credits common on soundtrack recordings.
+-- role stores MusicBrainz relationship type strings VERBATIM (no local
+-- enum: the vocabulary is upstream-maintained and grows; a local enum
+-- would only add tech debt). attributes such as instruments or vocal
+-- parts go into details (e.g. 'guitar', 'lead vocals'). display_name
 -- is the credit name as MusicBrainz recorded it for THIS credit (may
 -- differ from artist.name, e.g. localized or shortened forms).
 CREATE TABLE credit (
     subject_type text NOT NULL,   -- recording | release | release_group | work
     subject_mbid uuid NOT NULL,
     artist_mbid  uuid NOT NULL REFERENCES artist,
-    role         text NOT NULL,   -- performer | composer | arranger | mixer | ...
+    role         text NOT NULL,   -- raw MB relationship type, verbatim
+    details      text NOT NULL DEFAULT '',  -- attributes: 'guitar', 'lead vocals', ...
     position     integer NOT NULL,
     display_name text NOT NULL,
     joinphrase   text NOT NULL DEFAULT '',
     PRIMARY KEY (subject_type, subject_mbid, artist_mbid, role, position)
 );
 CREATE INDEX credit_subject_idx ON credit (subject_type, subject_mbid);
+CREATE INDEX credit_artist_idx ON credit (artist_mbid);
 
 -- Alternative names from MusicBrainz: per-locale primary flags and
 -- begin/end date ranges. These back the display-name feature: ordered
