@@ -4,6 +4,7 @@ package db
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"net/url"
 	"strings"
@@ -48,16 +49,23 @@ func New(dsn string) (*migrate.Migrate, error) {
 	return m, nil
 }
 
-// Migrate applies all pending migrations. Applying on an up-to-date
-// database is a no-op.
-func Migrate(dsn string) error {
+// Migrate applies all pending migrations and returns the current
+// schema version. Applying on an up-to-date database is a no-op.
+func Migrate(dsn string) (version uint, err error) {
 	m, err := New(dsn)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer m.Close()
 	if err := m.Up(); err != nil && !strings.Contains(err.Error(), "no change") {
-		return fmt.Errorf("apply migrations: %w", err)
+		return 0, fmt.Errorf("apply migrations: %w", err)
 	}
-	return nil
+	v, dirty, verr := m.Version()
+	if verr != nil && !errors.Is(verr, migrate.ErrNilVersion) {
+		return 0, fmt.Errorf("read schema version: %w", verr)
+	}
+	if dirty {
+		return 0, fmt.Errorf("schema marked dirty at version %d", v)
+	}
+	return v, nil
 }

@@ -63,10 +63,10 @@ func TestMigrationsApplyOnEmptyDatabase(t *testing.T) {
 	dsn, cleanup := testDatabase(t)
 	defer cleanup()
 
-	if err := Migrate(dsn); err != nil {
+	if _, err := Migrate(dsn); err != nil {
 		t.Fatalf("first Migrate: %v", err)
 	}
-	if err := Migrate(dsn); err != nil {
+	if _, err := Migrate(dsn); err != nil {
 		t.Fatalf("second Migrate (must be a no-op): %v", err)
 	}
 
@@ -98,7 +98,7 @@ func TestMigrationsDownAndUp(t *testing.T) {
 	dsn, cleanup := testDatabase(t)
 	defer cleanup()
 
-	if err := Migrate(dsn); err != nil {
+	if _, err := Migrate(dsn); err != nil {
 		t.Fatalf("up: %v", err)
 	}
 
@@ -128,7 +128,7 @@ func TestConstraintShape(t *testing.T) {
 	dsn, cleanup := testDatabase(t)
 	defer cleanup()
 
-	if err := Migrate(dsn); err != nil {
+	if _, err := Migrate(dsn); err != nil {
 		t.Fatalf("up: %v", err)
 	}
 	conn, err := sql.Open("pgx", dsn)
@@ -173,7 +173,7 @@ func TestSearchSurfacesWorkTitles(t *testing.T) {
 	dsn, cleanup := testDatabase(t)
 	defer cleanup()
 
-	if err := Migrate(dsn); err != nil {
+	if _, err := Migrate(dsn); err != nil {
 		t.Fatalf("up: %v", err)
 	}
 	conn, err := sql.Open("pgx", dsn)
