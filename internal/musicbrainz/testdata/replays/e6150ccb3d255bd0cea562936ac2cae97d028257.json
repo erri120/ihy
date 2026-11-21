@@ -1,0 +1,43 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "TurboA",
+      "primary": null,
+      "sort-name": "TurboA",
+      "type": "Search hint",
+      "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "TurboA_",
+      "primary": null,
+      "sort-name": "TurboA_",
+      "type": "Search hint",
+      "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+    }
+  ],
+  "country": "FI",
+  "disambiguation": "Eurobeat remixer",
+  "end-area": null,
+  "gender": null,
+  "gender-id": null,
+  "id": "f2286e7a-81c2-4332-b88c-9cdd3abf5665",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "2017-06-24",
+    "end": null,
+    "ended": false
+  },
+  "name": "Turbo",
+  "sort-name": "Turbo",
+  "type": null,
+  "type-id": null
+}

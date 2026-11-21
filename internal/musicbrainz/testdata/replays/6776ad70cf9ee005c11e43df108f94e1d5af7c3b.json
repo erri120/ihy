@@ -1,0 +1,87 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "GUMI",
+      "primary": true,
+      "sort-name": "GUMI",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Megpoid",
+      "primary": false,
+      "sort-name": "Megpoid",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "V3 GUMI (English)",
+      "primary": null,
+      "sort-name": "GUMI V3 (English)",
+      "type": null,
+      "type-id": null
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "V3 GUMI (Sweet)",
+      "primary": null,
+      "sort-name": "V3 GUMI (Sweet)",
+      "type": null,
+      "type-id": null
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "グミ",
+      "primary": true,
+      "sort-name": "グミ",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "メグッポイド",
+      "primary": false,
+      "sort-name": "メグッポイド",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "Vocaloid/SynthV",
+  "end-area": null,
+  "gender": "Female",
+  "gender-id": "93452b5a-a947-30c8-934f-6a4056b151c2",
+  "id": "ef46bbef-dba2-46e3-b534-1b44cbddf249",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "2009-06-26",
+    "end": null,
+    "ended": false
+  },
+  "name": "GUMI",
+  "sort-name": "GUMI",
+  "type": "Character",
+  "type-id": "5c1375b0-f18d-3db7-a164-a49d7a63773f"
+}

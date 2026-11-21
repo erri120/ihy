@@ -1,0 +1,136 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Possessed by Disease",
+      "primary": true,
+      "sort-name": "Possessed by Disease",
+      "type": "Recording name",
+      "type-id": "5d564c8f-97de-3572-94bb-7f40ad661499"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "取リ憑イタ業病 (From NieR:Automata)",
+      "primary": null,
+      "sort-name": "取リ憑イタ業病 (From NieR:Automata)",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "Keiichi Okabe",
+            "primary": true,
+            "sort-name": "Okabe, Keiichi",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "岡部 啓一",
+            "primary": null,
+            "sort-name": "岡部 啓一",
+            "type": "Search hint",
+            "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "岡部啓一",
+            "primary": true,
+            "sort-name": "オカベ ケイイチ",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "",
+        "id": "d82df34a-a1ff-45fa-ac50-c0b7454b201e",
+        "name": "岡部啓一",
+        "sort-name": "Okabe, Keiichi",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "",
+      "name": "Keiichi Okabe"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2017-03-29",
+  "id": "62c2dd65-6fa0-4bce-a330-aefc9bc6a935",
+  "length": 303000,
+  "relations": [
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "d82df34a-a1ff-45fa-ac50-c0b7454b201e",
+        "name": "岡部啓一",
+        "sort-name": "Okabe, Keiichi",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "arranger",
+      "type-id": "22661fb8-cdb7-4f67-8385-b2a8be6c9f0d"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "NieR:Automata",
+        "id": "58406818-a273-4858-84ab-15969a6849cd",
+        "iswcs": [
+          "T-703.802.966-4"
+        ],
+        "language": "qaa",
+        "languages": [
+          "qaa"
+        ],
+        "title": "取リ憑イタ業病",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "取リ憑イタ業病",
+  "video": false
+}

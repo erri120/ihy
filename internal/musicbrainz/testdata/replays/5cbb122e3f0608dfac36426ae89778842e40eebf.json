@@ -1,0 +1,112 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Hypa Hypa",
+      "primary": null,
+      "sort-name": "Hypa Hypa",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [],
+        "country": "DE",
+        "disambiguation": "",
+        "id": "378d41ba-9982-4fb6-a67f-6c91a30a657e",
+        "name": "We Butter the Bread With Butter",
+        "sort-name": "We Butter the Bread With Butter",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "joinphrase": "",
+      "name": "We Butter the Bread With Butter"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2021-05-20",
+  "id": "e561976a-8b8a-469a-9499-5ee7161a7d31",
+  "length": 241546,
+  "relations": [
+    {
+      "artist": {
+        "country": "DE",
+        "disambiguation": "",
+        "id": "378d41ba-9982-4fb6-a67f-6c91a30a657e",
+        "name": "We Butter the Bread With Butter",
+        "sort-name": "We Butter the Bread With Butter",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "performer",
+      "type-id": "628a9658-f54c-4142-b0c0-95f031b544da"
+    },
+    {
+      "artist": {
+        "country": "DE",
+        "disambiguation": "German metalcore, fka Eskimo Callboy",
+        "id": "cf075492-d880-4afc-b87b-d6b03e33dacc",
+        "name": "Electric Callboy",
+        "sort-name": "Electric Callboy",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": "2021",
+      "direction": "backward",
+      "end": "2021",
+      "ended": true,
+      "source-credit": "",
+      "target-credit": "Eskimo Callboy",
+      "target-type": "artist",
+      "type": "phonographic copyright",
+      "type-id": "7fd5fbc0-fbf4-4d04-be23-417d50a4dc30"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "",
+        "id": "f656b594-83d7-48fa-8efd-bdd5e0240f53",
+        "iswcs": [],
+        "language": "eng",
+        "languages": [
+          "eng"
+        ],
+        "title": "Hypa Hypa",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "Hypa Hypa",
+  "video": false
+}

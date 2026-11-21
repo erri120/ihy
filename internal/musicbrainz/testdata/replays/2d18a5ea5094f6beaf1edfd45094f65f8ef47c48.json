@@ -1,0 +1,58 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Kakeru Ishihama",
+      "primary": true,
+      "sort-name": "Ishihama, Kakeru",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "石濱 翔",
+      "primary": null,
+      "sort-name": "石濱 翔",
+      "type": null,
+      "type-id": null
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "石濱翔",
+      "primary": true,
+      "sort-name": "いしはま かける",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "a56f84d8-9820-4428-91c1-5086061b962e",
+  "ipis": [
+    "00610003233"
+  ],
+  "isnis": [
+    "0000000372745717"
+  ],
+  "life-span": {
+    "begin": "1987-03-27",
+    "end": null,
+    "ended": false
+  },
+  "name": "石濱翔",
+  "sort-name": "Ishihama, Kakeru",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

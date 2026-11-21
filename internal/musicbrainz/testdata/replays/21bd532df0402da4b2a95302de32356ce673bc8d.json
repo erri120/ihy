@@ -1,0 +1,20 @@
+{
+  "aliases": [],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "e55c7984-03c4-496c-ba4a-c4ae90abf7b5",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "1988-11-09",
+    "end": null,
+    "ended": false
+  },
+  "name": "井草聖二",
+  "sort-name": "Igusa, Seiji",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

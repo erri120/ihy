@@ -1,0 +1,146 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Significance",
+      "primary": true,
+      "sort-name": "Significance",
+      "type": "Recording name",
+      "type-id": "5d564c8f-97de-3572-94bb-7f40ad661499"
+    }
+  ],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "Keiichi Okabe",
+            "primary": true,
+            "sort-name": "Okabe, Keiichi",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "岡部 啓一",
+            "primary": null,
+            "sort-name": "岡部 啓一",
+            "type": "Search hint",
+            "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "岡部啓一",
+            "primary": true,
+            "sort-name": "オカベ ケイイチ",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "",
+        "id": "d82df34a-a1ff-45fa-ac50-c0b7454b201e",
+        "name": "岡部啓一",
+        "sort-name": "Okabe, Keiichi",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "",
+      "name": "Keiichi Okabe"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2017-03-29",
+  "id": "e0025044-cfaa-4b17-8900-533a16397f14",
+  "length": 159640,
+  "relations": [
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "d82df34a-a1ff-45fa-ac50-c0b7454b201e",
+        "name": "岡部啓一",
+        "sort-name": "Okabe, Keiichi",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "arranger",
+      "type-id": "22661fb8-cdb7-4f67-8385-b2a8be6c9f0d"
+    },
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "500d656d-c940-479c-b6b1-89b907d11435",
+        "name": "J’Nique Nicole",
+        "sort-name": "Nicole, J’Nique",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "vocal",
+      "type-id": "0fdbe3c6-7700-4a31-ae54-b53f06ae1cfa"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "NieR:Automata",
+        "id": "38608abc-13e9-4550-ac48-3024cbc44fff",
+        "iswcs": [],
+        "language": "zxx",
+        "languages": [
+          "zxx"
+        ],
+        "title": "意味 / 無 / ジュニーク・ニコール",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "意味／無／ジュニーク・ニコール",
+  "video": false
+}

@@ -1,0 +1,20 @@
+{
+  "aliases": [],
+  "country": "DE",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": null,
+  "gender-id": null,
+  "id": "378d41ba-9982-4fb6-a67f-6c91a30a657e",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "2007",
+    "end": null,
+    "ended": false
+  },
+  "name": "We Butter the Bread With Butter",
+  "sort-name": "We Butter the Bread With Butter",
+  "type": "Group",
+  "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+}

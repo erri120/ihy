@@ -1,0 +1,20 @@
+{
+  "aliases": [],
+  "country": "DE",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": null,
+  "gender-id": null,
+  "id": "ae667c89-4be1-4100-bb44-39bcfbe9cc28",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "257ers",
+  "sort-name": "257ers",
+  "type": "Group",
+  "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+}

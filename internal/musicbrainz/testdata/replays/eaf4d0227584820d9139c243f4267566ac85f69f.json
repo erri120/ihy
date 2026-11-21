@@ -1,0 +1,26 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Widespread Illness",
+      "primary": true,
+      "sort-name": "Widespread Illness",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    }
+  ],
+  "attributes": [],
+  "disambiguation": "NieR:Automata",
+  "id": "c1de78f1-4d75-4c3c-b965-dc23a03b7cd0",
+  "iswcs": [],
+  "language": "zxx",
+  "languages": [
+    "zxx"
+  ],
+  "title": "茫洋タル病",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

@@ -1,0 +1,22 @@
+{
+  "aliases": [],
+  "country": "FI",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "db7bb3e4-aec8-4976-b7fb-1626fddccfd1",
+  "ipis": [
+    "00755377213"
+  ],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "Aleksi Nurmi",
+  "sort-name": "Nurmi, Aleksi",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

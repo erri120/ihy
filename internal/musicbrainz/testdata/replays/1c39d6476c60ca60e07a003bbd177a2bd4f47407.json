@@ -1,0 +1,20 @@
+{
+  "aliases": [],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Female",
+  "gender-id": "93452b5a-a947-30c8-934f-6a4056b151c2",
+  "id": "a5b53c17-e09a-4d4e-b922-b16db121647a",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "????-02-22",
+    "end": null,
+    "ended": false
+  },
+  "name": "佐山こうた",
+  "sort-name": "Sayama, Kota",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

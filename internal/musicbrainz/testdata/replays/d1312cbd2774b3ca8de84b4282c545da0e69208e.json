@@ -1,0 +1,73 @@
+{
+  "aliases": [],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": "2022-03-09",
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "Electric Callboy",
+            "primary": null,
+            "sort-name": "Electric Callboy",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": "2022-03-09",
+            "ended": true,
+            "locale": null,
+            "name": "Eskimo Callboy",
+            "primary": null,
+            "sort-name": "Eskimo Callboy",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "DE",
+        "disambiguation": "German metalcore, fka Eskimo Callboy",
+        "id": "cf075492-d880-4afc-b87b-d6b03e33dacc",
+        "name": "Electric Callboy",
+        "sort-name": "Electric Callboy",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "joinphrase": "",
+      "name": "Eskimo Callboy"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2020-09-11",
+  "id": "7b2d1ff8-7b1f-4177-aed4-4ccf67ee8321",
+  "length": 175000,
+  "relations": [
+    {
+      "artist": {
+        "country": "DE",
+        "disambiguation": "German metalcore, fka Eskimo Callboy",
+        "id": "cf075492-d880-4afc-b87b-d6b03e33dacc",
+        "name": "Electric Callboy",
+        "sort-name": "Electric Callboy",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": "2021",
+      "direction": "backward",
+      "end": "2021",
+      "ended": true,
+      "source-credit": "",
+      "target-credit": "Eskimo Callboy",
+      "target-type": "artist",
+      "type": "phonographic copyright",
+      "type-id": "7fd5fbc0-fbf4-4d04-be23-417d50a4dc30"
+    }
+  ],
+  "title": "Monsieur Moustache",
+  "video": false
+}

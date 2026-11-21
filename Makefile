@@ -41,4 +41,8 @@ db-ui:
 	@printf "INSTALL postgres;\nLOAD postgres;\nINSTALL json;\nLOAD json;\nATTACH 'dbname=postgres host=127.0.0.1 port=5433 user=ihy password=ihy' AS ihy (TYPE postgres, READ_ONLY);\nUSE ihy.public;\n" > $(DB_UI_INIT)
 	duckdb -init $(DB_UI_INIT) -ui
 
-.PHONY: test test-e2e dev build db-ui
+# Record MusicBrainz replays from live data (fixture-driven, ~1 req/s).
+record-replays:
+	IHY_MB_RECORD=1 IHY_FIXTURE_DIR=$(CURDIR)/examples go test ./internal/musicbrainz/ -run TestRecordReplays -count=1 -v
+
+.PHONY: test test-e2e dev build db-ui record-replays

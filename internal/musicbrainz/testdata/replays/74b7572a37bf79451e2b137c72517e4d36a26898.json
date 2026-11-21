@@ -1,0 +1,72 @@
+{
+  "aliases": [],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "こまん",
+            "primary": null,
+            "sort-name": "こまん",
+            "type": null,
+            "type-id": null
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "",
+        "id": "6bda1669-a4f9-460d-a17a-a582931473d8",
+        "name": "koma'n",
+        "sort-name": "koma'n",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "",
+      "name": "koma'n"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2012-09-12",
+  "id": "158d1863-1ef1-428e-ad8e-62c83a375dc5",
+  "length": 337706,
+  "relations": [
+    {
+      "attribute-ids": {
+        "cover": "1e8536bd-6eda-3822-8e78-1c0f4d3d2113"
+      },
+      "attribute-values": {},
+      "attributes": [
+        "cover"
+      ],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "",
+        "id": "748bbd7d-a800-49a5-8579-a18e11b6ccfd",
+        "iswcs": [
+          "T-102.045.405-9"
+        ],
+        "language": "jpn",
+        "languages": [
+          "jpn"
+        ],
+        "title": "千本桜",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "千本桜【オルゴール編】",
+  "video": false
+}

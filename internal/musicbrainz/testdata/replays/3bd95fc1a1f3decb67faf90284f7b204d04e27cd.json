@@ -1,0 +1,26 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Emil - Despair",
+      "primary": true,
+      "sort-name": "Emil - Despair",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    }
+  ],
+  "attributes": [],
+  "disambiguation": "NieR:Automata",
+  "id": "d4035b2b-85e7-44ff-bbe2-f6a63176b6cc",
+  "iswcs": [],
+  "language": "qaa",
+  "languages": [
+    "qaa"
+  ],
+  "title": "エミール / 絶望",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

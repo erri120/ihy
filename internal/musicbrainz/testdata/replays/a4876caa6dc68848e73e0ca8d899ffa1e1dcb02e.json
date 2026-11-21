@@ -1,0 +1,43 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "H.J.Freaks",
+      "primary": null,
+      "sort-name": "H.J.Freaks",
+      "type": null,
+      "type-id": null
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "HJFreaks",
+      "primary": null,
+      "sort-name": "HJFreaks",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "country": "KR",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "024792f2-b21b-4788-bf4f-88bd34d19c23",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "H. J. Freaks",
+  "sort-name": "H. J. Freaks",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

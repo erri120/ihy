@@ -1,0 +1,43 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Boss Hoss",
+      "primary": null,
+      "sort-name": "Boss Hoss",
+      "type": null,
+      "type-id": null
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "The Boss Hoss",
+      "primary": null,
+      "sort-name": "The Boss Hoss",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "country": "DE",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": null,
+  "gender-id": null,
+  "id": "e0ab57c6-7ba1-4dca-b36e-fae4c0c269e1",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "2004",
+    "end": null,
+    "ended": false
+  },
+  "name": "The BossHoss",
+  "sort-name": "BossHoss, The",
+  "type": "Group",
+  "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+}

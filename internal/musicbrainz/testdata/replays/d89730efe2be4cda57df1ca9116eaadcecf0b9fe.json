@@ -1,0 +1,34 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Voice of no Return - Normal",
+      "primary": true,
+      "sort-name": "Voice of no Return - Normal",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    }
+  ],
+  "attributes": [
+    {
+      "type": "SACEM ID",
+      "type-id": "d08147e2-d167-3c2b-bbe4-af6643a194f9",
+      "value": "53 407 464 11"
+    }
+  ],
+  "disambiguation": "NieR:Automata",
+  "id": "4b2d6734-f484-4254-8ae8-93144fd0c718",
+  "iswcs": [
+    "T-321.704.474-7"
+  ],
+  "language": "zxx",
+  "languages": [
+    "zxx"
+  ],
+  "title": "還ラナイ声 / 通常",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

@@ -1,0 +1,136 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Crumbling Lies (Front)",
+      "primary": true,
+      "sort-name": "Crumbling Lies (Front)",
+      "type": "Recording name",
+      "type-id": "5d564c8f-97de-3572-94bb-7f40ad661499"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "崩壊ノ虚妄 (From NieR:Automata)",
+      "primary": null,
+      "sort-name": "崩壊ノ虚妄 (From NieR:Automata)",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "Keigo Hoashi",
+            "primary": true,
+            "sort-name": "Hoashi, Keigo",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "帆足 圭吾",
+            "primary": null,
+            "sort-name": "帆足 圭吾",
+            "type": null,
+            "type-id": null
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "帆足圭吾",
+            "primary": true,
+            "sort-name": "ほあし けいご",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "",
+        "id": "33c8eca1-7d27-46b5-a854-ca984e033971",
+        "name": "帆足圭吾",
+        "sort-name": "Hoashi, Keigo",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "",
+      "name": "Keigo Hoashi"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2017-03-29",
+  "id": "f52abfc1-274a-47d9-8bbc-85a463d2aef6",
+  "length": 204000,
+  "relations": [
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "33c8eca1-7d27-46b5-a854-ca984e033971",
+        "name": "帆足圭吾",
+        "sort-name": "Hoashi, Keigo",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "arranger",
+      "type-id": "22661fb8-cdb7-4f67-8385-b2a8be6c9f0d"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "NieR:Automata",
+        "id": "37bc930c-1705-4d0f-974a-b19933862a1c",
+        "iswcs": [
+          "T-703.802.965-3"
+        ],
+        "language": "qaa",
+        "languages": [
+          "qaa"
+        ],
+        "title": "崩壊ノ虚妄",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "崩壊ノ虚妄",
+  "video": false
+}

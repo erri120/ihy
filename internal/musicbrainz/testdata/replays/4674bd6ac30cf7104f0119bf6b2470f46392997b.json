@@ -1,0 +1,26 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "War \u0026 War",
+      "primary": true,
+      "sort-name": "War \u0026 War",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    }
+  ],
+  "attributes": [],
+  "disambiguation": "NieR:Automata",
+  "id": "3706aa2d-06f3-4d39-9915-607d9427c338",
+  "iswcs": [],
+  "language": "qaa",
+  "languages": [
+    "qaa"
+  ],
+  "title": "戦争ト戦争",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

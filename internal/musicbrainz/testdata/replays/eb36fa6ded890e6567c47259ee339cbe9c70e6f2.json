@@ -1,0 +1,26 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Emil's Shop",
+      "primary": true,
+      "sort-name": "Emil's Shop",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    }
+  ],
+  "attributes": [],
+  "disambiguation": "NieR:Automata",
+  "id": "7d99fc79-9f98-4155-bf4d-8276010cedcd",
+  "iswcs": [],
+  "language": "qaa",
+  "languages": [
+    "qaa"
+  ],
+  "title": "エミール / ショップ",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

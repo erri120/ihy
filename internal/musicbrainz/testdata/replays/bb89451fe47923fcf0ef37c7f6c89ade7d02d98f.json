@@ -1,0 +1,26 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Significance (Nothing)",
+      "primary": true,
+      "sort-name": "Significance (Nothing)",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    }
+  ],
+  "attributes": [],
+  "disambiguation": "NieR:Automata",
+  "id": "38608abc-13e9-4550-ac48-3024cbc44fff",
+  "iswcs": [],
+  "language": "zxx",
+  "languages": [
+    "zxx"
+  ],
+  "title": "意味 / 無 / ジュニーク・ニコール",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

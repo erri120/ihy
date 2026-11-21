@@ -1,0 +1,47 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Sascha",
+      "primary": null,
+      "sort-name": "Sascha",
+      "type": null,
+      "type-id": null
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Sasha Alexander",
+      "primary": null,
+      "sort-name": "Alexander, Sasha",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "country": "DE",
+  "disambiguation": "German pop artist Sascha Schmitz",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "aa79d38b-2ee5-41fc-a4a0-642cc18d8089",
+  "ipis": [
+    "00279543915"
+  ],
+  "isnis": [
+    "0000000114536584"
+  ],
+  "life-span": {
+    "begin": "1972-01-05",
+    "end": null,
+    "ended": false
+  },
+  "name": "Sasha",
+  "sort-name": "Sasha",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

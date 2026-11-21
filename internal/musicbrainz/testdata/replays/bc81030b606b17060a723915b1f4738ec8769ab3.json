@@ -1,0 +1,206 @@
+{
+  "aliases": [],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "TurboA",
+            "primary": null,
+            "sort-name": "TurboA",
+            "type": "Search hint",
+            "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "TurboA_",
+            "primary": null,
+            "sort-name": "TurboA_",
+            "type": "Search hint",
+            "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+          }
+        ],
+        "country": "FI",
+        "disambiguation": "Eurobeat remixer",
+        "id": "f2286e7a-81c2-4332-b88c-9cdd3abf5665",
+        "name": "Turbo",
+        "sort-name": "Turbo",
+        "type": null,
+        "type-id": null
+      },
+      "joinphrase": " feat. ",
+      "name": "Turbo"
+    },
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "GUMI",
+            "primary": true,
+            "sort-name": "GUMI",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "Megpoid",
+            "primary": false,
+            "sort-name": "Megpoid",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "V3 GUMI (English)",
+            "primary": null,
+            "sort-name": "GUMI V3 (English)",
+            "type": null,
+            "type-id": null
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "V3 GUMI (Sweet)",
+            "primary": null,
+            "sort-name": "V3 GUMI (Sweet)",
+            "type": null,
+            "type-id": null
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "グミ",
+            "primary": true,
+            "sort-name": "グミ",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "メグッポイド",
+            "primary": false,
+            "sort-name": "メグッポイド",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "Vocaloid/SynthV",
+        "id": "ef46bbef-dba2-46e3-b534-1b44cbddf249",
+        "name": "GUMI",
+        "sort-name": "GUMI",
+        "type": "Character",
+        "type-id": "5c1375b0-f18d-3db7-a164-a49d7a63773f"
+      },
+      "joinphrase": "",
+      "name": "GUMI"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2023-06-28",
+  "id": "7c75d292-1c56-46c5-a1d8-ecfa6f13ce1c",
+  "length": 176000,
+  "relations": [
+    {
+      "artist": {
+        "country": "FI",
+        "disambiguation": "Eurobeat remixer",
+        "id": "f2286e7a-81c2-4332-b88c-9cdd3abf5665",
+        "name": "Turbo",
+        "sort-name": "Turbo",
+        "type": null,
+        "type-id": null
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "producer",
+      "type-id": "5c0ceac3-feb4-41f0-868d-dc06f6e27fc0"
+    },
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "Vocaloid/SynthV",
+        "id": "ef46bbef-dba2-46e3-b534-1b44cbddf249",
+        "name": "GUMI",
+        "sort-name": "GUMI",
+        "type": "Character",
+        "type-id": "5c1375b0-f18d-3db7-a164-a49d7a63773f"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "vocal",
+      "type-id": "0fdbe3c6-7700-4a31-ae54-b53f06ae1cfa"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "",
+        "id": "d137c225-f445-4700-b172-217e6025c2eb",
+        "iswcs": [
+          "T-314.856.481-8"
+        ],
+        "language": "fin",
+        "languages": [
+          "fin"
+        ],
+        "title": "Cha Cha Cha",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "Cha Cha Cha",
+  "video": false
+}

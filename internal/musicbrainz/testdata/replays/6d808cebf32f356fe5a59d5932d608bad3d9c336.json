@@ -1,0 +1,62 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "MMXX - Hypa Hypa Edition",
+      "primary": null,
+      "sort-name": "MMXX - Hypa Hypa Edition",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": "2022-03-09",
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "Electric Callboy",
+            "primary": null,
+            "sort-name": "Electric Callboy",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": "2022-03-09",
+            "ended": true,
+            "locale": null,
+            "name": "Eskimo Callboy",
+            "primary": null,
+            "sort-name": "Eskimo Callboy",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "DE",
+        "disambiguation": "German metalcore, fka Eskimo Callboy",
+        "id": "cf075492-d880-4afc-b87b-d6b03e33dacc",
+        "name": "Electric Callboy",
+        "sort-name": "Electric Callboy",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "joinphrase": "",
+      "name": "Eskimo Callboy"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2020-09-11",
+  "id": "ec1698d1-5811-4803-9cc3-68666934ea23",
+  "primary-type": "EP",
+  "primary-type-id": "6d0c5bf6-7a33-3420-a519-44fc63eedebf",
+  "secondary-type-ids": [],
+  "secondary-types": [],
+  "title": "MMXX"
+}

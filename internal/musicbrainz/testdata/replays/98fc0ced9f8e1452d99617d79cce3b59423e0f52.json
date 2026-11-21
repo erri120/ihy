@@ -1,0 +1,32 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "おさむらいさん",
+      "primary": true,
+      "sort-name": "おさむらいさん",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "Japanese composer and guitar arranger",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "0a84f423-0539-4c53-8b74-1089b4909f56",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "????-03-20",
+    "end": null,
+    "ended": false
+  },
+  "name": "おさむらいさん",
+  "sort-name": "Osamuraisan",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

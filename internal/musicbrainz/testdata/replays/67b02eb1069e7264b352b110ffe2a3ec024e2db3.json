@@ -1,0 +1,45 @@
+{
+  "aliases": [
+    {
+      "begin": "2022-03-09",
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Electric Callboy",
+      "primary": null,
+      "sort-name": "Electric Callboy",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": "2022-03-09",
+      "ended": true,
+      "locale": null,
+      "name": "Eskimo Callboy",
+      "primary": null,
+      "sort-name": "Eskimo Callboy",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": "DE",
+  "disambiguation": "German metalcore, fka Eskimo Callboy",
+  "end-area": null,
+  "gender": null,
+  "gender-id": null,
+  "id": "cf075492-d880-4afc-b87b-d6b03e33dacc",
+  "ipis": [],
+  "isnis": [
+    "0000000470683775"
+  ],
+  "life-span": {
+    "begin": "2010",
+    "end": null,
+    "ended": false
+  },
+  "name": "Electric Callboy",
+  "sort-name": "Electric Callboy",
+  "type": "Group",
+  "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+}

@@ -1,0 +1,45 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Kuniyuki Takahashi",
+      "primary": true,
+      "sort-name": "Takahashi, Kuniyuki",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "高橋 邦幸",
+      "primary": null,
+      "sort-name": "高橋 邦幸",
+      "type": "Search hint",
+      "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "MONACA",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "d4894600-615d-4a39-87d5-58813f243cc7",
+  "ipis": [
+    "00172661762"
+  ],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "高橋邦幸",
+  "sort-name": "Takahashi, Kuniyuki",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

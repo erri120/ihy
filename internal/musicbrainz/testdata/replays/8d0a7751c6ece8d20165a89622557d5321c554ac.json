@@ -1,0 +1,59 @@
+{
+  "artist-credit": [
+    {
+      "artist": {
+        "country": "DE",
+        "disambiguation": "German metalcore, fka Eskimo Callboy",
+        "id": "cf075492-d880-4afc-b87b-d6b03e33dacc",
+        "name": "Electric Callboy",
+        "sort-name": "Electric Callboy",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "joinphrase": "",
+      "name": "Eskimo Callboy"
+    }
+  ],
+  "asin": "B0923ZXVBY",
+  "barcode": "194398832623",
+  "country": "XE",
+  "cover-art-archive": {
+    "artwork": true,
+    "back": false,
+    "count": 1,
+    "darkened": false,
+    "front": true
+  },
+  "date": "2021-05-21",
+  "disambiguation": "",
+  "id": "b947aae9-bd8d-4cf8-b4f4-2426a4678c0a",
+  "label-info": [
+    {
+      "catalog-number": "19439883262",
+      "label": {
+        "disambiguation": "imprint of Century Media Records GmbH and its subsidiaries",
+        "id": "727ad90b-7ef4-48d2-8f16-c34016544822",
+        "label-code": 6975,
+        "name": "Century Media",
+        "sort-name": "Century Media",
+        "type": "Imprint",
+        "type-id": "b6285b2a-3514-3d43-80df-fcf528824ded"
+      }
+    }
+  ],
+  "packaging": "Jewel Case",
+  "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+  "quality": "normal",
+  "release-events": [
+    {
+      "date": "2021-05-21"
+    }
+  ],
+  "status": "Official",
+  "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+  "text-representation": {
+    "language": "eng",
+    "script": "Latn"
+  },
+  "title": "MMXX (Hypa Hypa edition)"
+}

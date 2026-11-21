@@ -1,0 +1,112 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Hypa Hypa",
+      "primary": null,
+      "sort-name": "Hypa Hypa",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [],
+        "country": null,
+        "disambiguation": "",
+        "id": "ab4c4e61-3495-4d47-9876-b8c2bace2ef7",
+        "name": "Axel One",
+        "sort-name": "One, Axel",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "",
+      "name": "Axel One"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2021-05-20",
+  "id": "4f2a6b31-b2ca-4b43-9ff5-bdd5d82bde76",
+  "length": 210960,
+  "relations": [
+    {
+      "artist": {
+        "country": null,
+        "disambiguation": "",
+        "id": "ab4c4e61-3495-4d47-9876-b8c2bace2ef7",
+        "name": "Axel One",
+        "sort-name": "One, Axel",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "performer",
+      "type-id": "628a9658-f54c-4142-b0c0-95f031b544da"
+    },
+    {
+      "artist": {
+        "country": "DE",
+        "disambiguation": "German metalcore, fka Eskimo Callboy",
+        "id": "cf075492-d880-4afc-b87b-d6b03e33dacc",
+        "name": "Electric Callboy",
+        "sort-name": "Electric Callboy",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": "2021",
+      "direction": "backward",
+      "end": "2021",
+      "ended": true,
+      "source-credit": "",
+      "target-credit": "Eskimo Callboy",
+      "target-type": "artist",
+      "type": "phonographic copyright",
+      "type-id": "7fd5fbc0-fbf4-4d04-be23-417d50a4dc30"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "",
+        "id": "f656b594-83d7-48fa-8efd-bdd5e0240f53",
+        "iswcs": [],
+        "language": "eng",
+        "languages": [
+          "eng"
+        ],
+        "title": "Hypa Hypa",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "Hypa Hypa",
+  "video": false
+}

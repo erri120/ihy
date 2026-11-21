@@ -1,0 +1,26 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Faltering Prayer (Dawn Breeze)",
+      "primary": true,
+      "sort-name": "Faltering Prayer (Dawn Breeze)",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    }
+  ],
+  "attributes": [],
+  "disambiguation": "NieR:Automata",
+  "id": "68c1d688-71f0-4b9f-9e84-696271419358",
+  "iswcs": [],
+  "language": "qaa",
+  "languages": [
+    "qaa"
+  ],
+  "title": "澱ンダ祈リ / 暁風",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

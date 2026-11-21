@@ -1,0 +1,70 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Eito Honda",
+      "primary": null,
+      "sort-name": "Honda, Eito",
+      "type": "Legal name",
+      "type-id": "d4dcd0c0-b341-3612-a332-c0ce797b25cf"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "marasy",
+      "primary": true,
+      "sort-name": "marasy",
+      "type": null,
+      "type-id": null
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "まらしぃ",
+      "primary": true,
+      "sort-name": "マラシィ",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "本田詠人",
+      "primary": false,
+      "sort-name": "本田詠人",
+      "type": "Legal name",
+      "type-id": "d4dcd0c0-b341-3612-a332-c0ce797b25cf"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "4938c8c5-14e4-4545-a5a7-5b324caaa542",
+  "ipis": [
+    "00632976128",
+    "00632976226"
+  ],
+  "isnis": [
+    "0000000372306861"
+  ],
+  "life-span": {
+    "begin": "1990-03-10",
+    "end": null,
+    "ended": false
+  },
+  "name": "まらしぃ",
+  "sort-name": "Marasy",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

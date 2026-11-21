@@ -1,0 +1,160 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Emil's Shop",
+      "primary": true,
+      "sort-name": "Emil's Shop",
+      "type": "Recording name",
+      "type-id": "5d564c8f-97de-3572-94bb-7f40ad661499"
+    }
+  ],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "Kuniyuki Takahashi",
+            "primary": true,
+            "sort-name": "Takahashi, Kuniyuki",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "高橋 邦幸",
+            "primary": null,
+            "sort-name": "高橋 邦幸",
+            "type": "Search hint",
+            "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "MONACA",
+        "id": "d4894600-615d-4a39-87d5-58813f243cc7",
+        "name": "高橋邦幸",
+        "sort-name": "Takahashi, Kuniyuki",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": ", ",
+      "name": "Kuniyuki Takahashi"
+    },
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "Kakeru Ishihama",
+            "primary": true,
+            "sort-name": "Ishihama, Kakeru",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "石濱 翔",
+            "primary": null,
+            "sort-name": "石濱 翔",
+            "type": null,
+            "type-id": null
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "石濱翔",
+            "primary": true,
+            "sort-name": "いしはま かける",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "",
+        "id": "a56f84d8-9820-4428-91c1-5086061b962e",
+        "name": "石濱翔",
+        "sort-name": "Ishihama, Kakeru",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "",
+      "name": "Kakeru Ishihama"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2017-03-29",
+  "id": "59ef94d9-24e1-4ece-86ed-55f9ebb33566",
+  "length": 328360,
+  "relations": [
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "MONACA",
+        "id": "d4894600-615d-4a39-87d5-58813f243cc7",
+        "name": "高橋邦幸",
+        "sort-name": "Takahashi, Kuniyuki",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "arranger",
+      "type-id": "22661fb8-cdb7-4f67-8385-b2a8be6c9f0d"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "NieR:Automata",
+        "id": "7d99fc79-9f98-4155-bf4d-8276010cedcd",
+        "iswcs": [],
+        "language": "qaa",
+        "languages": [
+          "qaa"
+        ],
+        "title": "エミール / ショップ",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "エミール／ショップ",
+  "video": false
+}

@@ -1,0 +1,337 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "A Thousand Cherry Blossoms",
+      "primary": false,
+      "sort-name": "A Thousand Cherry Blossoms",
+      "type": "Recording name",
+      "type-id": "5d564c8f-97de-3572-94bb-7f40ad661499"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Senbonzakura",
+      "primary": false,
+      "sort-name": "Senbonzakura",
+      "type": "Recording name",
+      "type-id": "5d564c8f-97de-3572-94bb-7f40ad661499"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "「千本桜」ver. WhiteFlame (from ニコニコ)",
+      "primary": null,
+      "sort-name": "「千本桜」ver. WhiteFlame (from ニコニコ)",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "KurousaP",
+            "primary": true,
+            "sort-name": "KurousaP",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "黒うさ",
+            "primary": false,
+            "sort-name": "くろうさ",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "黒うさP",
+            "primary": true,
+            "sort-name": "くろうさピー",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "黒うさP",
+            "primary": null,
+            "sort-name": "黒うさP",
+            "type": null,
+            "type-id": null
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "",
+        "id": "b9e28c01-0ff8-426b-8092-d0864f9271f1",
+        "name": "黒うさP",
+        "sort-name": "KurousaP",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": " feat. ",
+      "name": "黒うさP"
+    },
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "CV01",
+            "primary": null,
+            "sort-name": "CV01",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "HMV4X",
+            "primary": null,
+            "sort-name": "HMV4X",
+            "type": null,
+            "type-id": null
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "Hatsune Miku",
+            "primary": true,
+            "sort-name": "Hatsune, Miku",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "Miku Hatsune",
+            "primary": false,
+            "sort-name": "Hatsune Miku",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ru",
+            "name": "Мику Хацунэ",
+            "primary": true,
+            "sort-name": "Хацунэ, Мику",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "uk",
+            "name": "Міку, Хацуне",
+            "primary": true,
+            "sort-name": "Хацуне, Міку,",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "he",
+            "name": "האטסונה מיקו",
+            "primary": true,
+            "sort-name": "האטסונה מיקו",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "th",
+            "name": "ฮะสึเนะ มิกุ",
+            "primary": true,
+            "sort-name": "ฮะสึเนะ มิกุ",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "初音ミク",
+            "primary": true,
+            "sort-name": "ハツネ ミク",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "zh",
+            "name": "初音ミク",
+            "primary": true,
+            "sort-name": "初音ミク",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "初音ミク V4 (English)",
+            "primary": false,
+            "sort-name": "Hatsune Miku V4 (English)",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "初音ミク V4X (Sweet)",
+            "primary": null,
+            "sort-name": "初音ミク V4X (Sweet)",
+            "type": "Search hint",
+            "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "初音ミクAppend",
+            "primary": null,
+            "sort-name": "初音ミクAppend",
+            "type": "Search hint",
+            "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "zh",
+            "name": "初音未来",
+            "primary": false,
+            "sort-name": "初音未来",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "zh_Hans",
+            "name": "初音未来",
+            "primary": true,
+            "sort-name": "初音未来",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "zh_Hans_CN",
+            "name": "初音未来",
+            "primary": true,
+            "sort-name": "初音未来",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ko",
+            "name": "하츠네 미쿠",
+            "primary": true,
+            "sort-name": "하츠네 미쿠",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "Vocaloid",
+        "id": "130d679a-9a92-4373-8348-0800b6b93a30",
+        "name": "初音ミク",
+        "sort-name": "Hatsune, Miku",
+        "type": "Character",
+        "type-id": "5c1375b0-f18d-3db7-a164-a49d7a63773f"
+      },
+      "joinphrase": "",
+      "name": "初音ミク"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2012-01-18",
+  "id": "bd711d28-2b42-41c5-8ec4-53fe613d3856",
+  "length": 246000,
+  "relations": [
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "",
+        "id": "748bbd7d-a800-49a5-8579-a18e11b6ccfd",
+        "iswcs": [
+          "T-102.045.405-9"
+        ],
+        "language": "jpn",
+        "languages": [
+          "jpn"
+        ],
+        "title": "千本桜",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "千本桜",
+  "video": false
+}

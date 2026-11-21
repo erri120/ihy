@@ -1,0 +1,83 @@
+{
+  "artist-credit": [
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "d82df34a-a1ff-45fa-ac50-c0b7454b201e",
+        "name": "岡部啓一",
+        "sort-name": "Okabe, Keiichi",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "",
+      "name": "岡部啓一"
+    }
+  ],
+  "asin": "B01N7TGP1L",
+  "barcode": "4988601465403",
+  "country": "JP",
+  "cover-art-archive": {
+    "artwork": true,
+    "back": true,
+    "count": 19,
+    "darkened": false,
+    "front": true
+  },
+  "date": "2017-03-29",
+  "disambiguation": "",
+  "id": "b56596fe-24d3-41a5-87f0-bb91611c2681",
+  "label-info": [
+    {
+      "catalog-number": "SQEX-10589",
+      "label": {
+        "disambiguation": "imprint \"SEM / SQUARE ENIX MUSIC\" since mid-2014",
+        "id": "58abe598-05e1-4381-ad50-5b5649a031a2",
+        "label-code": null,
+        "name": "SQUARE ENIX MUSIC",
+        "sort-name": "SQUARE ENIX MUSIC",
+        "type": "Imprint",
+        "type-id": "b6285b2a-3514-3d43-80df-fcf528824ded"
+      }
+    },
+    {
+      "catalog-number": "SQEX-10590",
+      "label": {
+        "disambiguation": "imprint \"SEM / SQUARE ENIX MUSIC\" since mid-2014",
+        "id": "58abe598-05e1-4381-ad50-5b5649a031a2",
+        "label-code": null,
+        "name": "SQUARE ENIX MUSIC",
+        "sort-name": "SQUARE ENIX MUSIC",
+        "type": "Imprint",
+        "type-id": "b6285b2a-3514-3d43-80df-fcf528824ded"
+      }
+    },
+    {
+      "catalog-number": "SQEX-10591",
+      "label": {
+        "disambiguation": "imprint \"SEM / SQUARE ENIX MUSIC\" since mid-2014",
+        "id": "58abe598-05e1-4381-ad50-5b5649a031a2",
+        "label-code": null,
+        "name": "SQUARE ENIX MUSIC",
+        "sort-name": "SQUARE ENIX MUSIC",
+        "type": "Imprint",
+        "type-id": "b6285b2a-3514-3d43-80df-fcf528824ded"
+      }
+    }
+  ],
+  "packaging": "Fatbox",
+  "packaging-id": "57429523-ffe6-3336-9381-32565c142c18",
+  "quality": "normal",
+  "release-events": [
+    {
+      "date": "2017-03-29"
+    }
+  ],
+  "status": "Official",
+  "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+  "text-representation": {
+    "language": "jpn",
+    "script": "Jpan"
+  },
+  "title": "NieR:Automata Original Soundtrack"
+}
