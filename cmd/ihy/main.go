@@ -1,19 +1,24 @@
 // ihy is the ihy server binary.
 //
 // Startup: load bootstrap config from environment variables, bring the
-// database schema up, serve the first-party API on the configured
-// address.
+// database schema up, scan library roots in the background, serve the
+// first-party API on the configured address.
 package main
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strings"
 	"time"
 
+	_ "github.com/jackc/pgx/v5/stdlib"
+
 	"ihy/internal/config"
 	"ihy/internal/db"
+	"ihy/internal/scanner"
 )
 
 func main() {
@@ -28,10 +33,19 @@ func main() {
 	}
 	log.Printf("database schema at version %d", schemaVersion)
 
-	if len(cfg.Libraries) > 0 {
-		// Bootstrap seed; managed library roots live in the database
-		// (web UI). Scanner registration comes with the scanner.
-		log.Printf("library roots configured: %s", strings.Join(cfg.Libraries, ", "))
+	conn, err := sql.Open("pgx", cfg.DSN())
+	if err != nil {
+		log.Fatalf("open database: %v", err)
+	}
+	defer conn.Close()
+
+	if len(cfg.Libraries) == 0 {
+		log.Printf("no library roots configured; set IHY_LIBRARIES or manage them in the web UI later")
+	} else {
+		// Bootstrap seed (IHY_LIBRARIES); managed roots live in the
+		// database and are added via the web UI later.
+		log.Printf("library roots: %s", strings.Join(cfg.Libraries, ", "))
+		go scanner.RunAll(context.Background(), conn, cfg.Libraries, scanner.DefaultTagReader)
 	}
 	log.Printf("artwork dir: %s | transcode dir: %s", cfg.ArtworkDir, cfg.TranscodeDir)
 

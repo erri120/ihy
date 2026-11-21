@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -141,6 +142,26 @@ func Scan(ctx context.Context, db *sql.DB, root string, readTags TagReader) (Res
 		res.Removed++
 	}
 	return res, nil
+}
+
+// RunAll scans every given library root sequentially in the calling
+// goroutine. Intended to be started in the background right after
+// boot so startup never blocks on a large library. Later triggers
+// (schedule, web UI) enqueue the same work as River jobs.
+func RunAll(ctx context.Context, db *sql.DB, roots []string, readTags TagReader) {
+	for _, root := range roots {
+		if _, err := os.Stat(root); err != nil {
+			log.Printf("scanner: library root %s unavailable: %v", root, err)
+			continue
+		}
+		res, err := Scan(ctx, db, root, readTags)
+		if err != nil {
+			log.Printf("scanner: scan %s failed: %v", root, err)
+			continue
+		}
+		log.Printf("scanner: %s: %d added, %d updated, %d removed, %d unchanged, %d tag errors",
+			root, res.Added, res.Updated, res.Removed, res.Unchanged, res.TagErrors)
+	}
 }
 
 func upsertLibrary(ctx context.Context, db *sql.DB, root string) (int64, error) {
