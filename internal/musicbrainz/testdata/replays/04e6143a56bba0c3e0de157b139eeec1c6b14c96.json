@@ -1,0 +1,22 @@
+{
+  "aliases": [],
+  "country": "DE",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": null,
+  "gender-id": null,
+  "id": "f7cf081b-e519-4942-b4cc-c1499275e1b0",
+  "ipis": [],
+  "isnis": [
+    "0000000471404520"
+  ],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "Gestört aber GeiL",
+  "sort-name": "Gestört aber GeiL",
+  "type": "Group",
+  "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+}

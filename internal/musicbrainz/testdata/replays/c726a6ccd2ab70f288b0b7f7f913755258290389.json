@@ -1,0 +1,20 @@
+{
+  "aliases": [],
+  "country": "JP",
+  "disambiguation": "violinist",
+  "end-area": null,
+  "gender": "Female",
+  "gender-id": "93452b5a-a947-30c8-934f-6a4056b151c2",
+  "id": "6fc87b33-93f8-4162-85b3-c9a460508344",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "氏川恵美子",
+  "sort-name": "Ujikawa, Emiko",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

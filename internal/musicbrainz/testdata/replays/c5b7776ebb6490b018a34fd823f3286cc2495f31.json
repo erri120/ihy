@@ -1,0 +1,54 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Marina Kawano",
+      "primary": true,
+      "sort-name": "Kawano, Marina",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": "2011",
+      "end": "2016-03",
+      "ended": true,
+      "locale": "ja",
+      "name": "河野マリナ",
+      "primary": false,
+      "sort-name": "かわの マリナ",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "河野万里奈",
+      "primary": true,
+      "sort-name": "かわの まりな",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Female",
+  "gender-id": "93452b5a-a947-30c8-934f-6a4056b151c2",
+  "id": "05c12b6c-0852-42ea-b2a6-106734ec96fe",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "1990-05-21",
+    "end": null,
+    "ended": false
+  },
+  "name": "河野万里奈",
+  "sort-name": "Kawano, Marina",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

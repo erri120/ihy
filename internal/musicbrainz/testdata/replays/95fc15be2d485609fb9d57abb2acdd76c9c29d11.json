@@ -1,0 +1,20 @@
+{
+  "aliases": [],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "ed0c37cb-920a-42f8-8e81-c3e2180bb974",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "1982-08-01",
+    "end": null,
+    "ended": false
+  },
+  "name": "藤堂昌彦",
+  "sort-name": "Tōdō, Masahiko",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

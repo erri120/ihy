@@ -1,0 +1,43 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "J’Nique Nicole Johnson",
+      "primary": null,
+      "sort-name": "Johnson, J’Nique Nicole",
+      "type": "Legal name",
+      "type-id": "d4dcd0c0-b341-3612-a332-c0ce797b25cf"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "ジュニーク・ニコール",
+      "primary": false,
+      "sort-name": "ジュニーク・ニコール",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Female",
+  "gender-id": "93452b5a-a947-30c8-934f-6a4056b151c2",
+  "id": "500d656d-c940-479c-b6b1-89b907d11435",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "J’Nique Nicole",
+  "sort-name": "Nicole, J’Nique",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

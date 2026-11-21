@@ -1,0 +1,20 @@
+{
+  "aliases": [],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Female",
+  "gender-id": "93452b5a-a947-30c8-934f-6a4056b151c2",
+  "id": "b8934077-aa75-44ae-ae10-65a13aa794ca",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "漆原直美",
+  "sort-name": "Urushibara, Naomi",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

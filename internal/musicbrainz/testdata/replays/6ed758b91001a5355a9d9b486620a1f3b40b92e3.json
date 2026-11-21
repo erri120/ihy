@@ -1,0 +1,32 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Masateru Nishikata",
+      "primary": true,
+      "sort-name": "Nishikata, Masateru",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "39dc72b7-e497-4386-a524-7fab67273ca8",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "1989-02-14",
+    "end": null,
+    "ended": false
+  },
+  "name": "西方正輝",
+  "sort-name": "Nishikata, Masateru",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

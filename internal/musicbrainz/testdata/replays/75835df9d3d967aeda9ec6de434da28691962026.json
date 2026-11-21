@@ -1,0 +1,32 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Risa Yamamoto",
+      "primary": true,
+      "sort-name": "Yamamoto, Risa",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "violinist",
+  "end-area": null,
+  "gender": "Female",
+  "gender-id": "93452b5a-a947-30c8-934f-6a4056b151c2",
+  "id": "3fb9208f-127c-474c-bc2d-bd72c7c89ebf",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "山本理紗",
+  "sort-name": "Yamamoto, Risa",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

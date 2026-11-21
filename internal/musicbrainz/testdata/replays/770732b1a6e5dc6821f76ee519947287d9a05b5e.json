@@ -1,0 +1,20 @@
+{
+  "aliases": [],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Female",
+  "gender-id": "93452b5a-a947-30c8-934f-6a4056b151c2",
+  "id": "0cbec131-7ad0-4b06-9443-3f92599c5d7c",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "二木美里",
+  "sort-name": "Futaki, Misato",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

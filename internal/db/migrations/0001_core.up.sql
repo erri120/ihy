@@ -9,6 +9,9 @@
 --   * Names stored here are MusicBrainz CANONICAL names; display names
 --     are computed per user from `alias` at API time.
 
+-- All MusicBrainz dates are stored as text: the API allows partial
+-- values ("2017-03", "????-03-20") and they are display data; ISO-style
+-- prefixes still sort lexicographically.
 CREATE TABLE artist (
     mbid           uuid PRIMARY KEY,
     name           text NOT NULL,
@@ -16,8 +19,8 @@ CREATE TABLE artist (
     disambiguation text NOT NULL DEFAULT '',
     type           text,
     country        text,
-    begin_date     date,
-    end_date       date,
+    begin_date     text,
+    end_date       text,
     ended          boolean NOT NULL DEFAULT false
 );
 
@@ -26,14 +29,14 @@ CREATE TABLE release_group (
     title               text NOT NULL,
     primary_type        text NOT NULL,          -- album | ep | single | ...
     secondary_types     text[] NOT NULL DEFAULT '{}',  -- soundtrack, live, ...
-    first_release_date  date
+    first_release_date  text
 );
 
 CREATE TABLE release (
     mbid               uuid PRIMARY KEY,
     release_group_mbid uuid NOT NULL REFERENCES release_group,
     title              text NOT NULL,
-    date               date,
+    date               text,
     country            text,
     barcode            text
 );
@@ -55,7 +58,7 @@ CREATE TABLE recording (
     title               text NOT NULL,
     length_ms           integer,
     disambiguation      text NOT NULL DEFAULT '',
-    first_release_date  date,
+    first_release_date  text,
     -- Search document, maintained by the resolver: recording title,
     -- recording aliases, linked work titles and work aliases. Weighted
     -- (title > aliases > work) so a track's own name outranks the
@@ -118,8 +121,8 @@ CREATE TABLE alias (
     locale       text,            -- NULL = unlocalized alias
     type         text,            -- artist name | search hint | ...
     is_primary   boolean NOT NULL DEFAULT false,
-    begin_date   date,
-    end_date     date,
+    begin_date   text,
+    end_date     text,
     UNIQUE (entity_type, entity_mbid, name, locale)
 );
 CREATE INDEX alias_entity_idx ON alias (entity_type, entity_mbid);
@@ -201,6 +204,20 @@ CREATE TABLE event (
     occurred_at   timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX event_user_time_idx ON event (user_id, occurred_at);
+
+-- Conflicts between tag values and MusicBrainz canonical values for
+-- the same MBID-anchored entity. MusicBrainz wins in the graph; these
+-- rows exist so the UI can offer the tag value as a display choice
+-- (e.g. tags say "Eskimo Callboy", MB canonical is "Electric
+-- Callboy"). Resolver-owned, fully rebuilt per resolve run.
+CREATE TABLE conflict (
+    id           bigserial PRIMARY KEY,
+    file_id      bigint NOT NULL REFERENCES file,
+    kind         text NOT NULL,        -- recording-title | artist-name | release-title | release-group-title
+    tag_value    text NOT NULL,
+    mb_value     text NOT NULL,
+    UNIQUE (file_id, kind, tag_value, mb_value)
+);
 
 -- MusicBrainz HTTP response cache (1 rps upstream; rescans must be free).
 CREATE TABLE mb_cache (

@@ -135,10 +135,14 @@ type Recording struct {
 	Aliases          []Alias             `json:"aliases"`
 }
 
-// Work is the composed song behind one or more recordings.
+// Work is the composed song behind one or more recordings. Its
+// artist relationships carry the writing credits (composer,
+// lyricist, ...).
 type Work struct {
-	MBID    MBID    `json:"id"`
-	Title   string  `json:"title"`
-	Type    string  `json:"type,omitempty"`
-	Aliases []Alias `json:"aliases"`
+	MBID      MBID       `json:"id"`
+	Title     string     `json:"title"`
+	Type      string     `json:"type,omitempty"`
+	ISWCs     []string   `json:"iswcs"`
+	Relations []Relation `json:"relations"`
+	Aliases   []Alias    `json:"aliases"`
 }

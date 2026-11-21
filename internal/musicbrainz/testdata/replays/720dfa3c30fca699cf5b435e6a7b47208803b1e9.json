@@ -1,0 +1,76 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Emi Evans",
+      "primary": true,
+      "sort-name": "Evans, Emi",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Emiko Rebecca Evans",
+      "primary": false,
+      "sort-name": "Evans, Emiko Rebecca",
+      "type": "Legal name",
+      "type-id": "d4dcd0c0-b341-3612-a332-c0ce797b25cf"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Rebecca Evans",
+      "primary": null,
+      "sort-name": "Evans, Rebecca",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "エミ・エバンス",
+      "primary": true,
+      "sort-name": "エミ・エバンス",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "エミ・エヴァンス",
+      "primary": false,
+      "sort-name": "エミ・エヴァンス",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": null,
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Female",
+  "gender-id": "93452b5a-a947-30c8-934f-6a4056b151c2",
+  "id": "4867b206-d26b-4375-9680-8da77383a7de",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "1980-07-19",
+    "end": null,
+    "ended": false
+  },
+  "name": "Emi Evans",
+  "sort-name": "Evans, Emi",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

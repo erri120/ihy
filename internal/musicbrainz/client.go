@@ -39,10 +39,9 @@ const DefaultBaseURL = "https://musicbrainz.org"
 // Client talks to MusicBrainz WS/2, enforcing the documented 1 req/s
 // limit and a proper User-Agent, retrying transient 5xx responses.
 type Client struct {
-	base    string
-	ua      string
-	http    *http.Client
-	lastReq time.Time
+	base string
+	ua   string
+	http *http.Client
 }
 
 // NewClient builds a client. transport may be nil (default transport)
@@ -70,21 +69,9 @@ func UserAgent(version, contact string) string {
 var ErrNotFound = fmt.Errorf("musicbrainz: entity not found")
 
 // get fetches a path (starting with /ws/2/) and returns the raw body.
-// Rate limiting is skipped for replay transports: tests run offline
-// against recorded files and must not stall per request.
+// Rate limiting lives in the transport chain (LiveTransport), so
+// offline replay traffic is never paced.
 func (c *Client) get(ctx context.Context, path string) (json.RawMessage, error) {
-	if _, isReplay := c.http.Transport.(*ReplayTransport); !isReplay {
-		// 1 req/s: sleep out the remainder since the previous request.
-		if wait := time.Until(c.lastReq.Add(time.Second)); wait > 0 {
-			select {
-			case <-ctx.Done():
-				return nil, ctx.Err()
-			case <-time.After(wait):
-			}
-		}
-	}
-	c.lastReq = time.Now()
-
 	url := c.base + path
 	var body json.RawMessage
 	var err error

@@ -77,6 +77,7 @@ type Manifest map[string]string
 const manifestFile = "manifest.json"
 
 // RecordingTransport fetches live, trims, and stores responses.
+// Live requests are paced by the inner LiveTransport.
 type RecordingTransport struct {
 	dir  string
 	rt   http.RoundTripper
@@ -89,10 +90,11 @@ var (
 	_ http.RoundTripper = (*ReplayTransport)(nil)
 )
 
-// NewRecordingTransport stores trimmed responses under dir.
+// NewRecordingTransport stores trimmed responses under dir. The inner
+// transport defaults to a rate-limited live transport.
 func NewRecordingTransport(dir string, rt http.RoundTripper) (*RecordingTransport, error) {
 	if rt == nil {
-		rt = http.DefaultTransport
+		rt = NewLiveTransport(http.DefaultTransport)
 	}
 	t := &RecordingTransport{dir: dir, rt: rt, seen: Manifest{}}
 	if err := t.loadManifest(); err != nil {

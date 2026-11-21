@@ -18,6 +18,8 @@ import (
 
 	"ihy/internal/config"
 	"ihy/internal/db"
+	"ihy/internal/musicbrainz"
+	"ihy/internal/resolver"
 	"ihy/internal/scanner"
 )
 
@@ -43,9 +45,26 @@ func main() {
 		log.Printf("no library roots configured; set IHY_LIBRARIES or manage them in the web UI later")
 	} else {
 		// Bootstrap seed (IHY_LIBRARIES); managed roots live in the
-		// database and are added via the web UI later.
+		// database and are added via the web UI later. The resolver
+		// runs right after the scan, in the same background chain, so
+		// startup never blocks.
 		log.Printf("library roots: %s", strings.Join(cfg.Libraries, ", "))
-		go scanner.RunAll(context.Background(), conn, cfg.Libraries, scanner.DefaultTagReader)
+		go func() {
+			scanner.RunAll(context.Background(), conn, cfg.Libraries, scanner.DefaultTagReader)
+			live := musicbrainz.NewLiveTransport(http.DefaultTransport)
+			fetcher := musicbrainz.NewClient(
+				musicbrainz.DefaultBaseURL,
+				musicbrainz.UserAgent("0.0.1", musicbrainz.DefaultContactURL),
+				musicbrainz.NewCachingTransport(conn, live))
+			res := resolver.New(conn, fetcher)
+			out, err := res.Resolve(context.Background())
+			if err != nil {
+				log.Printf("resolver: %v", err)
+				return
+			}
+			log.Printf("resolver: %d artists, %d release-groups, %d releases, %d recordings, %d works, %d credits, %d aliases, %d conflicts, %d stale MBIDs",
+				out.Artists, out.Groups, out.Releases, out.Recordings, out.Works, out.Credits, out.Aliases, out.Conflicts, out.NotFound)
+		}()
 	}
 	log.Printf("artwork dir: %s | transcode dir: %s", cfg.ArtworkDir, cfg.TranscodeDir)
 

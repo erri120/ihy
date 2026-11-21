@@ -1,0 +1,54 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Kiyo Kido",
+      "primary": null,
+      "sort-name": "Kiyo Kido",
+      "type": null,
+      "type-id": null
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "きどきよ",
+      "primary": null,
+      "sort-name": "きどきよ",
+      "type": null,
+      "type-id": null
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "城戸 喜代",
+      "primary": null,
+      "sort-name": "城戸 喜代",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": null,
+  "gender-id": null,
+  "id": "18d93906-33f8-455f-8bae-02fb908664bb",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "城戸喜代",
+  "sort-name": "Kido, Kiyo",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

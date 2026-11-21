@@ -1,0 +1,32 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Tsunehiro Shigyo",
+      "primary": true,
+      "sort-name": "Shigyo, Tsunehiro",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "violinist",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "7b80e3cd-d92e-499c-a317-c0e26d51eb73",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": null,
+    "end": null,
+    "ended": false
+  },
+  "name": "執行恒宏",
+  "sort-name": "Shigyo, Tsunehiro",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

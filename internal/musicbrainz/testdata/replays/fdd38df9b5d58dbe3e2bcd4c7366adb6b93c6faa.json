@@ -1,0 +1,76 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Ayaka Jomoto",
+      "primary": null,
+      "sort-name": "Ayaka Jomoto",
+      "type": "Search hint",
+      "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Ayaka Jyomoto",
+      "primary": null,
+      "sort-name": "Ayaka Jyomoto",
+      "type": "Search hint",
+      "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Ayaka Jōmoto",
+      "primary": true,
+      "sort-name": "Jōmoto, Ayaka",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "城元絢花",
+      "primary": true,
+      "sort-name": "じょうもと あやか",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "城元絢香",
+      "primary": null,
+      "sort-name": "城元絢香",
+      "type": "Search hint",
+      "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "",
+  "end-area": null,
+  "gender": "Female",
+  "gender-id": "93452b5a-a947-30c8-934f-6a4056b151c2",
+  "id": "b02b2306-be31-4711-a6bd-08fa239210e3",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "1991-04-29",
+    "end": null,
+    "ended": false
+  },
+  "name": "城元絢花",
+  "sort-name": "Joumoto, Ayaka",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}

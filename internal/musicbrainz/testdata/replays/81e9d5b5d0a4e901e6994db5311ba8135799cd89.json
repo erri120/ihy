@@ -1,0 +1,43 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Keiji Kondou",
+      "primary": null,
+      "sort-name": "Keiji Kondou",
+      "type": "Search hint",
+      "type-id": "1937e404-b981-3cb7-8151-4c86ebfc8d8e"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Keiji Kondō",
+      "primary": true,
+      "sort-name": "Kondō, Keiji",
+      "type": "Artist name",
+      "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+    }
+  ],
+  "country": "JP",
+  "disambiguation": "engineer",
+  "end-area": null,
+  "gender": "Male",
+  "gender-id": "36d3d30a-839d-3eda-8cb3-29be4384e4a9",
+  "id": "67d8e45d-e183-4ef7-bad5-65f15a14c1e4",
+  "ipis": [],
+  "isnis": [],
+  "life-span": {
+    "begin": "1973-03-16",
+    "end": null,
+    "ended": false
+  },
+  "name": "近藤圭司",
+  "sort-name": "Kondō, Keiji",
+  "type": "Person",
+  "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+}
