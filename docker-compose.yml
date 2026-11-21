@@ -36,6 +36,7 @@ services:
       IHY_LIBRARIES: ${IHY_LIBRARIES:-/music}
       IHY_ARTWORK_DIR: /data/artwork
       IHY_TRANSCODE_DIR: /data/transcode
+      IHY_ADMIN_PASSWORD: ${IHY_ADMIN_PASSWORD:?set in .env (first boot only)}
     volumes:
       - ${IHY_LIBRARY:?set in .env}:/music:ro
       - artwork:/data/artwork

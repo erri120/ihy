@@ -36,6 +36,10 @@ type Config struct {
 	// TranscodeDir is the disposable transcode output mount
 	// (IHY_TRANSCODE_DIR, default "./data/transcode").
 	TranscodeDir string
+	// AdminPassword bootstraps the single "admin" account on first
+	// boot when no user exists (IHY_ADMIN_PASSWORD). Required for the
+	// first run; ignored afterwards.
+	AdminPassword string
 }
 
 // DSN builds the Postgres connection string from the DB_* settings.
@@ -83,6 +87,7 @@ func FromEnv() (Config, error) {
 
 	c.ArtworkDir = envDefault("IHY_ARTWORK_DIR", "./data/artwork")
 	c.TranscodeDir = envDefault("IHY_TRANSCODE_DIR", "./data/transcode")
+	c.AdminPassword = os.Getenv("IHY_ADMIN_PASSWORD")
 	return c, nil
 }
 

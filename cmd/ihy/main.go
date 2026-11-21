@@ -16,6 +16,8 @@ import (
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 
+	"ihy/internal/api"
+	"ihy/internal/auth"
 	"ihy/internal/config"
 	"ihy/internal/db"
 	"ihy/internal/musicbrainz"
@@ -41,6 +43,17 @@ func main() {
 	}
 	defer conn.Close()
 
+	// Bootstrap the single admin account (first boot only).
+	created, err := auth.EnsureAdminUser(context.Background(), conn, "admin", cfg.AdminPassword)
+	switch {
+	case err != nil:
+		log.Printf("admin bootstrap: %v", err)
+	case created:
+		log.Printf("admin account created (set IHY_ADMIN_PASSWORD; log in to create API tokens)")
+	case !created && cfg.AdminPassword == "":
+		log.Printf("admin account already exists")
+	}
+
 	if len(cfg.Libraries) == 0 {
 		log.Printf("no library roots configured; set IHY_LIBRARIES or manage them in the web UI later")
 	} else {
@@ -65,6 +78,12 @@ func main() {
 	log.Printf("artwork dir: %s | transcode dir: %s", cfg.ArtworkDir, cfg.TranscodeDir)
 
 	mux := http.NewServeMux()
+	a := api.NewAuth(conn)
+	mux.HandleFunc("POST /auth/login", a.Login)
+	mux.HandleFunc("POST /auth/logout", a.Logout)
+	mux.Handle("POST /auth/tokens", a.Middleware(http.HandlerFunc(a.CreateToken)))
+	mux.Handle("GET /auth/tokens", a.Middleware(http.HandlerFunc(a.ListTokens)))
+	mux.Handle("DELETE /auth/tokens/{id}", a.Middleware(http.HandlerFunc(a.RevokeToken)))
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]any{
