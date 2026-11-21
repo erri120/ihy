@@ -1,0 +1,70 @@
+{
+  "aliases": [],
+  "attributes": [
+    {
+      "type": "ASCAP ID",
+      "type-id": "d833318c-6c6a-370e-8b16-9cb15873ba76",
+      "value": "893083971"
+    }
+  ],
+  "disambiguation": "NieR:Automata",
+  "id": "8f89ea83-a066-44b4-9088-02145826ebf8",
+  "iswcs": [
+    "T-703.802.964-2"
+  ],
+  "language": "eng",
+  "languages": [
+    "eng"
+  ],
+  "relations": [
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "d82df34a-a1ff-45fa-ac50-c0b7454b201e",
+        "name": "岡部啓一",
+        "sort-name": "Okabe, Keiichi",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "composer",
+      "type-id": "d59d99ea-23d4-4a80-b066-edca32ee158f"
+    },
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "500d656d-c940-479c-b6b1-89b907d11435",
+        "name": "J’Nique Nicole",
+        "sort-name": "Nicole, J’Nique",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "lyricist",
+      "type-id": "3e48faba-ec01-47fd-8e89-30e81161661c"
+    }
+  ],
+  "title": "Weight of the World / English Version",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

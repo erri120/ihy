@@ -1,0 +1,135 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "A Beautiful Song",
+      "primary": true,
+      "sort-name": "A Beautiful Song",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    }
+  ],
+  "attributes": [
+    {
+      "type": "SPA ID",
+      "type-id": "f15e9a05-231e-415b-8b7d-8ec44c736bde",
+      "value": "5316155"
+    },
+    {
+      "type": "SOCAN ID",
+      "type-id": "00370bc6-7388-34a1-aa5b-b0e081ccb53d",
+      "value": "88774827"
+    },
+    {
+      "type": "SIAE ID",
+      "type-id": "2e4f9e12-d094-4bd0-b4dd-a560cc5c4977",
+      "value": "17833284000"
+    },
+    {
+      "type": "SGAE ID",
+      "type-id": "6a200b13-ca08-3b32-87a9-7aaa46368d75",
+      "value": "16.708.774"
+    },
+    {
+      "type": "SESAC ID",
+      "type-id": "d05fce14-b3d7-370c-8655-e27ac2e4e290",
+      "value": "691908367"
+    },
+    {
+      "type": "SAYCE ID",
+      "type-id": "4bcbb212-a973-46ee-8160-e9f0f89ca6ef",
+      "value": "11586584"
+    },
+    {
+      "type": "SACEM ID",
+      "type-id": "d08147e2-d167-3c2b-bbe4-af6643a194f9",
+      "value": "36 483 057 11"
+    },
+    {
+      "type": "SABAM ID",
+      "type-id": "b2e4067b-a9e4-44fb-bfcd-3c1fc41dc06d",
+      "value": "A09MSDP00"
+    },
+    {
+      "type": "PRS tune code",
+      "type-id": "cd76035f-b94e-4e47-850d-aa2cd825d1a6",
+      "value": "288488KS"
+    },
+    {
+      "type": "GEMA ID",
+      "type-id": "01eeee67-f514-3801-bdce-279e04872f91",
+      "value": "19519886-001"
+    },
+    {
+      "type": "COMPASS ID",
+      "type-id": "5ea37343-be89-4cd0-8a37-f471738df641",
+      "value": "12568204"
+    },
+    {
+      "type": "BUMA/STEMRA ID",
+      "type-id": "a6492434-b847-4f1b-9869-9184ade990ed",
+      "value": "W-014460973"
+    },
+    {
+      "type": "ASCAP ID",
+      "type-id": "d833318c-6c6a-370e-8b16-9cb15873ba76",
+      "value": "893083990"
+    },
+    {
+      "type": "APDAYC ID",
+      "type-id": "b66d6f47-2a58-4bc1-ac75-b44c47a198f8",
+      "value": "9567974"
+    },
+    {
+      "type": "COMPASS ID",
+      "type-id": "5ea37343-be89-4cd0-8a37-f471738df641",
+      "value": "17190792"
+    },
+    {
+      "type": "PRS tune code",
+      "type-id": "cd76035f-b94e-4e47-850d-aa2cd825d1a6",
+      "value": "650840FT"
+    }
+  ],
+  "disambiguation": "NieR:Automata",
+  "id": "cfedbfa0-b589-430c-9e72-e5e57ed8a697",
+  "iswcs": [
+    "T-703.802.948-2",
+    "T-932.221.165-4"
+  ],
+  "language": "qaa",
+  "languages": [
+    "qaa"
+  ],
+  "relations": [
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "33c8eca1-7d27-46b5-a854-ca984e033971",
+        "name": "帆足圭吾",
+        "sort-name": "Hoashi, Keigo",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "composer",
+      "type-id": "d59d99ea-23d4-4a80-b066-edca32ee158f"
+    }
+  ],
+  "title": "美シキ歌",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

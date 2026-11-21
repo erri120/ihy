@@ -120,6 +120,12 @@ func (t *RecordingTransport) saveManifest() error {
 	return os.WriteFile(filepath.Join(t.dir, manifestFile), append(out, '\n'), 0o644)
 }
 
+// seenCount reports how many URLs this run has recorded so far
+// (including previously recorded ones loaded from the manifest).
+func (t *RecordingTransport) seenCount() int {
+	return len(t.seen)
+}
+
 func (t *RecordingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	resp, err := t.rt.RoundTrip(req)
 	if err != nil {

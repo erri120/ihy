@@ -100,13 +100,22 @@ type Release struct {
 // Relation is a typed relationship; target entity payloads are
 // references only.
 type Relation struct {
-	Type       string     `json:"type"`
-	TargetType string     `json:"target-type"`
-	Direction  string     `json:"direction,omitempty"`
-	Attributes []string   `json:"attributes,omitempty"`
-	Work       *WorkRef   `json:"work,omitempty"`
-	Artist     *ArtistRef `json:"artist,omitempty"`
+	Type       string   `json:"type"`
+	TargetType string   `json:"target-type"`
+	Direction  string   `json:"direction,omitempty"`
+	Attributes []string `json:"attributes,omitempty"`
+	// Attribute metadata: MusicBrainz documents attribute-credits as
+	// the "credited as" names (e.g. guitar credited as "Fender
+	// Stratocaster"). Absent from most fixtures, kept for decoding.
+	AttributeIDs     map[string]string `json:"attribute-ids,omitempty"`
+	AttributeValues  map[string]string `json:"attribute-values,omitempty"`
+	AttributeCredits map[string]string `json:"attribute-credits,omitempty"`
+	Work             *WorkRef          `json:"work,omitempty"`
+	Artist           *ArtistRef        `json:"artist,omitempty"`
 }
+
+// AttributeCredit is a credited-as name for one relationship
+// attribute type; see Relation.AttributeCredits.
 
 // WorkRef is a work reference inside a relationship.
 type WorkRef struct {

@@ -136,7 +136,7 @@ const (
 	incRG        = "artist-credits+aliases"
 	incRelease   = "artist-credits+labels+release-groups"
 	incRecording = "artist-credits+work-rels+artist-rels+aliases"
-	incWork      = "aliases"
+	incWork      = "aliases+artist-rels" // composer/lyricist live on the work
 )
 
 // Artist looks up an artist entity.
@@ -169,11 +169,37 @@ func (c *Client) Work(ctx context.Context, mbid MBID) (Work, error) {
 	return out, lookup(ctx, c, EntityWork, mbid, incWork, &out)
 }
 
+// lookup performs an entity lookup after validating the MBID format:
+// malformed IDs would only waste a request and come back as a 400.
 func lookup(ctx context.Context, c *Client, entityType string, mbid MBID, inc string, out any) error {
+	if !validMBID(mbid) {
+		return fmt.Errorf("musicbrainz: invalid MBID %q", mbid)
+	}
 	path := fmt.Sprintf("/ws/2/%s/%s?inc=%s&fmt=json", entityType, mbid, inc)
 	raw, err := c.get(ctx, path)
 	if err != nil {
 		return err
 	}
 	return json.Unmarshal(raw, out)
+}
+
+// validMBID checks the UUID form MusicBrainz lookups require.
+func validMBID(mbid MBID) bool {
+	s := string(mbid)
+	if len(s) != 36 {
+		return false
+	}
+	for i, r := range s {
+		switch i {
+		case 8, 13, 18, 23:
+			if r != '-' {
+				return false
+			}
+		default:
+			if !strings.ContainsRune("0123456789abcdefABCDEF", r) {
+				return false
+			}
+		}
+	}
+	return true
 }

@@ -1,0 +1,74 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Faltering Prayer (Starry Sky)",
+      "primary": true,
+      "sort-name": "Faltering Prayer (Starry Sky)",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    }
+  ],
+  "attributes": [],
+  "disambiguation": "NieR:Automata",
+  "id": "3ebe0e76-438d-4eec-afde-b6932fe4ed9b",
+  "iswcs": [],
+  "language": "qaa",
+  "languages": [
+    "qaa"
+  ],
+  "relations": [
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "33c8eca1-7d27-46b5-a854-ca984e033971",
+        "name": "帆足圭吾",
+        "sort-name": "Hoashi, Keigo",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "composer",
+      "type-id": "d59d99ea-23d4-4a80-b066-edca32ee158f"
+    },
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "d82df34a-a1ff-45fa-ac50-c0b7454b201e",
+        "name": "岡部啓一",
+        "sort-name": "Okabe, Keiichi",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "composer",
+      "type-id": "d59d99ea-23d4-4a80-b066-edca32ee158f"
+    }
+  ],
+  "title": "澱ンダ祈リ / 星空",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

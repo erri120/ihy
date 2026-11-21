@@ -1,0 +1,118 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "en",
+      "name": "Senbonzakura",
+      "primary": true,
+      "sort-name": "Senbonzakura",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    },
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": "ja",
+      "name": "千本桜",
+      "primary": true,
+      "sort-name": "せんぼんざくら",
+      "type": "Work name",
+      "type-id": "a18cab3f-0ae2-3978-8f75-dd9c09702b25"
+    }
+  ],
+  "attributes": [
+    {
+      "type": "NexTone ID",
+      "type-id": "97aac6a3-f2dd-4372-96fe-2462eb4e652a",
+      "value": "N00099604"
+    },
+    {
+      "type": "JASRAC ID",
+      "type-id": "31048fcc-3dbb-3979-8f85-805afb933e0c",
+      "value": "703-4546-5"
+    },
+    {
+      "type": "ASCAP ID",
+      "type-id": "d833318c-6c6a-370e-8b16-9cb15873ba76",
+      "value": "886739190"
+    },
+    {
+      "type": "SUISA ID",
+      "type-id": "034f35ae-d250-3749-95e7-854e606d5960",
+      "value": "005343 645 56"
+    },
+    {
+      "type": "SAYCE ID",
+      "type-id": "4bcbb212-a973-46ee-8160-e9f0f89ca6ef",
+      "value": "11876853"
+    },
+    {
+      "type": "COMPASS ID",
+      "type-id": "5ea37343-be89-4cd0-8a37-f471738df641",
+      "value": "8061103"
+    }
+  ],
+  "disambiguation": "",
+  "id": "748bbd7d-a800-49a5-8579-a18e11b6ccfd",
+  "iswcs": [
+    "T-102.045.405-9"
+  ],
+  "language": "jpn",
+  "languages": [
+    "jpn"
+  ],
+  "relations": [
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "b9e28c01-0ff8-426b-8092-d0864f9271f1",
+        "name": "黒うさP",
+        "sort-name": "KurousaP",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "黒うさ",
+      "target-type": "artist",
+      "type": "composer",
+      "type-id": "d59d99ea-23d4-4a80-b066-edca32ee158f"
+    },
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "b9e28c01-0ff8-426b-8092-d0864f9271f1",
+        "name": "黒うさP",
+        "sort-name": "KurousaP",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "黒うさ",
+      "target-type": "artist",
+      "type": "lyricist",
+      "type-id": "3e48faba-ec01-47fd-8e89-30e81161661c"
+    }
+  ],
+  "title": "千本桜",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

@@ -1,0 +1,68 @@
+{
+  "aliases": [],
+  "attributes": [
+    {
+      "type": "ASCAP ID",
+      "type-id": "d833318c-6c6a-370e-8b16-9cb15873ba76",
+      "value": "893083981"
+    }
+  ],
+  "disambiguation": "NieR:Automata",
+  "id": "a6f9ba8f-d3e3-497e-99fe-dcb41d787c35",
+  "iswcs": [],
+  "language": "jpn",
+  "languages": [
+    "jpn"
+  ],
+  "relations": [
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "",
+        "id": "d82df34a-a1ff-45fa-ac50-c0b7454b201e",
+        "name": "岡部啓一",
+        "sort-name": "Okabe, Keiichi",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "composer",
+      "type-id": "d59d99ea-23d4-4a80-b066-edca32ee158f"
+    },
+    {
+      "artist": {
+        "country": "JP",
+        "disambiguation": "Japanese video game director",
+        "id": "df4abdd2-8fc5-408d-8c03-79c875f86eb8",
+        "name": "横尾太郎",
+        "sort-name": "Yoko, Taro",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "YOKO TARO",
+      "target-type": "artist",
+      "type": "lyricist",
+      "type-id": "3e48faba-ec01-47fd-8e89-30e81161661c"
+    }
+  ],
+  "title": "Weight of the World / 壊レタ世界ノ歌",
+  "type": "Song",
+  "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+}

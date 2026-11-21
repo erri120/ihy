@@ -13,6 +13,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -57,6 +59,19 @@ func contains(list []MBID, v MBID) bool {
 		}
 	}
 	return false
+}
+
+// lookupURL builds the WS/2 lookup URL for an entity, mirroring the
+// client so the recording driver can skip already-recorded requests.
+func lookupURL(entityType string, mbid MBID) string {
+	inc := map[string]string{
+		EntityArtist:       incArtist,
+		EntityReleaseGroup: incRG,
+		EntityRelease:      incRelease,
+		EntityRecording:    incRecording,
+		EntityWork:         incWork,
+	}[entityType]
+	return fmt.Sprintf("%s/ws/2/%s/%s?inc=%s&fmt=json", DefaultBaseURL, entityType, mbid, inc)
 }
 
 func TestRecordReplays(t *testing.T) {
@@ -107,8 +122,29 @@ func TestRecordReplays(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
 
-	for entity, ids := range wanted {
+	// IHY_MB_LIMIT caps the number of NEW lookups per run: verify a
+	// small batch before committing to the full recording pass.
+	limit := 0
+	if raw := os.Getenv("IHY_MB_LIMIT"); raw != "" {
+		if n, err := strconv.Atoi(raw); err == nil && n > 0 {
+			limit = n
+		}
+	}
+
+	var entityOrder = []string{EntityRecording, EntityRelease, EntityReleaseGroup, EntityWork, EntityArtist}
+	newLookups := 0
+	for _, entity := range entityOrder {
+		ids := wanted[entity]
+		sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
 		for _, id := range ids {
+			if limit > 0 && newLookups >= limit {
+				t.Logf("limit %d reached after %d new lookups", limit, newLookups)
+				return
+			}
+			if _, done := rec.seen[lookupURL(entity, id)]; done {
+				continue // already recorded, costs nothing
+			}
+			newLookups++
 			var err error
 			switch entity {
 			case EntityArtist:
