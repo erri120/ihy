@@ -14,6 +14,7 @@ import (
 
 	"ihy/internal/api/gen"
 	"ihy/internal/auth"
+	"ihy/internal/display"
 )
 
 // Compile-time interface assertion, per project convention.
@@ -56,118 +57,28 @@ func writeOK(w http.ResponseWriter, v any) {
 	json.NewEncoder(w).Encode(v)
 }
 
-// pref is a user's display preference for one entity type.
-type pref struct {
-	localeChain   []string
-	historyPolicy string
+// prefsFor, aliasesFor and the name-resolution rules live in
+// internal/display, shared with the web UI.
+func (s *Server) prefsFor(ctx context.Context, userID int64) (map[string]display.Pref, error) {
+	return display.PrefsFor(ctx, s.db, userID)
 }
 
-// prefsFor loads a user's display preferences.
-func (s *Server) prefsFor(ctx context.Context, userID int64) (map[string]pref, error) {
-	rows, err := s.db.QueryContext(ctx,
-		`SELECT entity_type, locale_chain, history_policy FROM display_pref WHERE user_id = $1`, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	out := map[string]pref{}
-	for rows.Next() {
-		var entityType string
-		var p pref
-		if err := rows.Scan(&entityType, &p.localeChain, &p.historyPolicy); err != nil {
-			return nil, err
-		}
-		out[entityType] = p
-	}
-	return out, rows.Err()
+func (s *Server) aliasesFor(ctx context.Context, entityType, mbid string) ([]display.Alias, error) {
+	return display.Aliases(ctx, s.db, entityType, mbid)
 }
 
-// aliasRow is a stored alias for display resolution.
-type aliasRow struct {
-	name     string
-	locale   string
-	primary  bool
-	begin    string
-	end      string
-	typeName string
-}
-
-// aliasesFor loads the aliases of one entity.
-func (s *Server) aliasesFor(ctx context.Context, entityType, mbid string) ([]aliasRow, error) {
-	rows, err := s.db.QueryContext(ctx,
-		`SELECT name, coalesce(locale, ''), is_primary, coalesce(begin_date, ''),
-			coalesce(end_date, ''), coalesce(type, '')
-		FROM alias WHERE entity_type = $1 AND entity_mbid = $2`, entityType, mbid)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var out []aliasRow
-	for rows.Next() {
-		var a aliasRow
-		if err := rows.Scan(&a.name, &a.locale, &a.primary, &a.begin, &a.end, &a.typeName); err != nil {
-			return nil, err
-		}
-		out = append(out, a)
-	}
-	return out, rows.Err()
-}
-
-// displayName resolves a display name: the primary alias for the
-// first locale in the user's chain that has one, else the canonical
-// name. The at_release policy is applied by the artist handler
-// per-album (it needs a date anchor); everywhere else names are
-// "current".
-func displayName(p pref, canonical string, aliases []aliasRow) string {
-	for _, locale := range p.localeChain {
-		for _, a := range aliases {
-			if a.primary && a.locale == locale {
-				return a.name
-			}
-		}
-	}
-	return canonical
+func displayName(p display.Pref, canonical string, aliases []display.Alias) string {
+	return display.Name(p, canonical, aliases)
 }
 
 // artistDisplayName applies the name-history policy for the artist's
 // own display name. "current" keeps the canonical name (or its
 // locale-preferring alias); "at_release" is only meaningful per album,
 // so the artist page itself shows the current name.
-func artistDisplayName(p pref, canonical string, aliases []aliasRow) string {
+func artistDisplayName(p display.Pref, canonical string, aliases []display.Alias) string {
 	return displayName(p, canonical, aliases)
 }
 
-// nameAtRelease implements the "at_release" policy: the alias whose
-// date range covers the release date.
-func nameAtRelease(aliases []aliasRow, releaseDate string) string {
-	if releaseDate == "" {
-		return ""
-	}
-	for _, a := range aliases {
-		if a.typeName != "" && a.typeName != "Artist name" {
-			continue
-		}
-		if a.begin != "" && a.begin > releaseDate[:len4(a.begin, releaseDate)] {
-			continue
-		}
-		if a.end != "" && a.end < releaseDate[:len4(a.end, releaseDate)] {
-			continue
-		}
-		// Alias active at that date; prefer one with a date range.
-		return a.name
-	}
-	return ""
-}
-
-func len4(s, ref string) int {
-	if len(s) < len(ref) {
-		return len(s)
-	}
-	return len(ref)
-}
-
-// userFromCtx resolves the authenticated user (middleware guarantees
-// presence).
 func (s *Server) userFromCtx(ctx context.Context) (auth.User, error) {
 	u, ok := UserFromContext(ctx)
 	if !ok {
@@ -215,8 +126,8 @@ func (s *Server) GetDisplayPrefs(w http.ResponseWriter, r *http.Request) {
 	for entityType, p := range prefs {
 		out = append(out, gen.DisplayPref{
 			EntityType:    gen.DisplayPrefEntityType(entityType),
-			LocaleChain:   p.localeChain,
-			HistoryPolicy: gen.DisplayPrefHistoryPolicy(p.historyPolicy),
+			LocaleChain:   p.LocaleChain,
+			HistoryPolicy: gen.DisplayPrefHistoryPolicy(p.HistoryPolicy),
 		})
 	}
 	writeOK(w, out)
@@ -278,7 +189,7 @@ func (s *Server) Search(w http.ResponseWriter, r *http.Request, params gen.Searc
 	}
 
 	hits := []gen.SearchHit{}
-	addHit := func(hitType, mbid, canonical string, aliases []aliasRow) {
+	addHit := func(hitType, mbid, canonical string, aliases []display.Alias) {
 		name := displayName(prefs[hitType], canonical, aliases)
 		hits = append(hits, gen.SearchHit{
 			Type:          gen.SearchHitType(hitType),
@@ -316,7 +227,7 @@ func (s *Server) Search(w http.ResponseWriter, r *http.Request, params gen.Searc
 			SELECT t.mbid, t.%s FROM %s t
 			WHERE t.%s ILIKE '%%' || $1 || '%%'
 			   OR EXISTS (SELECT 1 FROM alias a WHERE a.entity_type = $2 AND a.entity_mbid = t.mbid
-			              AND a.name ILIKE '%%' || $1 || '%%')
+			              AND a.Name ILIKE '%%' || $1 || '%%')
 			LIMIT 10`, nameCol, table, nameCol), q, entityType)
 		if err != nil {
 			writeErr(w, http.StatusInternalServerError, err.Error())
@@ -448,14 +359,14 @@ func (s *Server) GetArtist(w http.ResponseWriter, r *http.Request, mbid openapi_
 	}
 	for _, a := range albums {
 		rgAliases, _ := s.aliasesFor(r.Context(), "release_group", a.mbid)
-		display := displayName(prefs["release_group"], a.title, rgAliases)
+		name := displayName(prefs["release_group"], a.title, rgAliases)
 		rel := "featured"
 		if primary[a.mbid] {
 			rel = "primary"
 		}
 		appearance := gen.AlbumAppearance{
 			Mbid:             uuidOf(a.mbid),
-			Name:             display,
+			Name:             name,
 			CanonicalName:    ptr(a.title),
 			FirstReleaseDate: ptr(a.date),
 			Relationship:     gen.AlbumAppearanceRelationship(rel),
@@ -465,8 +376,8 @@ func (s *Server) GetArtist(w http.ResponseWriter, r *http.Request, mbid openapi_
 		}
 		// The at_release policy: show the name the artist used when
 		// the album came out, if a dated alias covers it.
-		if artistPref.historyPolicy == "at_release" && a.date != "" {
-			if historical := nameAtRelease(aliases, a.date); historical != "" {
+		if artistPref.HistoryPolicy == "at_release" && a.date != "" {
+			if historical := display.NameAtRelease(aliases, a.date); historical != "" {
 				appearance.Name = historical
 			}
 		}
@@ -510,7 +421,7 @@ func (s *Server) GetReleaseGroup(w http.ResponseWriter, r *http.Request, mbid op
 
 	primaryArtists := []gen.NamedRef{}
 	rows, err := s.db.QueryContext(r.Context(), `
-		SELECT a.mbid, a.name FROM credit c JOIN artist a ON a.mbid = c.artist_mbid
+		SELECT a.mbid, a.Name FROM credit c JOIN artist a ON a.mbid = c.artist_mbid
 		WHERE c.subject_type = 'release_group' AND c.subject_mbid = $1 AND c.role = 'artist-credit'
 		ORDER BY c.position`, mbid)
 	if err != nil {
@@ -598,7 +509,7 @@ func (s *Server) GetRecording(w http.ResponseWriter, r *http.Request, mbid opena
 
 	credits := []gen.Credit{}
 	rows, err := s.db.QueryContext(r.Context(), `
-		SELECT c.artist_mbid, a.name, c.role, c.details, c.position, c.joinphrase
+		SELECT c.artist_mbid, a.Name, c.role, c.details, c.position, c.joinphrase
 		FROM credit c JOIN artist a ON a.mbid = c.artist_mbid
 		WHERE c.subject_type = 'recording' AND c.subject_mbid = $1
 		ORDER BY c.role, c.position`, mbid)
@@ -639,7 +550,7 @@ func (s *Server) GetRecording(w http.ResponseWriter, r *http.Request, mbid opena
 		workAliases, _ := s.aliasesFor(r.Context(), "work", workMbid)
 		composers := []string{}
 		rows, err := s.db.QueryContext(r.Context(), `
-			SELECT a.name FROM credit c JOIN artist a ON a.mbid = c.artist_mbid
+			SELECT a.Name FROM credit c JOIN artist a ON a.mbid = c.artist_mbid
 			WHERE c.subject_type = 'work' AND c.subject_mbid = $1 AND c.role = 'composer'
 			ORDER BY c.position`, workMbid)
 		if err == nil {
@@ -682,15 +593,15 @@ func (s *Server) GetRecording(w http.ResponseWriter, r *http.Request, mbid opena
 	writeOK(w, out)
 }
 
-func ptrToGenAliases(aliases []aliasRow) *[]gen.Alias {
+func ptrToGenAliases(aliases []display.Alias) *[]gen.Alias {
 	out := []gen.Alias{}
 	for _, a := range aliases {
 		out = append(out, gen.Alias{
-			Name:    a.name,
-			Locale:  ptr(a.locale),
-			Primary: &a.primary,
-			Begin:   ptr(a.begin),
-			End:     ptr(a.end),
+			Name:    a.Name,
+			Locale:  ptr(a.Locale),
+			Primary: &a.Primary,
+			Begin:   ptr(a.Begin),
+			End:     ptr(a.End),
 		})
 	}
 	return &out

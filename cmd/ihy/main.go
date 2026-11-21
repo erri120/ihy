@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -24,6 +25,7 @@ import (
 	"ihy/internal/musicbrainz"
 	"ihy/internal/resolver"
 	"ihy/internal/scanner"
+	"ihy/internal/webui"
 )
 
 func main() {
@@ -65,10 +67,28 @@ func main() {
 		go func() {
 			scanner.RunAll(context.Background(), conn, cfg.Libraries, scanner.DefaultTagReader)
 			live := musicbrainz.NewLiveTransport(http.DefaultTransport)
+			var rt http.RoundTripper = live
+			// Dev/offline mode: serve recorded entities from the
+			// replay manifest instead of the API; misses still go
+			// live. Production leaves this unset.
+			if dir := os.Getenv("IHY_MB_REPLAYS"); dir != "" {
+				replay, err := musicbrainz.NewReplayTransport(dir)
+				if err != nil {
+					log.Printf("replays: %v (falling back to live)", err)
+				} else {
+					record, err := musicbrainz.NewRecordingTransport(dir, live)
+					if err != nil {
+						log.Printf("recording transport: %v (falling back to live)", err)
+					} else {
+						rt = musicbrainz.NewReplayFirstTransport(replay, record)
+						log.Printf("MusicBrainz: replay-first from %s", dir)
+					}
+				}
+			}
 			fetcher := musicbrainz.NewClient(
 				musicbrainz.DefaultBaseURL,
 				musicbrainz.UserAgent("0.0.1", musicbrainz.DefaultContactURL),
-				musicbrainz.NewCachingTransport(conn, live))
+				musicbrainz.NewCachingTransport(conn, rt))
 			res := resolver.New(conn, fetcher)
 			if _, err := res.Resolve(context.Background()); err != nil {
 				log.Printf("resolver: %v", err)
@@ -92,6 +112,10 @@ func main() {
 	// requires a session or API token.
 	server := api.NewServer(conn)
 	mux.Handle("/", api.NewAuth(conn).Middleware(gen.Handler(server)))
+
+	// Web UI routes: server-rendered templ pages with htmx. Specific
+	// patterns win over the API catch-all above.
+	webui.NewServer(conn).Register(mux)
 
 	log.Printf("ihy listening on %s", cfg.Addr)
 	log.Fatal(http.ListenAndServe(cfg.Addr, mux))

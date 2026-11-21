@@ -1,3 +1,7 @@
+# Generate Go code from templ templates (committed generated files).
+ui:
+	go tool templ generate
+
 # Unit tests: no external dependencies. Postgres-backed tests skip
 # when no test database is configured.
 test:
@@ -12,11 +16,11 @@ test-e2e:
 # Run ihy in a dev environment: ephemeral Postgres, fixtures as
 # library. Override IHY_LIBRARIES for any read-only path.
 IHY_LIBRARIES ?= $(CURDIR)/examples
-dev:
+dev: ui
 	docker compose -f docker-compose.dev.yml up -d --wait testdb
-	DB_HOST=127.0.0.1 DB_PORT=5433 DB_USER=ihy DB_PASSWORD=ihy DB_DATABASE=postgres IHY_LIBRARIES=$(IHY_LIBRARIES) go run ./cmd/ihy
+	DB_HOST=127.0.0.1 DB_PORT=5433 DB_USER=ihy DB_PASSWORD=ihy DB_DATABASE=postgres IHY_LIBRARIES=$(IHY_LIBRARIES) IHY_MB_REPLAYS=$(CURDIR)/internal/musicbrainz/testdata/replays go run ./cmd/ihy
 
-build:
+build: ui
 	CGO_ENABLED=0 go build -o ihy ./cmd/ihy
 
 # Open the DuckDB UI against the dev database. Starts the dev stack if
@@ -35,6 +39,7 @@ db-ui:
 		$(MAKE) build >/dev/null; \
 		nohup env DB_HOST=127.0.0.1 DB_PORT=5433 DB_USER=ihy DB_PASSWORD=ihy \
 			DB_DATABASE=postgres IHY_LIBRARIES=$(IHY_LIBRARIES) \
+			IHY_MB_REPLAYS=$(CURDIR)/internal/musicbrainz/testdata/replays \
 			$(CURDIR)/ihy >/tmp/ihy-dev.log 2>&1 & \
 	fi
 	@until curl -sf http://127.0.0.1:7731/healthz >/dev/null; do sleep 0.5; done
@@ -45,4 +50,4 @@ db-ui:
 record-replays:
 	IHY_MB_RECORD=1 IHY_FIXTURE_DIR=$(CURDIR)/examples go test ./internal/musicbrainz/ -run TestRecordReplays -count=1 -v
 
-.PHONY: test test-e2e dev build db-ui record-replays
+.PHONY: ui test test-e2e dev build db-ui record-replays

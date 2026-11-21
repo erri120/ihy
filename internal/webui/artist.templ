@@ -1,0 +1,42 @@
+package webui
+
+templ ArtistPage(a ArtistVM) {
+	@Layout(a.Name) {
+		<header class="page-head">
+			<h1>{ a.Name }</h1>
+			<form method="post" action="/logout" class="logout">
+				<button type="submit">Log out</button>
+			</form>
+		</header>
+		if a.Canonical != a.Name {
+			<p class="muted">Canonical: { a.Canonical }</p>
+		}
+		if a.Meta != "" {
+			<p class="muted">{ a.Meta }</p>
+		}
+		<h2>Albums</h2>
+		if len(a.Albums) == 0 {
+			<p class="muted">No albums in the library yet.</p>
+		} else {
+			<ul class="results">
+				for _, al := range a.Albums {
+					<li>
+						<a href={ templ.URL(al.Href()) }>{ al.Name }</a>
+						if al.FirstReleaseDate != "" {
+							<span class="muted">{ " " }{ al.FirstReleaseDate }</span>
+						}
+						if al.Relationship == "featured" {
+							<span class="badge">
+								if al.FeaturedTracks == 1 {
+									featured on 1 track
+								} else {
+									featured on { al.FeaturedTracks } tracks
+								}
+							</span>
+						}
+					</li>
+				}
+			</ul>
+		}
+	}
+}

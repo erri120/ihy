@@ -1,0 +1,21 @@
+// The web UI: server-rendered pages (templ) with htmx for partial
+// updates. Design of record: docs/architecture.md §7.
+package webui
+
+templ Layout(title string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>{ title } · ihy</title>
+			<script src="/ui/static/htmx.min.js"></script>
+			<link rel="stylesheet" href="/ui/static/app.css"/>
+		</head>
+		<body hx-boost="true">
+			<main id="content">
+				{ children... }
+			</main>
+		</body>
+	</html>
+}

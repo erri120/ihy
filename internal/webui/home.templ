@@ -1,0 +1,43 @@
+package webui
+
+templ HomePage(stats StatsVM) {
+	@Layout("Library") {
+		<header class="page-head">
+			<h1>Library</h1>
+			<form method="post" action="/logout" class="logout">
+				<button type="submit">Log out</button>
+			</form>
+		</header>
+		<p class="muted">
+			{ stats.Files } files · { stats.Artists } artists · { stats.ReleaseGroups } albums · { stats.Recordings } recordings
+		</p>
+		<input
+			type="search"
+			name="q"
+			placeholder="Search titles, artists, aliases..."
+			autofocus
+			hx-get="/ui/search"
+			hx-trigger="input changed delay:300ms, search"
+			hx-target="#search-results"
+		/>
+		<div id="search-results"></div>
+	}
+}
+
+templ SearchResults(results []SearchResultVM) {
+	if len(results) == 0 {
+		<p class="muted">Nothing found.</p>
+	} else {
+		<ul class="results">
+			for _, r := range results {
+				<li class={ "hit", "hit-"+r.Type }>
+					<span class="kind">{ r.Type }</span>
+					<a href={ templ.URL(r.Href()) }>{ r.Name }</a>
+					if r.Canonical != "" && r.Canonical != r.Name {
+						<span class="muted"> ({ r.Canonical })</span>
+					}
+				</li>
+			}
+		</ul>
+	}
+}

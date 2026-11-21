@@ -1,0 +1,23 @@
+package webui
+
+templ LoginPage(errMsg string) {
+	@Layout("Log in") {
+		<div class="login">
+			<h1>ihy</h1>
+			if errMsg != "" {
+				<p class="error">{ errMsg }</p>
+			}
+			<form method="post" action="/login">
+				<label>
+					Username
+					<input type="text" name="username" required autocomplete="username"/>
+				</label>
+				<label>
+					Password
+					<input type="password" name="password" required autocomplete="current-password"/>
+				</label>
+				<button type="submit">Log in</button>
+			</form>
+		</div>
+	}
+}
