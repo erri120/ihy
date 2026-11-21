@@ -118,7 +118,7 @@ func TestRecordReplays(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	client := NewClient(DefaultBaseURL, UserAgent("0.0.1", "user@example.com"), rec)
+	client := NewClient(DefaultBaseURL, UserAgent("0.0.1", DefaultContactURL), rec)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
 

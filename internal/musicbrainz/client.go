@@ -55,10 +55,15 @@ func NewClient(baseURL, userAgent string, transport http.RoundTripper) *Client {
 	}
 }
 
+// DefaultContactURL points at the public repository; MusicBrainz
+// wants enough information in the User-Agent to contact the
+// maintainers, and the repo (issues) is that contact point.
+const DefaultContactURL = "https://github.com/erri120/ihy"
+
 // UserAgent builds the User-Agent MusicBrainz expects: app name and
 // version plus a contact address.
 func UserAgent(version, contact string) string {
-	return fmt.Sprintf("ihy/%s (contact: %s)", version, contact)
+	return fmt.Sprintf("ihy/%s (%s)", version, contact)
 }
 
 // ErrNotFound is returned for 404 responses (unknown or stale MBIDs).
