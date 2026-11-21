@@ -11,7 +11,9 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"io/fs"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -77,17 +79,20 @@ func TestMigrationsApplyOnEmptyDatabase(t *testing.T) {
 	if dirty {
 		t.Fatal("schema_migrations marked dirty")
 	}
-	if version != 1 {
-		t.Fatalf("version = %d, want 1", version)
+	// Version must match the number of embedded migrations; this keeps
+	// the assertion valid as new migrations land.
+	wantVersion := countMigrations()
+	if version != int(wantVersion) {
+		t.Fatalf("version = %d, want %d", version, wantVersion)
 	}
 
-	want := []string{
+	wantTables := []string{
 		"artist", "release_group", "release", "label", "release_label",
 		"recording", "work", "recording_work", "credit", "alias",
 		"library", "file", "track", "user", "session", "api_token",
 		"display_pref", "event", "mb_cache",
 	}
-	for _, table := range want {
+	for _, table := range wantTables {
 		if !tableExists(dsn, table) {
 			t.Errorf("table %q missing after migration", table)
 		}
@@ -106,10 +111,10 @@ func TestMigrationsDownAndUp(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open migrate handle: %v", err)
 	}
-	if err := m.Steps(-1); err != nil {
-		t.Fatalf("down one step: %v", err)
+	if err := m.Down(); err != nil {
+		t.Fatalf("down to zero: %v", err)
 	}
-	for _, table := range []string{"artist", "credit", "alias", "event"} {
+	for _, table := range []string{"artist", "credit", "alias", "event", "file"} {
 		if tableExists(dsn, table) {
 			t.Errorf("table %q still exists after down", table)
 		}
@@ -232,6 +237,22 @@ func TestSearchSurfacesWorkTitles(t *testing.T) {
 }
 
 // helpers
+
+// countMigrations counts the embedded up-migrations so the expected
+// schema version tracks new migration files automatically.
+func countMigrations() uint {
+	entries, err := fs.ReadDir(migrationFS, "migrations")
+	if err != nil {
+		panic("read embedded migrations: " + err.Error())
+	}
+	var n uint
+	for _, e := range entries {
+		if strings.HasSuffix(e.Name(), ".up.sql") {
+			n++
+		}
+	}
+	return n
+}
 
 func schemaVersion(dsn string) (version int, dirty bool, err error) {
 	conn, err := sql.Open("pgx", dsn)
