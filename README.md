@@ -16,24 +16,6 @@ herself: music as something played for the goddess, not merely owned.
 A fitting namesake for a server that treats music as relationships and
 context, not as a pile of files.
 
-## Status
-
-Work in progress, but the data pipeline is real and running today:
-
-- Scans library roots (read-only, always) and stores raw tags as
-  evidence.
-- Resolves every track, album and artist against MusicBrainz
-  (rate-limited, cached, idempotent; a full first sync is bounded by
-  the official 1 req/s API limit, rescans are free).
-- Serves a first-party JSON API (OpenAPI spec-first) and a
-  server-rendered web UI with live search, artist and album pages,
-  per-user localized display names (English alias, kanji original, or
-  historical names like "Eskimo Callboy" before the rename), and a
-  localized interface (English and German so far).
-- Auth: argon2id login, browser sessions and revocable API tokens.
-
-Playback and analytics come next; the Android client comes after that.
-
 ## Setup
 
 The deployment path is Docker Compose. Create a `.env` file next to
