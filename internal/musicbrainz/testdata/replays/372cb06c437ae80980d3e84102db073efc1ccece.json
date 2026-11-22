@@ -1,0 +1,72 @@
+{
+  "aliases": [],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "おさむらいさん",
+            "primary": true,
+            "sort-name": "おさむらいさん",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "Japanese composer and guitar arranger",
+        "id": "0a84f423-0539-4c53-8b74-1089b4909f56",
+        "name": "おさむらいさん",
+        "sort-name": "Osamuraisan",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "",
+      "name": "おさむらいさん"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2012-09-12",
+  "id": "c79ab0e7-6aeb-4e80-87bc-5a1de587ea35",
+  "length": 228893,
+  "relations": [
+    {
+      "attribute-ids": {
+        "cover": "1e8536bd-6eda-3822-8e78-1c0f4d3d2113"
+      },
+      "attribute-values": {},
+      "attributes": [
+        "cover"
+      ],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "",
+        "id": "748bbd7d-a800-49a5-8579-a18e11b6ccfd",
+        "iswcs": [
+          "T-102.045.405-9"
+        ],
+        "language": "jpn",
+        "languages": [
+          "jpn"
+        ],
+        "title": "千本桜",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "千本桜【アコースティックギター・バージョン】",
+  "video": false
+}

@@ -1,0 +1,297 @@
+{
+  "aliases": [],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "Keisuke Ōya",
+            "primary": null,
+            "sort-name": "Ōya, Keisuke",
+            "type": "Legal name",
+            "type-id": "d4dcd0c0-b341-3612-a332-c0ce797b25cf"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "ZimuinG",
+            "primary": true,
+            "sort-name": "ZimuinG",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "事務員G",
+            "primary": true,
+            "sort-name": "ジムインジー",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "",
+        "id": "eb43c999-dcea-464d-8558-280a1acf1379",
+        "name": "事務員G",
+        "sort-name": "ZimuinG",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": ", ",
+      "name": "事務員G"
+    },
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "Eito Honda",
+            "primary": null,
+            "sort-name": "Honda, Eito",
+            "type": "Legal name",
+            "type-id": "d4dcd0c0-b341-3612-a332-c0ce797b25cf"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "en",
+            "name": "marasy",
+            "primary": true,
+            "sort-name": "marasy",
+            "type": null,
+            "type-id": null
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "まらしぃ",
+            "primary": true,
+            "sort-name": "マラシィ",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "本田詠人",
+            "primary": false,
+            "sort-name": "本田詠人",
+            "type": "Legal name",
+            "type-id": "d4dcd0c0-b341-3612-a332-c0ce797b25cf"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "",
+        "id": "4938c8c5-14e4-4545-a5a7-5b324caaa542",
+        "name": "まらしぃ",
+        "sort-name": "Marasy",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": ", ",
+      "name": "まらしぃ"
+    },
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "[TEST]",
+            "primary": null,
+            "sort-name": "TEST",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "松村弘基",
+            "primary": true,
+            "sort-name": "まつむら ひろき",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "guitarist",
+        "id": "93640a33-f47b-4276-abe1-7c5accb294e9",
+        "name": "松村弘基",
+        "sort-name": "Matsumura, Hiroki",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": ", ",
+      "name": "[TEST]"
+    },
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "Shobon",
+            "primary": null,
+            "sort-name": "Shobon",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "Taichi \"Shobon\" Ito",
+            "primary": null,
+            "sort-name": "Taichi \"Shobon\" Ito",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "ショボン",
+            "primary": false,
+            "sort-name": "ショボン",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "伊藤“ショボン”太一",
+            "primary": false,
+            "sort-name": "いとう ショボン たいち",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": "ja",
+            "name": "伊藤太一",
+            "primary": true,
+            "sort-name": "いとう たいち",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "JP",
+        "disambiguation": "drummer",
+        "id": "2eaacc16-26ec-4e5e-a9af-c1ba1817bb2e",
+        "name": "伊藤太一",
+        "sort-name": "Ito, Taichi",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": ", ",
+      "name": "ショボン"
+    },
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "H.J.Freaks",
+            "primary": null,
+            "sort-name": "H.J.Freaks",
+            "type": null,
+            "type-id": null
+          },
+          {
+            "begin": null,
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "HJFreaks",
+            "primary": null,
+            "sort-name": "HJFreaks",
+            "type": null,
+            "type-id": null
+          }
+        ],
+        "country": "KR",
+        "disambiguation": "",
+        "id": "024792f2-b21b-4788-bf4f-88bd34d19c23",
+        "name": "H. J. Freaks",
+        "sort-name": "H. J. Freaks",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "",
+      "name": "H.J.FREAKS"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2012-09-12",
+  "id": "da87eae0-9d42-4c78-b3b8-6bca5195fe1f",
+  "length": 237600,
+  "relations": [
+    {
+      "attribute-ids": {
+        "cover": "1e8536bd-6eda-3822-8e78-1c0f4d3d2113"
+      },
+      "attribute-values": {},
+      "attributes": [
+        "cover"
+      ],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "",
+        "id": "748bbd7d-a800-49a5-8579-a18e11b6ccfd",
+        "iswcs": [
+          "T-102.045.405-9"
+        ],
+        "language": "jpn",
+        "languages": [
+          "jpn"
+        ],
+        "title": "千本桜",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "千本桜【２台ピアノバージョン】",
+  "video": false
+}

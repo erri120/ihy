@@ -66,7 +66,9 @@ func main() {
 		log.Printf("library roots: %s", strings.Join(cfg.Libraries, ", "))
 		go func() {
 			scanner.RunAll(context.Background(), conn, cfg.Libraries, scanner.DefaultTagReader)
-			live := musicbrainz.NewLiveTransport(http.DefaultTransport)
+			interval := time.Duration(float64(time.Second) / cfg.MBRateLimit)
+			live := musicbrainz.NewLiveTransport(http.DefaultTransport, interval)
+			log.Printf("MusicBrainz: %s at %.1f req/s", cfg.MBBaseURL, cfg.MBRateLimit)
 			var rt http.RoundTripper = live
 			// Dev/offline mode: serve recorded entities from the
 			// replay manifest instead of the API; misses still go
@@ -86,7 +88,7 @@ func main() {
 				}
 			}
 			fetcher := musicbrainz.NewClient(
-				musicbrainz.DefaultBaseURL,
+				cfg.MBBaseURL,
 				musicbrainz.UserAgent("0.0.1", musicbrainz.DefaultContactURL),
 				musicbrainz.NewCachingTransport(conn, rt))
 			res := resolver.New(conn, fetcher)

@@ -25,10 +25,11 @@ func TestReplayLookupsDecode(t *testing.T) {
 	ctx := context.Background()
 
 	for url := range rt.manifest {
-		// URL form: <base>/ws/2/<entity>/<mbid>?inc=...
-		rest, ok := strings.CutPrefix(url, client.base+"/ws/2/")
+		// Manifest keys are host-independent request URIs:
+		// /ws/2/<entity>/<mbid>?inc=...
+		rest, ok := strings.CutPrefix(url, "/ws/2/")
 		if !ok {
-			t.Errorf("unexpected manifest URL: %s", url)
+			t.Errorf("unexpected manifest key: %s", url)
 			continue
 		}
 		parts := strings.SplitN(rest, "?", 2)

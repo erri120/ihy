@@ -122,9 +122,12 @@ CREATE TABLE alias (
     type         text,            -- artist name | search hint | ...
     is_primary   boolean NOT NULL DEFAULT false,
     begin_date   text,
-    end_date     text,
-    UNIQUE (entity_type, entity_mbid, name, locale)
+    end_date     text
 );
+-- NULL locale must dedupe like any other value: uniqueness is an
+-- expression index over coalesce(locale, ''), since table-level
+-- UNIQUE constraints cannot contain expressions.
+CREATE UNIQUE INDEX alias_uniq_key ON alias (entity_type, entity_mbid, name, coalesce(locale, ''));
 CREATE INDEX alias_entity_idx ON alias (entity_type, entity_mbid);
 
 -- Physical media.

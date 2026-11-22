@@ -26,8 +26,8 @@ func NewCachingTransport(db *sql.DB, rt http.RoundTripper) *CachingTransport {
 	return &CachingTransport{db: db, rt: rt}
 }
 
-func cacheKey(url string) []byte {
-	h := sha1.Sum([]byte(url))
+func cacheKey(requestURI string) []byte {
+	h := sha1.Sum([]byte(requestURI))
 	return h[:]
 }
 
@@ -35,7 +35,10 @@ func (t *CachingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 	if req.Method != http.MethodGet {
 		return nil, fmt.Errorf("cache transport supports GET only, got %s", req.Method)
 	}
-	key := cacheKey(req.URL.String())
+	// Keyed by the host-independent request URI, so a mirror
+	// endpoint shares the cache with musicbrainz.org.
+	uri := req.URL.RequestURI()
+	key := cacheKey(uri)
 
 	var cached []byte
 	err := t.db.QueryRowContext(req.Context(),
@@ -62,7 +65,7 @@ func (t *CachingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 		INSERT INTO mb_cache (url_hash, url, body, fetched_at)
 		VALUES ($1, $2, $3, now())
 		ON CONFLICT (url_hash) DO UPDATE SET body = EXCLUDED.body, fetched_at = now()`,
-		key, req.URL.String(), raw)
+		key, uri, raw)
 	if err != nil {
 		return resp, fmt.Errorf("write mb_cache: %w", err)
 	}

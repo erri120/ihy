@@ -1,8 +1,8 @@
 // LiveTransport is the rate-limited boundary to the MusicBrainz API:
 // every transport chain that can hit the network goes through it, so
-// the documented 1 req/s rule is enforced exactly where requests
-// leave the process. Offline transports (replay) sit in front of it
-// and are never paced.
+// the documented pacing rule is enforced exactly where requests leave
+// the process. Offline transports (replay) sit in front of it and are
+// never paced.
 package musicbrainz
 
 import (
@@ -10,24 +10,34 @@ import (
 	"time"
 )
 
+// DefaultRateInterval is the documented musicbrainz.org pacing: one
+// request per second, on average, per IP. Self-hosted mirrors may
+// allow more; configure via IHY_MB_RATE_LIMIT.
+const DefaultRateInterval = time.Second
+
 type LiveTransport struct {
-	rt      http.RoundTripper
-	lastReq time.Time
+	rt       http.RoundTripper
+	interval time.Duration
+	lastReq  time.Time
 }
 
 var _ http.RoundTripper = (*LiveTransport)(nil)
 
-// NewLiveTransport wraps an inner transport with 1 req/s pacing.
-func NewLiveTransport(rt http.RoundTripper) *LiveTransport {
+// NewLiveTransport wraps an inner transport with rate limiting. An
+// interval of zero or less means one request per second.
+func NewLiveTransport(rt http.RoundTripper, interval time.Duration) *LiveTransport {
 	if rt == nil {
 		rt = http.DefaultTransport
 	}
-	return &LiveTransport{rt: rt}
+	if interval <= 0 {
+		interval = DefaultRateInterval
+	}
+	return &LiveTransport{rt: rt, interval: interval}
 }
 
 func (t *LiveTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	// 1 req/s: sleep out the remainder since the previous request.
-	if wait := time.Until(t.lastReq.Add(time.Second)); wait > 0 {
+	// Pace by sleeping out the remainder since the previous request.
+	if wait := time.Until(t.lastReq.Add(t.interval)); wait > 0 {
 		select {
 		case <-req.Context().Done():
 			return nil, req.Context().Err()

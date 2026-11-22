@@ -1,0 +1,60 @@
+{
+  "aliases": [],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [],
+        "country": null,
+        "disambiguation": "",
+        "id": "0d0617c6-c32f-4eac-a0ca-6ee378dba73a",
+        "name": "[Mint], ムター",
+        "sort-name": "[Mint], ムター",
+        "type": null,
+        "type-id": null
+      },
+      "joinphrase": "",
+      "name": "[Mint] feat. ムター"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2012-09-12",
+  "id": "9c872867-ba95-4199-9409-3e333b7da39f",
+  "length": 269000,
+  "relations": [
+    {
+      "attribute-ids": {
+        "cover": "1e8536bd-6eda-3822-8e78-1c0f4d3d2113"
+      },
+      "attribute-values": {},
+      "attributes": [
+        "cover"
+      ],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "",
+        "id": "748bbd7d-a800-49a5-8579-a18e11b6ccfd",
+        "iswcs": [
+          "T-102.045.405-9"
+        ],
+        "language": "jpn",
+        "languages": [
+          "jpn"
+        ],
+        "title": "千本桜",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "千本桜 -[Mint] Edition-",
+  "video": false
+}

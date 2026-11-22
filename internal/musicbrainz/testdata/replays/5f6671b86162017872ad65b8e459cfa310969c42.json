@@ -1,0 +1,74 @@
+{
+  "aliases": [],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [],
+        "country": "JP",
+        "disambiguation": "",
+        "id": "1b5de66c-c9c3-4768-9e65-4d8d585c2e60",
+        "name": "やまだひさし",
+        "sort-name": "Yamada, Hisashi",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": "(ピアノ:",
+      "name": "やまだひさし"
+    },
+    {
+      "artist": {
+        "aliases": [],
+        "country": "JP",
+        "disambiguation": "",
+        "id": "a5b53c17-e09a-4d4e-b922-b16db121647a",
+        "name": "佐山こうた",
+        "sort-name": "Sayama, Kota",
+        "type": "Person",
+        "type-id": "b6e035f4-3ce9-331c-97df-83397230b0df"
+      },
+      "joinphrase": ")",
+      "name": "佐山こうた"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2012-09-12",
+  "id": "ca68e7c5-ff03-4b18-ad00-1f582ef8b5ac",
+  "length": 274000,
+  "relations": [
+    {
+      "attribute-ids": {
+        "cover": "1e8536bd-6eda-3822-8e78-1c0f4d3d2113"
+      },
+      "attribute-values": {},
+      "attributes": [
+        "cover"
+      ],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "",
+        "id": "748bbd7d-a800-49a5-8579-a18e11b6ccfd",
+        "iswcs": [
+          "T-102.045.405-9"
+        ],
+        "language": "jpn",
+        "languages": [
+          "jpn"
+        ],
+        "title": "千本桜",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "千本桜【口笛バージョン】",
+  "video": false
+}

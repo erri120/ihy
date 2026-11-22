@@ -64,7 +64,11 @@ func (st *run) fetch(ctx context.Context) error {
 			return err
 		}
 		st.res.Artists++
-		st.res.Aliases += st.r.putAliases(ctx, "artist", a.MBID, artistAliases(a))
+		n, err := st.r.putAliases(ctx, "artist", a.MBID, artistAliases(a))
+		if err != nil {
+			return err
+		}
+		st.res.Aliases += n
 	}
 	for _, m := range snapshot(st.wanted["release-group"]) {
 		rg, err := st.r.fetcher.ReleaseGroup(ctx, m)
@@ -86,7 +90,11 @@ func (st *run) fetch(ctx context.Context) error {
 			return err
 		}
 		st.res.Credits += n
-		st.res.Aliases += st.r.putAliases(ctx, "release_group", rg.MBID, mbAliases(rg.Aliases))
+		n, err = st.r.putAliases(ctx, "release_group", rg.MBID, mbAliases(rg.Aliases))
+		if err != nil {
+			return err
+		}
+		st.res.Aliases += n
 	}
 	for _, m := range snapshot(st.wanted["release"]) {
 		rel, err := st.r.fetcher.Release(ctx, m)
@@ -121,7 +129,11 @@ func (st *run) fetch(ctx context.Context) error {
 			return err
 		}
 		st.res.Credits += n
-		st.res.Aliases += st.r.putAliases(ctx, "work", w.MBID, mbAliases(w.Aliases))
+		n, err = st.r.putAliases(ctx, "work", w.MBID, mbAliases(w.Aliases))
+		if err != nil {
+			return err
+		}
+		st.res.Aliases += n
 	}
 	for _, rec := range recordings {
 		if err := st.r.upsertRecording(ctx, rec); err != nil {
@@ -133,7 +145,11 @@ func (st *run) fetch(ctx context.Context) error {
 			return err
 		}
 		st.res.Credits += n
-		st.res.Aliases += st.r.putAliases(ctx, "recording", rec.MBID, mbAliases(rec.Aliases))
+		n, err = st.r.putAliases(ctx, "recording", rec.MBID, mbAliases(rec.Aliases))
+		if err != nil {
+			return err
+		}
+		st.res.Aliases += n
 	}
 	return nil
 }
@@ -273,27 +289,52 @@ func (r *Resolver) upsertWork(ctx context.Context, w musicbrainz.Work) error {
 	return err
 }
 
-// putAliases writes alias rows and returns how many were stored.
-func (r *Resolver) putAliases(ctx context.Context, entityType string, mbid musicbrainz.MBID, aliases []musicbrainz.Alias) int {
-	n := 0
+// putAliases writes alias rows in one statement and returns how many
+// were stored. Empty strings become NULL, matching the per-row
+// behavior; the unique index keys on coalesce(locale, ”) so
+// NULL-locale aliases dedupe like any other.
+func (r *Resolver) putAliases(ctx context.Context, entityType string, mbid musicbrainz.MBID, aliases []musicbrainz.Alias) (int, error) {
+	rows := make([]musicbrainz.Alias, 0, len(aliases))
 	for _, al := range aliases {
-		if al.Name == "" {
-			continue
-		}
-		_, err := r.db.ExecContext(ctx, `
-			INSERT INTO alias (entity_type, entity_mbid, name, sort_name, locale, type, is_primary, begin_date, end_date)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-			ON CONFLICT (entity_type, entity_mbid, name, locale) DO UPDATE SET
-				sort_name = EXCLUDED.sort_name, type = EXCLUDED.type,
-				is_primary = EXCLUDED.is_primary,
-				begin_date = EXCLUDED.begin_date, end_date = EXCLUDED.end_date`,
-			entityType, mbid, al.Name, nullString(al.SortName), nullString(al.Locale),
-			nullString(al.Type), al.Primary, nullString(al.Begin), nullString(al.End))
-		if err == nil {
-			n++
+		if al.Name != "" {
+			rows = append(rows, al)
 		}
 	}
-	return n
+	if len(rows) == 0 {
+		return 0, nil
+	}
+	names := make([]string, len(rows))
+	sortNames := make([]string, len(rows))
+	locales := make([]string, len(rows))
+	types := make([]string, len(rows))
+	primaries := make([]bool, len(rows))
+	begins := make([]string, len(rows))
+	ends := make([]string, len(rows))
+	for i, al := range rows {
+		names[i] = al.Name
+		sortNames[i] = al.SortName
+		locales[i] = al.Locale
+		types[i] = al.Type
+		primaries[i] = al.Primary
+		begins[i] = al.Begin
+		ends[i] = al.End
+	}
+	res, err := r.db.ExecContext(ctx, `
+		INSERT INTO alias (entity_type, entity_mbid, name, sort_name, locale, type, is_primary, begin_date, end_date)
+		SELECT $1, $2::uuid, c.name, nullif(c.sort_name, ''), nullif(c.locale, ''),
+		       nullif(c.type, ''), c.is_primary, nullif(c.begin_date, ''), nullif(c.end_date, '')
+		FROM unnest($3::text[], $4::text[], $5::text[], $6::text[], $7::bool[], $8::text[], $9::text[])
+		     AS c(name, sort_name, locale, type, is_primary, begin_date, end_date)
+		ON CONFLICT (entity_type, entity_mbid, name, coalesce(locale, '')) DO UPDATE SET
+			sort_name = EXCLUDED.sort_name, type = EXCLUDED.type,
+			is_primary = EXCLUDED.is_primary,
+			begin_date = EXCLUDED.begin_date, end_date = EXCLUDED.end_date`,
+		entityType, mbid, names, sortNames, locales, types, primaries, begins, ends)
+	if err != nil {
+		return 0, err
+	}
+	n, _ := res.RowsAffected()
+	return int(n), nil
 }
 
 func artistAliases(a musicbrainz.Artist) []musicbrainz.Alias { return a.Aliases }
@@ -349,31 +390,29 @@ func relCreditRows(rels []musicbrainz.Relation) []creditInput {
 	return out
 }
 
-// putCredits writes credit rows; also links work relations when the
-// payload is a recording (recording -> work performance links).
+// putRecordingCredits stores the recording's credits and links its
+// performance works in two statements. The work join drops stale work
+// MBIDs whose lookup failed.
 func (r *Resolver) putRecordingCredits(ctx context.Context, rec musicbrainz.Recording) (int, error) {
 	n, err := r.putCredits(ctx, "recording", rec.MBID,
 		append(creditRows("artist-credit", rec.ArtistCredit), relCreditRows(rec.Relations)...))
 	if err != nil {
 		return n, err
 	}
+	var workIDs []string
 	for _, rel := range rec.Relations {
 		if rel.Type == "performance" && rel.Work != nil && rel.Work.MBID != "" {
-			// Skip stale work MBIDs whose lookup failed.
-			var exists bool
-			if err := r.db.QueryRowContext(ctx,
-				`SELECT EXISTS (SELECT 1 FROM work WHERE mbid = $1)`, rel.Work.MBID).Scan(&exists); err != nil {
-				return n, err
-			}
-			if !exists {
-				continue
-			}
-			if _, err := r.db.ExecContext(ctx, `
-				INSERT INTO recording_work (recording_mbid, work_mbid)
-				VALUES ($1, $2) ON CONFLICT DO NOTHING`,
-				rec.MBID, rel.Work.MBID); err != nil {
-				return n, err
-			}
+			workIDs = append(workIDs, string(rel.Work.MBID))
+		}
+	}
+	if len(workIDs) > 0 {
+		_, err = r.db.ExecContext(ctx, `
+			INSERT INTO recording_work (recording_mbid, work_mbid)
+			SELECT $1, w.mbid FROM unnest($2::text[]) AS m(mbid)
+			JOIN work w ON w.mbid = m.mbid::uuid
+			ON CONFLICT DO NOTHING`, rec.MBID, workIDs)
+		if err != nil {
+			return n, err
 		}
 	}
 	return n, nil
@@ -385,148 +424,128 @@ func (r *Resolver) putWorkCredits(ctx context.Context, w musicbrainz.Work) (int,
 	return r.putCredits(ctx, "work", w.MBID, relCreditRows(w.Relations))
 }
 
+// putCredits writes credit rows in one statement. Artists missing
+// from the artist table (stale MBIDs whose lookup failed) are
+// filtered server-side, preserving the per-row behavior.
 func (r *Resolver) putCredits(ctx context.Context, subjectType string, subject musicbrainz.MBID, rows []creditInput) (int, error) {
-	n := 0
-	for _, cr := range rows {
-		// A relationship can target a stale MBID whose artist lookup
-		// failed; a credit without its artist row would violate the
-		// FK, so drop it (the missing artist is counted elsewhere).
-		var exists bool
-		err := r.db.QueryRowContext(ctx,
-			`SELECT EXISTS (SELECT 1 FROM artist WHERE mbid = $1)`, cr.artist).Scan(&exists)
-		if err != nil {
-			return n, err
-		}
-		if !exists {
-			continue
-		}
-		_, err = r.db.ExecContext(ctx, `
-			INSERT INTO credit (subject_type, subject_mbid, artist_mbid, role, details, position, display_name, joinphrase)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-			ON CONFLICT (subject_type, subject_mbid, artist_mbid, role, position) DO UPDATE SET
-				details = EXCLUDED.details, display_name = EXCLUDED.display_name,
-				joinphrase = EXCLUDED.joinphrase`,
-			subjectType, subject, cr.artist, cr.role, cr.details, cr.position,
-			cr.displayName, cr.joinPhrase)
-		if err != nil {
-			return n, err
-		}
-		n++
+	if len(rows) == 0 {
+		return 0, nil
 	}
-	return n, nil
+	artists := make([]string, len(rows))
+	roles := make([]string, len(rows))
+	details := make([]string, len(rows))
+	positions := make([]int32, len(rows))
+	displayNames := make([]string, len(rows))
+	joins := make([]string, len(rows))
+	for i, cr := range rows {
+		artists[i] = string(cr.artist)
+		roles[i] = cr.role
+		details[i] = cr.details
+		positions[i] = int32(cr.position)
+		displayNames[i] = cr.displayName
+		joins[i] = cr.joinPhrase
+	}
+	res, err := r.db.ExecContext(ctx, `
+		INSERT INTO credit (subject_type, subject_mbid, artist_mbid, role, details, position, display_name, joinphrase)
+		SELECT $1, $2::uuid, c.artist_mbid::uuid, c.role, c.details, c.position, c.display_name, c.joinphrase
+		FROM unnest($3::text[], $4::text[], $5::text[], $6::int[], $7::text[], $8::text[])
+		     AS c(artist_mbid, role, details, position, display_name, joinphrase)
+		WHERE c.artist_mbid ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+		  AND EXISTS (SELECT 1 FROM artist a WHERE a.mbid = c.artist_mbid::uuid)
+		ON CONFLICT (subject_type, subject_mbid, artist_mbid, role, position) DO UPDATE SET
+			details = EXCLUDED.details, display_name = EXCLUDED.display_name,
+			joinphrase = EXCLUDED.joinphrase`,
+		subjectType, subject, artists, roles, details, positions, displayNames, joins)
+	if err != nil {
+		return 0, err
+	}
+	n, _ := res.RowsAffected()
+	return int(n), nil
 }
 
-// linkFiles sets file.release_mbid / file.recording_mbid from tags.
+// linkFiles sets file.release_mbid / file.recording_mbid from tags
+// in one statement: standalone-marker files keep NULL release, and
+// missing tag MBIDs become NULL exactly as the per-row version did.
 func (st *run) linkFiles(ctx context.Context, files []fileTags) error {
-	for _, f := range files {
+	if len(files) == 0 {
+		return nil
+	}
+	ids := make([]int64, len(files))
+	releases := make([]string, len(files))
+	recordings := make([]string, len(files))
+	for i, f := range files {
+		ids[i] = f.id
 		standalone := first(f.tags, "ALBUM") == standaloneMarker
-		var release any
 		if !standalone {
-			if v := first(f.tags, "MUSICBRAINZ_ALBUMID"); v != "" {
-				release = musicbrainz.MBID(v)
-			}
+			releases[i] = first(f.tags, "MUSICBRAINZ_ALBUMID")
 		}
-		var recording any
-		if v := first(f.tags, "MUSICBRAINZ_TRACKID"); v != "" {
-			recording = musicbrainz.MBID(v)
-		}
-		if _, err := st.r.db.ExecContext(ctx, `
-			UPDATE file SET release_mbid = $2, recording_mbid = $3 WHERE id = $1`,
-			f.id, release, recording); err != nil {
-			return fmt.Errorf("link file %d: %w", f.id, err)
-		}
-		st.recordConflicts(f)
+		recordings[i] = first(f.tags, "MUSICBRAINZ_TRACKID")
+	}
+	if _, err := st.r.db.ExecContext(ctx, `
+		UPDATE file SET
+			release_mbid = nullif(u.release, '')::uuid,
+			recording_mbid = nullif(u.recording, '')::uuid
+		FROM unnest($1::bigint[], $2::text[], $3::text[]) AS u(id, release, recording)
+		WHERE file.id = u.id`, ids, releases, recordings); err != nil {
+		return fmt.Errorf("link files: %w", err)
 	}
 	return nil
 }
 
-// recordConflicts compares tag values against canonical MusicBrainz
-// names for MBID-anchored entities (MB wins; tag value is recorded as
-// a display choice, not deleted).
-func (st *run) recordConflicts(f fileTags) {
-	if v := first(f.tags, "MUSICBRAINZ_TRACKID"); v != "" {
-		var mbTitle string
-		err := st.r.db.QueryRow(`SELECT title FROM recording WHERE mbid = $1`,
-			musicbrainz.MBID(v)).Scan(&mbTitle)
-		if err == nil {
-			if tag := first(f.tags, "TITLE"); tag != "" && tag != mbTitle {
-				st.add(f.id, "recording-title", tag, mbTitle)
-			}
-		}
-	}
-	for key, kind := range map[string]string{
-		"MUSICBRAINZ_ARTISTID":       "artist-name",
-		"MUSICBRAINZ_ALBUMARTISTID":  "artist-name",
-		"MUSICBRAINZ_ALBUMID":        "release-title",
-		"MUSICBRAINZ_RELEASEGROUPID": "release-group-title",
-	} {
-		v := first(f.tags, key)
-		if v == "" || v == string(vaArtistMBID) {
-			continue
-		}
-		var table, column string
-		switch kind {
-		case "artist-name":
-			table, column = "artist", "name"
-		case "release-title":
-			table, column = "release", "title"
-		default:
-			table, column = "release_group", "title"
-		}
-		var mbName string
-		err := st.r.db.QueryRow(fmt.Sprintf(`SELECT %s FROM %s WHERE mbid = $1`, column, table),
-			musicbrainz.MBID(v)).Scan(&mbName)
-		if err == nil {
-			tagValue := first(f.tags, tagKeyFor(kind, f.tags))
-			if tagValue != "" && tagValue != mbName {
-				st.add(f.id, kind, tagValue, mbName)
-			}
-		}
-	}
-}
-
-// tagKeyFor picks the tag key holding the human name for a conflict
-// kind (ARTIST/ALBUMARTIST/ALBUM). The tag value is compared against
-// the canonical MB name of the MBID it was written with.
-func tagKeyFor(kind string, tags map[string][]string) string {
-	switch kind {
-	case "artist-name":
-		if _, ok := tags["ARTIST"]; ok {
-			return "ARTIST"
-		}
-		return "ALBUMARTISTS"
-	case "release-title":
-		return "ALBUM"
-	default:
-		return "ALBUM"
-	}
-}
-
-func (st *run) add(fileID int64, kind, tagValue, mbValue string) {
-	for _, c := range st.confRows {
-		if c.fileID == fileID && c.kind == kind && c.tagValue == tagValue && c.mbValue == mbValue {
-			return
-		}
-	}
-	st.confRows = append(st.confRows, conflictRow{fileID, kind, tagValue, mbValue})
-}
-
-// persistConflicts rebuilds the conflict table for the run.
+// persistConflicts rebuilds the conflict table for the run in one
+// pass: tag values are compared against canonical MusicBrainz names
+// set-based, per kind (MB wins; tag values are display choices, not
+// deletions). The MBID regex guard keeps malformed tag UUIDs from
+// aborting the cast the way the per-row queries skipped them.
 func (st *run) persistConflicts(ctx context.Context) error {
 	if _, err := st.r.db.ExecContext(ctx, `DELETE FROM conflict`); err != nil {
 		return err
 	}
-	for _, c := range st.confRows {
-		if _, err := st.r.db.ExecContext(ctx, `
+	const mbidPattern = `^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`
+	const vaMBID = "89ad4ac3-39f7-470e-963a-56509c546377"
+	// kind, tag tag key resolution, MB table+column, tag MBID key.
+	kinds := []struct {
+		kind    string
+		tagExpr string // SQL for the tag value
+		mbidKey string // file tag key holding the MB ID
+		table   string
+		column  string
+	}{
+		{"recording-title", "f.tags->'TITLE'->>0", "MUSICBRAINZ_TRACKID", "recording", "title"},
+		{"artist-name", "coalesce(nullif(f.tags->'ARTIST'->>0,''), f.tags->'ALBUMARTISTS'->>0)", "MUSICBRAINZ_ARTISTID", "artist", "name"},
+		{"artist-name", "coalesce(nullif(f.tags->'ARTIST'->>0,''), f.tags->'ALBUMARTISTS'->>0)", "MUSICBRAINZ_ALBUMARTISTID", "artist", "name"},
+		{"release-title", "f.tags->'ALBUM'->>0", "MUSICBRAINZ_ALBUMID", "release", "title"},
+		{"release-group-title", "f.tags->'ALBUM'->>0", "MUSICBRAINZ_RELEASEGROUPID", "release_group", "title"},
+	}
+	for _, k := range kinds {
+		res, err := st.r.db.ExecContext(ctx, `
 			INSERT INTO conflict (file_id, kind, tag_value, mb_value)
-			VALUES ($1, $2, $3, $4)
+			SELECT DISTINCT f.id, $1, nullif(tag.tag_value, ''), mb.`+k.column+`
+			FROM file f
+			JOIN `+k.table+` mb ON mb.mbid = CASE
+				WHEN f.tags->'`+k.mbidKey+`'->>0 ~* $2 THEN (f.tags->'`+k.mbidKey+`'->>0)::uuid
+			END
+			CROSS JOIN LATERAL (SELECT `+k.tagExpr+` AS tag_value) tag
+			WHERE f.tags->'`+k.mbidKey+`'->>0 ~* $2
+			  AND f.tags->'`+k.mbidKey+`'->>0 <> $3
+			  AND tag.tag_value IS NOT NULL
+			  AND tag.tag_value IS DISTINCT FROM mb.`+k.column+`
 			ON CONFLICT (file_id, kind, tag_value, mb_value) DO NOTHING`,
-			c.fileID, c.kind, c.tagValue, c.mbValue); err != nil {
+			k.kind, mbidPattern, vaMBID)
+		if err != nil {
 			return err
 		}
-		st.res.Conflicts++
+		n, _ := res.RowsAffected()
+		st.res.Conflicts += int(n)
 	}
 	return nil
+}
+
+func nullString(s string) any {
+	if s == "" {
+		return nil
+	}
+	return s
 }
 
 // buildSearchVectors writes the weighted search document per
@@ -552,11 +571,4 @@ func (st *run) buildSearchVectors(ctx context.Context) error {
 				WHERE rw.recording_mbid = recording.mbid
 			), '')), 'D')`)
 	return err
-}
-
-func nullString(s string) any {
-	if s == "" {
-		return nil
-	}
-	return s
 }

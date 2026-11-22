@@ -22,7 +22,8 @@ func NewReplayFirstTransport(replay *ReplayTransport, record *RecordingTransport
 
 func (t *ReplayFirstTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if req.Method == http.MethodGet {
-		if _, ok := t.replay.manifest[req.URL.String()]; ok {
+		// Manifest keys are host-independent request URIs.
+		if _, ok := t.replay.manifest[req.URL.RequestURI()]; ok {
 			return t.replay.RoundTrip(req)
 		}
 	}

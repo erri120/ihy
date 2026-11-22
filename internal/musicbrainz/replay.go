@@ -62,16 +62,19 @@ func trimValue(v any) any {
 	}
 }
 
-// replayKey is the replay manifest key for a request URL.
-func replayKey(method, url string) (string, error) {
+// replayKey is the replay manifest key for a request: the
+// host-independent request URI (path + query), so replays and caches
+// work unchanged against a mirror endpoint.
+func replayKey(method, requestURI string) (string, error) {
 	if method != http.MethodGet {
 		return "", fmt.Errorf("replays only support GET, got %s", method)
 	}
-	h := sha1.Sum([]byte(url))
+	h := sha1.Sum([]byte(requestURI))
 	return fmt.Sprintf("%x", h), nil
 }
 
-// Manifest maps request URLs to replay file names.
+// Manifest maps request URIs (path + query, host-independent) to
+// replay file names.
 type Manifest map[string]string
 
 const manifestFile = "manifest.json"
@@ -94,7 +97,7 @@ var (
 // transport defaults to a rate-limited live transport.
 func NewRecordingTransport(dir string, rt http.RoundTripper) (*RecordingTransport, error) {
 	if rt == nil {
-		rt = NewLiveTransport(http.DefaultTransport)
+		rt = NewLiveTransport(http.DefaultTransport, DefaultRateInterval)
 	}
 	t := &RecordingTransport{dir: dir, rt: rt, seen: Manifest{}}
 	if err := t.loadManifest(); err != nil {
@@ -136,7 +139,7 @@ func (t *RecordingTransport) RoundTrip(req *http.Request) (*http.Response, error
 	if resp.StatusCode != http.StatusOK {
 		return resp, nil // only record clean 200 responses
 	}
-	name, err := replayKey(req.Method, req.URL.String())
+	name, err := replayKey(req.Method, req.URL.RequestURI())
 	if err != nil {
 		return resp, err
 	}
@@ -151,7 +154,7 @@ func (t *RecordingTransport) RoundTrip(req *http.Request) (*http.Response, error
 	if err := os.WriteFile(filepath.Join(t.dir, name+".json"), trimmed, 0o644); err != nil {
 		return resp, err
 	}
-	t.seen[req.URL.String()] = name + ".json"
+	t.seen[req.URL.RequestURI()] = name + ".json"
 	if err := t.saveManifest(); err != nil {
 		return resp, err
 	}
@@ -182,7 +185,7 @@ func (t *ReplayTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	if req.Method != http.MethodGet {
 		return nil, fmt.Errorf("replays only support GET, got %s", req.Method)
 	}
-	name, ok := t.manifest[req.URL.String()]
+	name, ok := t.manifest[req.URL.RequestURI()]
 	if !ok {
 		return nil, fmt.Errorf(
 			"replay miss: %s not recorded; set IHY_MB_RECORD=1 (live MusicBrainz) and rerun to record it",

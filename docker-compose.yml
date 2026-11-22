@@ -34,6 +34,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?set in .env}
       DB_DATABASE: ${DB_DATABASE:?set in .env}
       IHY_LIBRARIES: ${IHY_LIBRARIES:-/music}
+      IHY_MB_BASE_URL: ${IHY_MB_BASE_URL:-https://musicbrainz.org}
+      IHY_MB_RATE_LIMIT: ${IHY_MB_RATE_LIMIT:-1}
       IHY_ARTWORK_DIR: /data/artwork
       IHY_TRANSCODE_DIR: /data/transcode
       IHY_ADMIN_PASSWORD: ${IHY_ADMIN_PASSWORD:?set in .env (first boot only)}

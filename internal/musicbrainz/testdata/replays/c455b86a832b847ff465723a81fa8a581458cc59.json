@@ -1,0 +1,135 @@
+{
+  "aliases": [
+    {
+      "begin": null,
+      "end": null,
+      "ended": false,
+      "locale": null,
+      "name": "Hypa Hypa - Gestört aber GeiL Remix",
+      "primary": null,
+      "sort-name": "Hypa Hypa - Gestört aber GeiL Remix",
+      "type": null,
+      "type-id": null
+    }
+  ],
+  "artist-credit": [
+    {
+      "artist": {
+        "aliases": [
+          {
+            "begin": "2022-03-09",
+            "end": null,
+            "ended": false,
+            "locale": null,
+            "name": "Electric Callboy",
+            "primary": null,
+            "sort-name": "Electric Callboy",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          },
+          {
+            "begin": null,
+            "end": "2022-03-09",
+            "ended": true,
+            "locale": null,
+            "name": "Eskimo Callboy",
+            "primary": null,
+            "sort-name": "Eskimo Callboy",
+            "type": "Artist name",
+            "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc"
+          }
+        ],
+        "country": "DE",
+        "disambiguation": "German metalcore, fka Eskimo Callboy",
+        "id": "cf075492-d880-4afc-b87b-d6b03e33dacc",
+        "name": "Electric Callboy",
+        "sort-name": "Electric Callboy",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "joinphrase": "",
+      "name": "Eskimo Callboy"
+    }
+  ],
+  "disambiguation": "",
+  "first-release-date": "2021-05-20",
+  "id": "c6199dd2-1446-4517-a5a2-e3efee16ffe4",
+  "length": 149546,
+  "relations": [
+    {
+      "artist": {
+        "country": "DE",
+        "disambiguation": "German metalcore, fka Eskimo Callboy",
+        "id": "cf075492-d880-4afc-b87b-d6b03e33dacc",
+        "name": "Electric Callboy",
+        "sort-name": "Electric Callboy",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": "2021",
+      "direction": "backward",
+      "end": "2021",
+      "ended": true,
+      "source-credit": "",
+      "target-credit": "Eskimo Callboy",
+      "target-type": "artist",
+      "type": "phonographic copyright",
+      "type-id": "7fd5fbc0-fbf4-4d04-be23-417d50a4dc30"
+    },
+    {
+      "artist": {
+        "country": "DE",
+        "disambiguation": "",
+        "id": "f7cf081b-e519-4942-b4cc-c1499275e1b0",
+        "name": "Gestört aber GeiL",
+        "sort-name": "Gestört aber GeiL",
+        "type": "Group",
+        "type-id": "e431f5f6-b5d2-343d-8b36-72607fffb74b"
+      },
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "backward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "artist",
+      "type": "remixer",
+      "type-id": "7950be4d-13a3-48e7-906b-5af562e39544"
+    },
+    {
+      "attribute-ids": {},
+      "attribute-values": {},
+      "attributes": [],
+      "begin": null,
+      "direction": "forward",
+      "end": null,
+      "ended": false,
+      "source-credit": "",
+      "target-credit": "",
+      "target-type": "work",
+      "type": "performance",
+      "type-id": "a3005666-a872-32c3-ad06-98af558e99b0",
+      "work": {
+        "attributes": [],
+        "disambiguation": "",
+        "id": "f656b594-83d7-48fa-8efd-bdd5e0240f53",
+        "iswcs": [],
+        "language": "eng",
+        "languages": [
+          "eng"
+        ],
+        "title": "Hypa Hypa",
+        "type": "Song",
+        "type-id": "f061270a-2fd6-32f1-a641-f0f8676d14e6"
+      }
+    }
+  ],
+  "title": "Hypa Hypa (Gestört aber Geil remix)",
+  "video": false
+}
