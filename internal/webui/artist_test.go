@@ -90,3 +90,31 @@ func TestAliasSummary(t *testing.T) {
 		t.Fatalf("aliasSummary: got %q, want %q", got, want)
 	}
 }
+
+func TestArtistOverviewRecordingCap(t *testing.T) {
+	vm := baseVM("Person")
+	for i := 0; i < 14; i++ {
+		vm.Recordings = append(vm.Recordings, RecordingVM{Mbid: itoa(i), Title: "recording"})
+	}
+	html := renderArtist(t, vm, "overview")
+	if n := strings.Count(html, `class="tr"`); n != 10 {
+		t.Errorf("overview rows: got %d, want 10 (capped)", n)
+	}
+	if strings.Contains(html, "break") {
+		t.Error("template control text leaked into the page")
+	}
+}
+
+func TestArtistRowPlaysOnPrimaryClick(t *testing.T) {
+	vm := baseVM("Person")
+	vm.Recordings = []RecordingVM{{Mbid: "rec-1", Title: "Track", Length: "3:33"}}
+	html := renderArtist(t, vm, "recordings")
+	// The row and its play button post the play intent; the detail is
+	// a separate info affordance.
+	if !strings.Contains(html, `hx-post="/ui/play?recording=rec-1"`) {
+		t.Error("the row's primary click should post a play intent")
+	}
+	if !strings.Contains(html, `hx-get="`) || !strings.Contains(html, "/detail") {
+		t.Error("the credit detail should load from the info affordance")
+	}
+}

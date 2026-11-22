@@ -170,7 +170,7 @@ not a product component.
 
 ### Track rows
 - The same row pattern serves tracks (a release position) and recordings (distinct audio); counts and section labels follow whichever entity the list holds.
-- Primary listening rows stay lean: number, title, duration, with a play affordance on hover. Credits and relationship chips live in the row's detail surface (expandable row, context menu) or on data surfaces (credits view), not inline by default.
+- Primary listening rows stay lean: number, title, duration, with a play affordance on hover. Clicking a row (or its play affordance) is a play intent; credits and relationships open through the row's info affordance (detail surface) or on data surfaces (credits view), never as the primary click.
 - Desktop: one line, lean by default: number, title (weight 500, ellipsis), duration right-aligned. Hairline separators, no zebra.
 - Mobile: the same markup adapts at the 600px breakpoint; the chips wrap to their own line under the title (title line keeps number, wrapped title, right-aligned duration). No per-device markup duplicates.
 - Credits/role line: caption voice, muted; entity names in `text` weight 600.
@@ -182,7 +182,7 @@ not a product component.
 - Reference composition: /ui/design catalogs the atoms; the artist page adopts them with real data from the dev library.
 
 ### Icons
-- Set (12): search, play, pause, prev, next, heart, heart-filled, trash, home, library, settings, close. Assets live at `static/icons/<name>.svg` (served at `/ui/static/icons/<name>.svg`); 24x24 viewBox, paint attributes on the `g id="icon"` with `currentColor`, 2px round-cap strokes for line icons, filled glyphs for transport.
+- Set (13): search, play, pause, prev, next, heart, heart-filled, info, trash, home, library, settings, close. Assets live at `static/icons/<name>.svg` (served at `/ui/static/icons/<name>.svg`); 24x24 viewBox, paint attributes on the `g id="icon"` with `currentColor`, 2px round-cap strokes for line icons, filled glyphs for transport.
 - Reference inline: `<svg class="icon" viewBox="0 0 24 24"><use href="/ui/static/icons/<name>.svg#icon"></use></svg>`, or the `Icon` templ component. `.icon` sizes (18px default, 16px in search, 20px in nav items); color inherits.
 - Adding an icon means adding the asset and listing it in the design page's icon section. No emoji, no icon fonts, no inline path copies in markup.
 
@@ -196,7 +196,7 @@ not a product component.
 
 - 8px spacing base: 4, 8, 12, 16, 22, 32, 48.
 - Page designs compose page content only: head, tabs, panels. No breadcrumb or other URL-path display at the top of a page; location is carried by the app's navigation, not by the page itself. Global chrome (navigation, playbar) is designed in the catalog and composed in the app shell. A page design covers every tab/panel of the page, and tabs stay actually switchable, never a single painted tab. The artist page is the reference composition as it adopts the system.
-- Overview pattern: primary views lead with listening: most played albums (grid, limited rows) then most played recordings (limited list), each section head clickable into its full tab, with entity data last on the overview.
+- Overview pattern: primary views lead with listening: most played albums (grid, up to eight) then most played recordings (ten), each section head clickable into its full tab, with entity data last on the overview.
 - Density is a feature: this is a library for people who read credits. Whitespace comes from spacing tokens, not from hiding metadata.
 - Entity names wrap, never truncate. Metadata may truncate with ellipsis.
 - Mobile-first wrapping rules: tiles stack, track rows split into title-line + chip-line, actions go full-width. Tablet restores the desktop structure at two columns. TV (10-foot): scale the root, not the layout; increase chip and dot sizes; do not invent a separate navigation paradigm.

@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"io/fs"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -136,6 +137,19 @@ func recordingDetailFragment(mbid, recordingMbid string) string {
 
 func itoa(n int) string { return strconv.Itoa(n) }
 
+// limited caps a slice for overview sections (most played lists).
+func limited[T any](s []T, n int) []T {
+	if len(s) > n {
+		return s[:n]
+	}
+	return s
+}
+
+// playURL is the play intent target for one recording.
+func playURL(recordingMbid string) string {
+	return "/ui/play?recording=" + url.PathEscape(recordingMbid)
+}
+
 // artistTabs builds the tab list with the active state.
 func artistTabs(mbid, active string, t *T) []TabVM {
 	names := []struct{ name, key string }{
@@ -213,6 +227,7 @@ func (s *Server) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /login", s.LoginPage)
 	mux.HandleFunc("POST /login", s.Login)
 	mux.HandleFunc("POST /logout", s.Logout)
+	mux.HandleFunc("POST /ui/play", s.auth(s.PlayRecording))
 	mux.HandleFunc("GET /ui/search", s.auth(s.Search))
 	mux.HandleFunc("GET /ui/artists/{mbid}", s.auth(s.Artist))
 	mux.HandleFunc("GET /ui/artists/{mbid}/tab/{tab}", s.auth(s.ArtistTab))
@@ -530,6 +545,15 @@ func (s *Server) ArtistRecordingDetail(w http.ResponseWriter, r *http.Request) {
 		work = &WorkVM{Mbid: recordingMbid, Title: title, ISWC: iswc}
 	}
 	render(w, http.StatusOK, ArtistRecordingDetail(t, roles, work))
+}
+
+// PlayRecording accepts a play intent for a recording (track row
+// clicks). Playback lands with the player milestone; until then the
+// intent is accepted and intentionally does nothing, keeping the
+// interaction contract (click = play) wired.
+func (s *Server) PlayRecording(w http.ResponseWriter, r *http.Request) {
+	log.Printf("play intent: recording %s (player milestone pending)", r.FormValue("recording"))
+	w.WriteHeader(http.StatusAccepted)
 }
 
 // tabName normalizes the ?tab= value; unknown tabs fall back to the

@@ -111,10 +111,7 @@ templ artistOverview(t *T, vm ArtistVM) {
 			@artistEmpty(t, t.Msg("NoAlbums"))
 		} else {
 			<div class="album-grid">
-				for i, al := range vm.Albums {
-					if i >= 8 {
-						break
-					}
+				for _, al := range limited(vm.Albums, 8) {
 					<div class="album-card">
 						@Cover("", al.Name, "")
 						<div class="ac-title">{ al.Name }</div>
@@ -140,11 +137,8 @@ templ artistOverview(t *T, vm ArtistVM) {
 			@artistEmpty(t, t.Msg("NoRecordings"))
 		} else {
 			<div class="tracklist">
-				for i, rec := range vm.Recordings {
-					if i >= 5 {
-						break
-					}
-					@artistRow(vm.Mbid, itoa(i+1), rec)
+				for i, rec := range limited(vm.Recordings, 10) {
+					@artistRow(t, vm.Mbid, itoa(i+1), rec)
 				}
 			</div>
 		}
@@ -203,21 +197,23 @@ templ artistRecordings(t *T, vm ArtistVM) {
 		} else {
 			<div class="tracklist">
 				for i, rec := range vm.Recordings {
-					@artistRow(vm.Mbid, itoa(i+1), rec)
+					@artistRow(t, vm.Mbid, itoa(i+1), rec)
 				}
 			</div>
 		}
 	</div>
 }
 
-// artistRow is one expandable recording row: clicking loads the
-// credit detail (roles verbatim + work) into the slot beneath it.
-templ artistRow(mbid, no string, rec RecordingVM) {
-	<div class="tr" hx-get={ templ.URL(recordingDetailFragment(mbid, rec.Mbid)) } hx-trigger="click" hx-target="next .a-detail-slot" hx-swap="innerHTML">
+// artistRow is one listening row: clicking it (or the play
+// affordance) posts a play intent; the credit detail stays one info
+// click away.
+templ artistRow(t *T, mbid, no string, rec RecordingVM) {
+	<div class="tr" role="button" tabindex="0" title={ t.Msg("Play") } hx-post={ templ.URL(playURL(rec.Mbid)) } hx-swap="none">
 		<span class="no">{ no }</span>
 		<span class="t">{ rec.Title }</span>
 		<span class="dur">{ rec.Length }</span>
-		<button class="btn-icon play-hover" type="button" disabled aria-label={ "Play" }>@Icon("play")</button>
+		<button class="btn-icon play-hover" type="button" aria-label={ t.Msg("Play") } hx-post={ templ.URL(playURL(rec.Mbid)) } hx-swap="none">@Icon("play")</button>
+		<button class="btn-icon" type="button" aria-label={ t.Msg("Details") } hx-get={ templ.URL(recordingDetailFragment(mbid, rec.Mbid)) } hx-target="next .a-detail-slot" hx-swap="innerHTML">@Icon("info")</button>
 	</div>
 	<div class="a-detail-slot"></div>
 }

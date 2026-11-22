@@ -427,11 +427,19 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			templ_7745c5c3_Err = Icon("info").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<span class=\"d-label\">info</span></div><div class=\"d-icon-cell\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			templ_7745c5c3_Err = Icon("trash").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<span class=\"d-label\">trash</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<span class=\"d-label\">trash</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -439,7 +447,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<span class=\"d-label\">home</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<span class=\"d-label\">home</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -447,7 +455,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<span class=\"d-label\">library</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<span class=\"d-label\">library</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -455,7 +463,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<span class=\"d-label\">settings</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<span class=\"d-label\">settings</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -463,25 +471,25 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<span class=\"d-label\">close</span></div></div></section><section class=\"d-section\"><h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<span class=\"d-label\">close</span></div></div></section><section class=\"d-section\"><h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("DesignFeedback"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/webui/design.templ`, Line: 235, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/webui/design.templ`, Line: 236, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</h2><p class=\"d-note\">.skeleton, .toast</p><div class=\"d-spec\"><div class=\"d-row\"><span class=\"d-label\">.skeleton</span><div style=\"flex: 1; display: grid; gap: var(--space-2);\"><div class=\"skeleton\" style=\"height: 14px; width: 70%;\"></div><div class=\"skeleton\" style=\"height: 14px; width: 45%;\"></div></div></div><div class=\"d-row\"><span class=\"d-label\">.toast</span><div class=\"toast\">Transient confirmation message.</div></div></div></section></div><script>\n\t\t\t// Fixture affordance: theme switch (not a product component).\n\t\t\tdocument.addEventListener('change', function (e) {\n\t\t\t\tif (e.target.name === 'd-theme') document.body.dataset.theme = e.target.value;\n\t\t\t});\n\t\t</script> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</h2><p class=\"d-note\">.skeleton, .toast</p><div class=\"d-spec\"><div class=\"d-row\"><span class=\"d-label\">.skeleton</span><div style=\"flex: 1; display: grid; gap: var(--space-2);\"><div class=\"skeleton\" style=\"height: 14px; width: 70%;\"></div><div class=\"skeleton\" style=\"height: 14px; width: 45%;\"></div></div></div><div class=\"d-row\"><span class=\"d-label\">.toast</span><div class=\"toast\">Transient confirmation message.</div></div></div></section></div><script>\n\t\t\t// Fixture affordance: theme switch (not a product component).\n\t\t\tdocument.addEventListener('change', function (e) {\n\t\t\t\tif (e.target.name === 'd-theme') document.body.dataset.theme = e.target.value;\n\t\t\t});\n\t\t</script> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if dev {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<script>\n\t\t\t\t// Dev hot reload: swap stylesheets on asset changes; full\n\t\t\t\t// reload when the dev server restarted (connection dropped).\n\t\t\t\t(function () {\n\t\t\t\t\tvar es = new EventSource('/ui/dev/refresh');\n\t\t\t\t\tvar down = false;\n\t\t\t\t\tes.addEventListener('change', function () {\n\t\t\t\t\t\tdocument.querySelectorAll('link[rel=\"stylesheet\"]').forEach(function (l) {\n\t\t\t\t\t\t\tl.href = l.href.split('?')[0] + '?t=' + Date.now();\n\t\t\t\t\t\t});\n\t\t\t\t\t});\n\t\t\t\t\tes.onerror = function () { down = true; };\n\t\t\t\t\tes.onopen = function () { if (down) location.reload(); };\n\t\t\t\t})();\n\t\t\t</script>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<script>\n\t\t\t\t// Dev hot reload: swap stylesheets on asset changes; full\n\t\t\t\t// reload when the dev server restarted (connection dropped).\n\t\t\t\t(function () {\n\t\t\t\t\tvar es = new EventSource('/ui/dev/refresh');\n\t\t\t\t\tvar down = false;\n\t\t\t\t\tes.addEventListener('change', function () {\n\t\t\t\t\t\tdocument.querySelectorAll('link[rel=\"stylesheet\"]').forEach(function (l) {\n\t\t\t\t\t\t\tl.href = l.href.split('?')[0] + '?t=' + Date.now();\n\t\t\t\t\t\t});\n\t\t\t\t\t});\n\t\t\t\t\tes.onerror = function () { down = true; };\n\t\t\t\t\tes.onopen = function () { if (down) location.reload(); };\n\t\t\t\t})();\n\t\t\t</script>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

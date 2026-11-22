@@ -119,6 +119,9 @@ other = "Add to queue"
 [Favorite]
 other = "Favorite"
 
+[Details]
+other = "Recording details"
+
 [PlayerComingSoon]
 other = "Playback lands with the player milestone."
 
