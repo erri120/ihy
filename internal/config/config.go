@@ -19,6 +19,19 @@ import (
 // musicbrainzDefaultBaseURL is the official MusicBrainz server.
 const musicbrainzDefaultBaseURL = "https://musicbrainz.org"
 
+// isOfficialMB reports whether the base URL points at the official
+// MusicBrainz server (any scheme/host spelling of musicbrainz.org).
+func isOfficialMB(baseURL string) bool {
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return false
+	}
+	host := strings.ToLower(u.Host)
+	host = strings.TrimSuffix(host, ":443")
+	host = strings.TrimPrefix(host, "www.")
+	return host == "musicbrainz.org"
+}
+
 // Config is the bootstrap configuration of ihy.
 type Config struct {
 	// Postgres connection settings (DB_HOST, DB_DATABASE required;
@@ -88,9 +101,10 @@ func FromEnv() (Config, error) {
 	}
 
 	// MusicBrainz endpoint and pacing. IHY_MB_BASE_URL defaults to
-	// the official server; a self-hosted mirror may allow a higher
-	// rate than the official 1 req/s (IHY_MB_RATE_LIMIT, requests
-	// per second).
+	// the official server. IHY_MB_RATE_LIMIT (requests per second)
+	// only applies to a mirror the user controls: setting it while
+	// pointing at the official server is a configuration error, since
+	// the official 1 req/s rule is not negotiable.
 	c.MBBaseURL = envDefault("IHY_MB_BASE_URL", musicbrainzDefaultBaseURL)
 	if _, err := url.Parse(c.MBBaseURL); err != nil {
 		return c, fmt.Errorf("IHY_MB_BASE_URL: %v", err)
@@ -99,6 +113,10 @@ func FromEnv() (Config, error) {
 		rate, err := strconv.ParseFloat(v, 64)
 		if err != nil || rate <= 0 {
 			return c, fmt.Errorf("IHY_MB_RATE_LIMIT must be a positive number, got %q", v)
+		}
+		if isOfficialMB(c.MBBaseURL) {
+			return c, fmt.Errorf(
+				"IHY_MB_RATE_LIMIT only applies to a self-hosted mirror; the official musicbrainz.org is paced at 1 req/s (set IHY_MB_BASE_URL to a mirror you control, or unset IHY_MB_RATE_LIMIT)")
 		}
 		c.MBRateLimit = rate
 	} else {
