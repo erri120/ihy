@@ -75,6 +75,17 @@ templ ArtistPage(t *T, vm ArtistVM, tab string) {
 				@ArtistPanel(t, vm, tab)
 			</div>
 		</div>
+		<script>
+			// Accepted play intents pulse the row (the player milestone
+			// replaces this with actual playback).
+			document.body.addEventListener('htmx:afterRequest', function (e) {
+				var row = e.detail.elt;
+				if (row.matches && row.matches('.tr') && e.detail.successful) {
+					row.classList.add('is-playing');
+					setTimeout(function () { row.classList.remove('is-playing'); }, 600);
+				}
+			});
+		</script>
 	}
 }
 
@@ -208,7 +219,7 @@ templ artistRecordings(t *T, vm ArtistVM) {
 // affordance) posts a play intent; the credit detail stays one info
 // click away.
 templ artistRow(t *T, mbid, no string, rec RecordingVM) {
-	<div class="tr" role="button" tabindex="0" title={ t.Msg("Play") } hx-post={ templ.URL(playURL(rec.Mbid)) } hx-swap="none">
+	<div class="tr" role="button" tabindex="0" title={ t.Msg("Play") } hx-post={ templ.URL(playURL(rec.Mbid)) } hx-swap="none" hx-trigger="click, keydown[key=='Enter'], keydown[code=='Space']">
 		<span class="no">{ no }</span>
 		<span class="t">{ rec.Title }</span>
 		<span class="dur">{ rec.Length }</span>

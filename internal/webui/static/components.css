@@ -168,6 +168,13 @@ button:hover { filter: none; } /* legacy app.css brightens on hover */
 .tr .no { font-family: var(--font-mono); font-size: var(--text-meta); color: var(--muted); min-width: 18px; text-align: right; flex: none; }
 .tr .t { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
 .tr .dur { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-meta); color: var(--muted); flex: none; }
+/* Playable rows read clickable: pointer, hover wash, focus ring (the
+   global :focus-visible rule), and a brief gold flash when a play
+   intent is accepted. */
+.tr[role="button"] { cursor: pointer; }
+.tr[role="button"]:hover { background: var(--surface); }
+.tr.is-playing { background: var(--accent-soft); } /* brief pulse when the play intent is accepted */
+.tr.is-playing .play-hover { display: inline-flex; }
 .tr .play-hover { display: none; width: 22px; height: 22px; color: var(--accent); flex: none; }
 .tr:hover .play-hover { display: inline-flex; }
 @media (hover: none) { .tr .play-hover { display: inline-flex; } }
