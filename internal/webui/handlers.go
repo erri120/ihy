@@ -91,9 +91,11 @@ func (s *Server) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /ui/artists/{mbid}", s.auth(s.Artist))
 	mux.HandleFunc("GET /ui/release-groups/{mbid}", s.auth(s.ReleaseGroup))
 	mux.HandleFunc("GET /ui/recordings/{mbid}", s.auth(s.Recording))
-	mux.HandleFunc("GET /ui/design", s.auth(s.Design))
 	if s.Dev {
-		mux.HandleFunc("GET /ui/dev/refresh", s.auth(s.devRefresh))
+		// The design catalog and its hot-reload stream are development
+		// tooling: they exist only in dev mode and skip auth.
+		mux.HandleFunc("GET /ui/design", s.Design)
+		mux.HandleFunc("GET /ui/dev/refresh", s.devRefresh)
 	}
 	mux.Handle("GET /ui/static/", s.auth(s.staticHandler().ServeHTTP))
 }

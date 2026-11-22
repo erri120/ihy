@@ -6,6 +6,17 @@
 /* exactly these structures. Live catalog: /ui/design (design.templ).        */
 /* ========================================================================== */
 
+/* ---- Base ---------------------------------------------------------------- */
+/* Dendera owns the document base. app.css (legacy, loaded first) also        */
+/* sets body/h2/button/input styles: the rules below override it where the    */
+/* system has an opinion.                                                     */
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--font-sans); font-size: var(--text-body); line-height: 1.5;
+}
+h1, h2, h3 { color: var(--text); }
+button:hover { filter: none; } /* legacy app.css brightens on hover */
+
 /* ---- Covers ------------------------------------------------------------- */
 .cover { flex: none; border-radius: var(--radius-cover); background: var(--elev); object-fit: cover; }
 .cover-s { width: var(--cover-s); height: var(--cover-s); }
@@ -89,6 +100,7 @@
 .nav-item .icon { width: 20px; height: 20px; }
 .search input {
   background: transparent; border: none; outline: none; width: 100%;
+  margin: 0; padding: 0; /* legacy app.css pads search inputs; the pill owns spacing */
   color: var(--text); font-family: var(--font-sans); font-size: var(--text-body);
 }
 .search input::placeholder { color: var(--muted); }

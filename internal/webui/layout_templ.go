@@ -57,7 +57,7 @@ func Layout(t *T, title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " · ihy</title><link rel=\"icon\" type=\"image/svg+xml\" href=\"/ui/static/mark/sistrum-solid.svg\"><script src=\"/ui/static/htmx.min.js\"></script><link rel=\"stylesheet\" href=\"/ui/static/fonts/fonts.css\"><link rel=\"stylesheet\" href=\"/ui/static/tokens.css\"><link rel=\"stylesheet\" href=\"/ui/static/components.css\"><link rel=\"stylesheet\" href=\"/ui/static/app.css\"></head><body data-theme=\"lapis\" hx-boost=\"true\"><main id=\"content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " · ihy</title><link rel=\"icon\" type=\"image/svg+xml\" href=\"/ui/static/mark/sistrum-solid.svg\"><script src=\"/ui/static/htmx.min.js\"></script><link rel=\"stylesheet\" href=\"/ui/static/app.css\"><link rel=\"stylesheet\" href=\"/ui/static/fonts/fonts.css\"><link rel=\"stylesheet\" href=\"/ui/static/tokens.css\"><link rel=\"stylesheet\" href=\"/ui/static/components.css\"></head><body data-theme=\"lapis\" hx-boost=\"true\"><main id=\"content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

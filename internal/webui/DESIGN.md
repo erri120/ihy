@@ -140,11 +140,12 @@ and `chip-hair` are the two hairline weights. Tokens live in
 The library ships as `static/components.css`: classes backed only by
 tokens, one responsive markup pattern per component (no per-device
 duplicates). The templ atoms (internal/webui/components.templ: Icon,
-Chip, ChipDot, Cover, TrackRow) and the design page (/ui/design,
-internal/webui/design.templ) emit exactly these markup structures. The
-catalog's specimen rows are labeled with the class that produces them and
-carry generic content ("Button", "Tab 1", "Placeholder"): application
-copy belongs to pages, not to the catalog. Its theme switcher flips the
+Chip, ChipDot, Cover, TrackRow) and the design page (dev only:
+`make dev-ui`, then /ui/design, unauthenticated; internal/webui/
+design.templ) emit exactly these markup structures. The catalog's
+specimen rows are labeled with the class that produces them and carry
+generic content ("Button", "Tab 1", "Placeholder"): application copy
+belongs to pages, not to the catalog. Its theme switcher flips the
 whole page between Lapis, Silt and Papyrus; it is a fixture affordance,
 not a product component.
 
@@ -254,4 +255,4 @@ not a product component.
 4. Listening first: every primary view leads with playable music; data renders on demand, one interaction away.
 5. Check every color decision in both dark grounds and Papyrus; Silt's cool-on-warm separation is the one that fails quietly.
 6. When MusicBrainz changes, only the mapping changes, never the tokens.
-7. A design decision is not made until it lives here and on /ui/design; the templ components are the only implementation. Run `make dev-ui` and watch it reload.
+7. A design decision is not made until it lives here and on /ui/design (dev only, no auth); the templ components are the only implementation. Run `make dev-ui` and watch it reload.

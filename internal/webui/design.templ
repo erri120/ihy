@@ -129,10 +129,10 @@ templ DesignPage(t *T, dev bool) {
 				<div class="d-spec">
 					<div class="d-row">
 						<span class="d-label">sizes + placeholder</span>
-						@Cover("", "No artwork", "cover-s")/>
-						@Cover("", "No artwork", "cover-m")/>
-						@Cover("", "No artwork", "cover-l")/>
-						@Cover("", "No artwork", "cover-xl")/>
+						@Cover("", "No artwork", "cover-s")
+						@Cover("", "No artwork", "cover-m")
+						@Cover("", "No artwork", "cover-l")
+						@Cover("", "No artwork", "cover-xl")
 					</div>
 					<div class="d-row">
 						<span class="d-label">.album-grid + .album-card</span>
@@ -167,8 +167,8 @@ templ DesignPage(t *T, dev bool) {
 							<div class="tr"><span class="no">2</span><span class="t">別のトラック・タイトル</span><span class="dur">3:33</span><button class="btn-icon play-hover" type="button" aria-label="Play">@Icon("play")</button></div>
 							<div class="tr-detail">
 								<div class="chips">
-									@Chip("performance")/>
-									@Chip("arranger")/>
+									@Chip("performance")
+									@Chip("arranger")
 								</div>
 								<div class="detail-line">Work: <b>Work title</b> · composed by <b>Composer name</b> · publisher <b>Publisher</b></div>
 							</div>
@@ -184,16 +184,16 @@ templ DesignPage(t *T, dev bool) {
 				<div class="d-spec">
 					<div class="d-row">
 						<span class="d-label">.chip</span>
-						@Chip("performance")/>
-						@Chip("arranger")/>
-						@Chip("composer")/>
-						@Chip("producer")/>
-						@Chip("lyricist")/>
+						@Chip("performance")
+						@Chip("arranger")
+						@Chip("composer")
+						@Chip("producer")
+						@Chip("lyricist")
 					</div>
 					<div class="d-row">
 						<span class="d-label">group hue dot</span>
-						@ChipDot("performance", "#8f6bd0")/>
-						@ChipDot("writer", "#4e9a7a")/>
+						@ChipDot("performance", "#8f6bd0")
+						@ChipDot("writer", "#4e9a7a")
 					</div>
 				</div>
 			</section>
