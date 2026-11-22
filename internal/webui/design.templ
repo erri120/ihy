@@ -159,20 +159,20 @@ templ DesignPage(t *T, dev bool) {
 
 			<section class="d-section">
 				<h2>{ t.Msg("DesignTrackRows") }</h2>
-				<p class="d-note">.tracklist + .tr (+ .play-hover), .tr-detail with .chip s</p>
+				<p class="d-note">TrackRow: .tracklist + .tr (+ .play-hover, .tr-detail-slot); detail surface: .tr-detail with .chip s</p>
 				<div class="d-spec">
 					<div class="d-row" style="display: block; padding: var(--space-2) var(--space-4);">
 						<div class="tracklist">
-							<div class="tr"><span class="no">1</span><span class="t">Track title</span><span class="dur">5:44</span><button class="btn-icon play-hover" type="button" aria-label="Play">@Icon("play")</button></div>
-							<div class="tr"><span class="no">2</span><span class="t">別のトラック・タイトル</span><span class="dur">3:33</span><button class="btn-icon play-hover" type="button" aria-label="Play">@Icon("play")</button></div>
+							@TrackRow(t, "1", "Track title", "5:44", "", "", nil)
+							@TrackRow(t, "2", "別のトラック・タイトル", "3:33", "", "", nil)
 							<div class="tr-detail">
 								<div class="chips">
 									@Chip("performance")
 									@Chip("arranger")
 								</div>
-								<div class="detail-line">Work: <b>Work title</b> · composed by <b>Composer name</b> · publisher <b>Publisher</b></div>
+								<div class="detail-line">{ t.Msg("WorkLabel") } <b>{ t.Msg("SampleWork") }</b> · { t.Msg("SampleComposer") } <b>Composer name</b></div>
 							</div>
-							<div class="tr"><span class="no">3</span><span class="t">Third track title</span><span class="dur">2:39</span><button class="btn-icon play-hover" type="button" aria-label="Play">@Icon("play")</button></div>
+							@TrackRow(t, "3", "Third track title", "2:39", "", "", nil)
 						</div>
 					</div>
 				</div>

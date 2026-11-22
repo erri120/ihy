@@ -149,7 +149,7 @@ templ artistOverview(t *T, vm ArtistVM) {
 		} else {
 			<div class="tracklist">
 				for i, rec := range limited(vm.Recordings, 10) {
-					@artistRow(t, vm.Mbid, itoa(i+1), rec)
+					@TrackRow(t, itoa(i+1), rec.Title, rec.Length, playURL(rec.Mbid), recordingDetailFragment(vm.Mbid, rec.Mbid), nil)
 				}
 			</div>
 		}
@@ -208,27 +208,12 @@ templ artistRecordings(t *T, vm ArtistVM) {
 		} else {
 			<div class="tracklist">
 				for i, rec := range vm.Recordings {
-					@artistRow(t, vm.Mbid, itoa(i+1), rec)
+					@TrackRow(t, itoa(i+1), rec.Title, rec.Length, playURL(rec.Mbid), recordingDetailFragment(vm.Mbid, rec.Mbid), nil)
 				}
 			</div>
 		}
 	</div>
 }
-
-// artistRow is one listening row: clicking it (or the play
-// affordance) posts a play intent; the credit detail stays one info
-// click away.
-templ artistRow(t *T, mbid, no string, rec RecordingVM) {
-	<div class="tr" role="button" tabindex="0" title={ t.Msg("Play") } hx-post={ templ.URL(playURL(rec.Mbid)) } hx-swap="none" hx-trigger="click, keydown[key=='Enter'], keydown[code=='Space']">
-		<span class="no">{ no }</span>
-		<span class="t">{ rec.Title }</span>
-		<span class="dur">{ rec.Length }</span>
-		<button class="btn-icon play-hover" type="button" aria-label={ t.Msg("Play") } hx-post={ templ.URL(playURL(rec.Mbid)) } hx-swap="none">@Icon("play")</button>
-		<button class="btn-icon" type="button" aria-label={ t.Msg("Details") } hx-get={ templ.URL(recordingDetailFragment(mbid, rec.Mbid)) } hx-target="next .a-detail-slot" hx-swap="innerHTML">@Icon("info")</button>
-	</div>
-	<div class="a-detail-slot"></div>
-}
-
 templ artistWorks(t *T, vm ArtistVM) {
 	<div class="a-section">
 		<div class="a-kicker">{ t.Plural("StatsWorks", len(vm.Works)) }</div>

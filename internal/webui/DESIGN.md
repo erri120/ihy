@@ -139,15 +139,18 @@ and `chip-hair` are the two hairline weights. Tokens live in
 
 The library ships as `static/components.css`: classes backed only by
 tokens, one responsive markup pattern per component (no per-device
-duplicates). The templ atoms (internal/webui/components.templ: Icon,
-Chip, ChipDot, Cover, TrackRow) and the design page (dev only:
-`make dev-ui`, then /ui/design, unauthenticated; internal/webui/
-design.templ) emit exactly these markup structures. The catalog's
-specimen rows are labeled with the class that produces them and carry
-generic content ("Button", "Tab 1", "Placeholder"): application copy
-belongs to pages, not to the catalog. Its theme switcher flips the
-whole page between Lapis, Silt and Papyrus; it is a fixture affordance,
-not a product component.
+duplicates). The templ atoms (internal/webui/components.templ) are the
+ONLY implementation: pages and the catalog compose them, never
+hand-rolled copies. Every atom carries a render test asserting its
+markup contract (internal/webui/components_test.go), and the stylesheet
+is contract-tested too: the affordance rules (pointer, hover, focus,
+disabled, pulse) and the verified contrast budgets are enforced on
+every test run. The design page (dev only: `make dev-ui`, then
+/ui/design, unauthenticated; internal/webui/design.templ) catalogs the
+atoms as static specimens with generic content ("Button", "Tab 1",
+"Placeholder"): application copy belongs to pages, not to the catalog.
+Its theme switcher flips the whole page between Lapis, Silt and
+Papyrus; it is a fixture affordance, not a product component.
 
 ### Core component rules
 

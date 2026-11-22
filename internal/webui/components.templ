@@ -30,16 +30,32 @@ templ Cover(src, alt, size string) {
 	}
 }
 
-// TrackRow renders a lean listening row: number, title, duration,
-// play affordance on hover. detail (when given) renders as the row's
-// expandable detail surface beneath it.
-templ TrackRow(no, title, dur string, detail templ.Component) {
-	<div class="tr">
-		<span class="no">{ no }</span>
-		<span class="t">{ title }</span>
-		<span class="dur">{ dur }</span>
-	</div>
+// TrackRow is the listening row: number, title, duration, play
+// affordance on hover; the row's primary click posts a play intent
+// (hx-swap none: playback has no document payload), the info
+// affordance loads the credit detail into the slot beneath the row.
+// Empty URLs render a static specimen (the catalog) with no behavior.
+templ TrackRow(t *T, no, title, dur, playURL, detailURL string, detail templ.Component) {
+	if playURL == "" {
+		<div class="tr">
+			<span class="no">{ no }</span>
+			<span class="t">{ title }</span>
+			<span class="dur">{ dur }</span>
+		</div>
+	} else {
+		<div class="tr" role="button" tabindex="0" title={ t.Msg("Play") } hx-post={ templ.URL(playURL) } hx-swap="none" hx-trigger="click, keydown[key=='Enter'], keydown[code=='Space']">
+			<span class="no">{ no }</span>
+			<span class="t">{ title }</span>
+			<span class="dur">{ dur }</span>
+			<button class="btn-icon play-hover" type="button" aria-label={ t.Msg("Play") } hx-post={ templ.URL(playURL) } hx-swap="none">@Icon("play")</button>
+			if detailURL != "" {
+				<button class="btn-icon" type="button" aria-label={ t.Msg("Details") } hx-get={ templ.URL(detailURL) } hx-target="next .tr-detail-slot" hx-swap="innerHTML">@Icon("info")</button>
+			}
+		</div>
+	}
 	if detail != nil {
 		@detail
+	} else if detailURL != "" {
+		<div class="tr-detail-slot"></div>
 	}
 }

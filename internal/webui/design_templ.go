@@ -256,23 +256,19 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</h2><p class=\"d-note\">.tracklist + .tr (+ .play-hover), .tr-detail with .chip s</p><div class=\"d-spec\"><div class=\"d-row\" style=\"display: block; padding: var(--space-2) var(--space-4);\"><div class=\"tracklist\"><div class=\"tr\"><span class=\"no\">1</span><span class=\"t\">Track title</span><span class=\"dur\">5:44</span><button class=\"btn-icon play-hover\" type=\"button\" aria-label=\"Play\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</h2><p class=\"d-note\">TrackRow: .tracklist + .tr (+ .play-hover, .tr-detail-slot); detail surface: .tr-detail with .chip s</p><div class=\"d-spec\"><div class=\"d-row\" style=\"display: block; padding: var(--space-2) var(--space-4);\"><div class=\"tracklist\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = Icon("play").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = TrackRow(t, "1", "Track title", "5:44", "", "", nil).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</button></div><div class=\"tr\"><span class=\"no\">2</span><span class=\"t\">別のトラック・タイトル</span><span class=\"dur\">3:33</span><button class=\"btn-icon play-hover\" type=\"button\" aria-label=\"Play\">")
+			templ_7745c5c3_Err = TrackRow(t, "2", "別のトラック・タイトル", "3:33", "", "", nil).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = Icon("play").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</button></div><div class=\"tr-detail\"><div class=\"chips\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"tr-detail\"><div class=\"chips\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -284,28 +280,67 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div><div class=\"detail-line\">Work: <b>Work title</b> · composed by <b>Composer name</b> · publisher <b>Publisher</b></div></div><div class=\"tr\"><span class=\"no\">3</span><span class=\"t\">Third track title</span><span class=\"dur\">2:39</span><button class=\"btn-icon play-hover\" type=\"button\" aria-label=\"Play\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = Icon("play").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</button></div></div></div></div></section><section class=\"d-section\"><h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div><div class=\"detail-line\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("DesignChips"))
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("WorkLabel"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/webui/design.templ`, Line: 182, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/webui/design.templ`, Line: 173, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</h2><p class=\"d-note\">.chip, .chip .dot (raw relationship types verbatim)</p><div class=\"d-spec\"><div class=\"d-row\"><span class=\"d-label\">.chip</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " <b>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var14 string
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("SampleWork"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/webui/design.templ`, Line: 173, Col: 80}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</b> · ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var15 string
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("SampleComposer"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/webui/design.templ`, Line: 173, Col: 115}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " <b>Composer name</b></div></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = TrackRow(t, "3", "Third track title", "2:39", "", "", nil).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div></div></div></section><section class=\"d-section\"><h2>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var16 string
+			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("DesignChips"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/webui/design.templ`, Line: 182, Col: 30}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</h2><p class=\"d-note\">.chip, .chip .dot (raw relationship types verbatim)</p><div class=\"d-spec\"><div class=\"d-row\"><span class=\"d-label\">.chip</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -329,7 +364,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div><div class=\"d-row\"><span class=\"d-label\">group hue dot</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div><div class=\"d-row\"><span class=\"d-label\">group hue dot</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -341,33 +376,33 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div></div></section><section class=\"d-section\"><h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div></div></section><section class=\"d-section\"><h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("DesignEmpty"))
+			var templ_7745c5c3_Var17 string
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("DesignEmpty"))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/webui/design.templ`, Line: 202, Col: 30}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</h2><p class=\"d-note\">.empty + .sistrum + .empty-title + .empty-body</p><div class=\"d-spec\"><div class=\"d-row\" style=\"display: block;\"><div class=\"empty\"><svg class=\"sistrum\" viewBox=\"0 0 32 48\" aria-hidden=\"true\" style=\"color: var(--accent);\"><use href=\"/ui/static/mark/sistrum-line.svg#mark\"></use></svg><div class=\"empty-title\">Nothing here yet</div><div class=\"empty-body\">Empty states speak in the serif voice, with the mark above.</div></div></div></div></section><section class=\"d-section\"><h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</h2><p class=\"d-note\">.empty + .sistrum + .empty-title + .empty-body</p><div class=\"d-spec\"><div class=\"d-row\" style=\"display: block;\"><div class=\"empty\"><svg class=\"sistrum\" viewBox=\"0 0 32 48\" aria-hidden=\"true\" style=\"color: var(--accent);\"><use href=\"/ui/static/mark/sistrum-line.svg#mark\"></use></svg><div class=\"empty-title\">Nothing here yet</div><div class=\"empty-body\">Empty states speak in the serif voice, with the mark above.</div></div></div></div></section><section class=\"d-section\"><h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("DesignIcons"))
+			var templ_7745c5c3_Var18 string
+			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("DesignIcons"))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/webui/design.templ`, Line: 216, Col: 30}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</h2><p class=\"d-note\">static/icons/&lt;name&gt;.svg, referenced via &lt;use&gt; (12 icon set)</p><div class=\"d-icon-grid\"><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</h2><p class=\"d-note\">static/icons/&lt;name&gt;.svg, referenced via &lt;use&gt; (12 icon set)</p><div class=\"d-icon-grid\"><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -375,7 +410,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<span class=\"d-label\">search</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<span class=\"d-label\">search</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -383,7 +418,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<span class=\"d-label\">play</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<span class=\"d-label\">play</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -391,7 +426,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<span class=\"d-label\">pause</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<span class=\"d-label\">pause</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -399,7 +434,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "<span class=\"d-label\">prev</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<span class=\"d-label\">prev</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -407,7 +442,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<span class=\"d-label\">next</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<span class=\"d-label\">next</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -415,7 +450,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<span class=\"d-label\">heart</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<span class=\"d-label\">heart</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -423,7 +458,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<span class=\"d-label\">heart-filled</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<span class=\"d-label\">heart-filled</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -431,7 +466,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<span class=\"d-label\">info</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<span class=\"d-label\">info</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -439,7 +474,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<span class=\"d-label\">trash</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<span class=\"d-label\">trash</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -447,7 +482,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<span class=\"d-label\">home</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<span class=\"d-label\">home</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -455,7 +490,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<span class=\"d-label\">library</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<span class=\"d-label\">library</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -463,7 +498,7 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<span class=\"d-label\">settings</span></div><div class=\"d-icon-cell\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<span class=\"d-label\">settings</span></div><div class=\"d-icon-cell\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -471,25 +506,25 @@ func DesignPage(t *T, dev bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<span class=\"d-label\">close</span></div></div></section><section class=\"d-section\"><h2>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<span class=\"d-label\">close</span></div></div></section><section class=\"d-section\"><h2>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var16 string
-			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("DesignFeedback"))
+			var templ_7745c5c3_Var19 string
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(t.Msg("DesignFeedback"))
 			if templ_7745c5c3_Err != nil {
 				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/webui/design.templ`, Line: 236, Col: 33}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</h2><p class=\"d-note\">.skeleton, .toast</p><div class=\"d-spec\"><div class=\"d-row\"><span class=\"d-label\">.skeleton</span><div style=\"flex: 1; display: grid; gap: var(--space-2);\"><div class=\"skeleton\" style=\"height: 14px; width: 70%;\"></div><div class=\"skeleton\" style=\"height: 14px; width: 45%;\"></div></div></div><div class=\"d-row\"><span class=\"d-label\">.toast</span><div class=\"toast\">Transient confirmation message.</div></div></div></section></div><script>\n\t\t\t// Fixture affordance: theme switch (not a product component).\n\t\t\tdocument.addEventListener('change', function (e) {\n\t\t\t\tif (e.target.name === 'd-theme') document.body.dataset.theme = e.target.value;\n\t\t\t});\n\t\t</script> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</h2><p class=\"d-note\">.skeleton, .toast</p><div class=\"d-spec\"><div class=\"d-row\"><span class=\"d-label\">.skeleton</span><div style=\"flex: 1; display: grid; gap: var(--space-2);\"><div class=\"skeleton\" style=\"height: 14px; width: 70%;\"></div><div class=\"skeleton\" style=\"height: 14px; width: 45%;\"></div></div></div><div class=\"d-row\"><span class=\"d-label\">.toast</span><div class=\"toast\">Transient confirmation message.</div></div></div></section></div><script>\n\t\t\t// Fixture affordance: theme switch (not a product component).\n\t\t\tdocument.addEventListener('change', function (e) {\n\t\t\t\tif (e.target.name === 'd-theme') document.body.dataset.theme = e.target.value;\n\t\t\t});\n\t\t</script> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if dev {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "<script>\n\t\t\t\t// Dev hot reload: swap stylesheets on asset changes; full\n\t\t\t\t// reload when the dev server restarted (connection dropped).\n\t\t\t\t(function () {\n\t\t\t\t\tvar es = new EventSource('/ui/dev/refresh');\n\t\t\t\t\tvar down = false;\n\t\t\t\t\tes.addEventListener('change', function () {\n\t\t\t\t\t\tdocument.querySelectorAll('link[rel=\"stylesheet\"]').forEach(function (l) {\n\t\t\t\t\t\t\tl.href = l.href.split('?')[0] + '?t=' + Date.now();\n\t\t\t\t\t\t});\n\t\t\t\t\t});\n\t\t\t\t\tes.onerror = function () { down = true; };\n\t\t\t\t\tes.onopen = function () { if (down) location.reload(); };\n\t\t\t\t})();\n\t\t\t</script>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<script>\n\t\t\t\t// Dev hot reload: swap stylesheets on asset changes; full\n\t\t\t\t// reload when the dev server restarted (connection dropped).\n\t\t\t\t(function () {\n\t\t\t\t\tvar es = new EventSource('/ui/dev/refresh');\n\t\t\t\t\tvar down = false;\n\t\t\t\t\tes.addEventListener('change', function () {\n\t\t\t\t\t\tdocument.querySelectorAll('link[rel=\"stylesheet\"]').forEach(function (l) {\n\t\t\t\t\t\t\tl.href = l.href.split('?')[0] + '?t=' + Date.now();\n\t\t\t\t\t\t});\n\t\t\t\t\t});\n\t\t\t\t\tes.onerror = function () { down = true; };\n\t\t\t\t\tes.onopen = function () { if (down) location.reload(); };\n\t\t\t\t})();\n\t\t\t</script>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
