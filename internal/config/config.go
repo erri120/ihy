@@ -64,6 +64,14 @@ type Config struct {
 	// (IHY_MB_RATE_LIMIT, default 1 = the official limit). Only
 	// raise it for a mirror you control.
 	MBRateLimit float64
+	// UIDev enables web UI development mode: static assets serve
+	// from disk and the design page hot-reloads over SSE
+	// (IHY_UI_DEV=1).
+	UIDev bool
+	// UIStaticDir is the directory UI static assets serve from in
+	// dev mode, instead of the embedded copies
+	// (IHY_UI_STATIC_DIR, set by make dev-ui).
+	UIStaticDir string
 }
 
 // DSN builds the Postgres connection string from the DB_* settings.
@@ -135,6 +143,9 @@ func FromEnv() (Config, error) {
 	c.ArtworkDir = envDefault("IHY_ARTWORK_DIR", "./data/artwork")
 	c.TranscodeDir = envDefault("IHY_TRANSCODE_DIR", "./data/transcode")
 	c.AdminPassword = os.Getenv("IHY_ADMIN_PASSWORD")
+
+	c.UIDev = os.Getenv("IHY_UI_DEV") == "1"
+	c.UIStaticDir = os.Getenv("IHY_UI_STATIC_DIR")
 	return c, nil
 }
 

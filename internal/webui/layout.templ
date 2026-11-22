@@ -1,5 +1,5 @@
 // The web UI: server-rendered pages (templ) with htmx for partial
-// updates. Design of record: docs/architecture.md §7.
+// updates. Design of record: internal/webui/DESIGN.md (Dendera).
 package webui
 
 templ Layout(t *T, title string) {
@@ -9,10 +9,14 @@ templ Layout(t *T, title string) {
 			<meta charset="utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
 			<title>{ title } · ihy</title>
+			<link rel="icon" type="image/svg+xml" href="/ui/static/mark/sistrum-solid.svg"/>
 			<script src="/ui/static/htmx.min.js"></script>
+			<link rel="stylesheet" href="/ui/static/fonts/fonts.css"/>
+			<link rel="stylesheet" href="/ui/static/tokens.css"/>
+			<link rel="stylesheet" href="/ui/static/components.css"/>
 			<link rel="stylesheet" href="/ui/static/app.css"/>
 		</head>
-		<body hx-boost="true">
+		<body data-theme="lapis" hx-boost="true">
 			<main id="content">
 				{ children... }
 			</main>

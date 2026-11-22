@@ -1,0 +1,45 @@
+// Design system atoms: the templ components behind the Dendera
+// component library (DESIGN.md §5). Pages compose these; the design
+// page (/ui/design) catalogs them.
+package webui
+
+// Icon renders a system icon from the 12-icon set (static/icons/).
+templ Icon(name string) {
+	<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href={ templ.URL("/ui/static/icons/" + name + ".svg#icon") }></use></svg>
+}
+
+// Chip renders a neutral credit/tag pill; text is the raw upstream
+// relationship type, verbatim.
+templ Chip(text string) {
+	<span class="chip">{ text }</span>
+}
+
+// ChipDot renders a chip with the 8px group-hue dot (credit and graph
+// surfaces only, where a legend exists).
+templ ChipDot(text, hue string) {
+	<span class="chip"><span class="dot" style={ "background: " + hue }></span>{ text }</span>
+}
+
+// Cover renders a cover in one of the size classes; an empty src
+// renders the designed gray placeholder.
+templ Cover(src, alt, size string) {
+	if src == "" {
+		<div class={ "cover cover-empty " + size } title={ alt }></div>
+	} else {
+		<img class={ "cover " + size } src={ src } alt={ alt }/>
+	}
+}
+
+// TrackRow renders a lean listening row: number, title, duration,
+// play affordance on hover. detail (when given) renders as the row's
+// expandable detail surface beneath it.
+templ TrackRow(no, title, dur string, detail templ.Component) {
+	<div class="tr">
+		<span class="no">{ no }</span>
+		<span class="t">{ title }</span>
+		<span class="dur">{ dur }</span>
+	</div>
+	if detail != nil {
+		@detail
+	}
+}

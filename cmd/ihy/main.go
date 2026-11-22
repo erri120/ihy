@@ -117,7 +117,10 @@ func main() {
 
 	// Web UI routes: server-rendered templ pages with htmx. Specific
 	// patterns win over the API catch-all above.
-	webui.NewServer(conn).Register(mux)
+	ui := webui.NewServer(conn)
+	ui.Dev = cfg.UIDev
+	ui.DevStatic = cfg.UIStaticDir
+	ui.Register(mux)
 
 	log.Printf("ihy listening on %s", cfg.Addr)
 	log.Fatal(http.ListenAndServe(cfg.Addr, mux))

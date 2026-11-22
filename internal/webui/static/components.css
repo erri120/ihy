@@ -1,0 +1,196 @@
+/* ========================================================================== */
+/* ihy component library: Dendera                                            */
+/*                                                                            */
+/* Classes backed only by tokens.css. Markup patterns are the contract:      */
+/* the templ components (internal/webui/components.templ) and pages emit     */
+/* exactly these structures. Live catalog: /ui/design (design.templ).        */
+/* ========================================================================== */
+
+/* ---- Covers ------------------------------------------------------------- */
+.cover { flex: none; border-radius: var(--radius-cover); background: var(--elev); object-fit: cover; }
+.cover-s { width: var(--cover-s); height: var(--cover-s); }
+.cover-m { width: var(--cover-m); height: var(--cover-m); }
+.cover-l { width: var(--cover-l); height: var(--cover-l); }
+.cover-xl { width: var(--cover-xl); height: var(--cover-xl); }
+/* Covers without artwork are designed, not defaulted: */
+.cover-empty { background: linear-gradient(135deg, #8a857a 0%, #57534b 100%); }
+
+/* ---- Album cards --------------------------------------------------------- */
+/* The browse-grid unit for albums (library page, artist pages). The card's   */
+/* link stretches over the whole tile; the play button rides above it on the  */
+/* cover, revealed on hover and focus, always visible where hover is absent.  */
+.album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-4); }
+@media (max-width: 600px) { .album-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); } }
+.album-card { position: relative; }
+.album-card .cover { position: relative; width: 100%; height: auto; aspect-ratio: 1; border-radius: var(--radius-tile); }
+.album-card .ac-title { font-size: var(--text-body); font-weight: 600; line-height: 1.3; margin-top: var(--space-2); }
+.album-card .ac-artist { font-size: var(--text-caption); color: var(--muted); margin-top: 2px; }
+.album-card .ac-meta { font-family: var(--font-mono); font-size: var(--text-meta); color: var(--muted); margin-top: 2px; }
+.album-card .ac-link { position: absolute; inset: 0; border-radius: var(--radius-tile); }
+.album-card .ac-play { position: absolute; right: var(--space-2); bottom: var(--space-2); z-index: 1; display: none; }
+.album-card:hover .ac-play, .album-card:focus-within .ac-play { display: inline-flex; }
+@media (hover: none) { .album-card .ac-play { display: inline-flex; } }
+
+/* ---- Chips (credits, tags) ------------------------------------------------ */
+/* Neutral pill; text is the raw upstream relationship type, verbatim.        */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--chip-hair); border-radius: var(--radius-pill);
+  padding: 2px 9px; font-family: var(--font-sans); font-size: var(--text-chip);
+  color: var(--muted); white-space: nowrap;
+}
+/* Group hue rides only as the 8px dot, on credit/graph surfaces with a legend. */
+.chip .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+
+/* ---- Buttons ------------------------------------------------------------ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  background: var(--accent); color: var(--accent-ink);
+  font-family: var(--font-sans); font-size: var(--text-body); font-weight: 600;
+  padding: 7px 16px; border: none; border-radius: var(--radius-pill);
+  cursor: pointer; text-decoration: none;
+}
+.btn-ghost {
+  background: transparent; color: var(--text); border: 1px solid var(--chip-hair);
+}
+.btn-danger { background: var(--negative); color: var(--bg); }
+.btn-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; padding: 0; border: none; border-radius: 50%;
+  background: transparent; color: var(--muted); cursor: pointer;
+}
+.btn-icon:hover { background: var(--elev); color: var(--text); }
+.btn-icon.is-active { color: var(--accent); }
+.btn-play { width: 44px; height: 44px; padding: 0; border-radius: 50%; }
+
+/* ---- Inputs ------------------------------------------------------------- */
+.field { display: flex; flex-direction: column; gap: var(--space-2); max-width: 360px; }
+.field-label { font-size: var(--text-caption); color: var(--muted); }
+.input {
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--hair); border-radius: 8px;
+  padding: 8px 12px; font-family: var(--font-sans); font-size: var(--text-body);
+}
+.input::placeholder { color: var(--muted); }
+.input:focus { outline: none; border-color: var(--accent); }
+.input[aria-invalid="true"] { border-color: var(--negative); }
+.field-error { font-size: var(--text-caption); color: var(--negative); }
+
+/* Search: the library's most-used control */
+.search {
+  display: flex; align-items: center; gap: var(--space-2);
+  background: var(--surface); border: 1px solid var(--chip-hair);
+  border-radius: var(--radius-pill); padding: 8px 16px;
+  max-width: 360px; width: 100%;
+}
+.search:focus-within { border-color: var(--accent); }
+.icon { display: block; width: 18px; height: 18px; flex: none; }
+.search .icon { width: 16px; height: 16px; color: var(--muted); }
+.nav-item .icon { width: 20px; height: 20px; }
+.search input {
+  background: transparent; border: none; outline: none; width: 100%;
+  color: var(--text); font-family: var(--font-sans); font-size: var(--text-body);
+}
+.search input::placeholder { color: var(--muted); }
+
+/* ---- Tabs --------------------------------------------------------------- */
+.tabs { display: flex; gap: var(--space-4); border-bottom: 1px solid var(--hair); overflow-x: auto; }
+.tab {
+  padding: 8px 2px; border: none; border-bottom: 2px solid transparent;
+  background: none; cursor: pointer; white-space: nowrap;
+  font-family: var(--font-sans); font-size: var(--text-body); font-weight: 500;
+  color: var(--muted); text-decoration: none;
+}
+.tab:hover { color: var(--text); }
+.tab.is-active { color: var(--text); border-bottom-color: var(--accent); }
+
+/* ---- Navigation ----------------------------------------------------------- */
+/* >= 600px: sidebar. < 600px: bottom bar. Same items, two shells. */
+.nav-items { display: flex; flex-direction: column; gap: 2px; list-style: none; }
+.nav-item {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 8px 12px; border-radius: 8px;
+  color: var(--muted); font-size: var(--text-body); font-weight: 500; text-decoration: none;
+}
+.nav-item:hover { color: var(--text); background: var(--elev); }
+.nav-item.is-active { color: var(--text); background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
+.sidebar { width: 240px; padding: var(--space-4); background: var(--bg); }
+
+.bottombar {
+  display: none;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+  background: var(--surface); border-top: 1px solid var(--hair);
+}
+.bottombar .nav-items { flex-direction: row; }
+.bottombar .nav-item { flex: 1; flex-direction: column; gap: 2px; padding: 8px 4px; font-size: 10px; justify-content: center; }
+.bottombar .nav-item.is-active { background: none; box-shadow: inset 0 2px 0 var(--accent); }
+@media (max-width: 600px) {
+  .sidebar { display: none; }
+  .bottombar { display: block; }
+  body { padding-bottom: 64px; } /* room for the bar */
+}
+
+/* ---- Now playing bar ---------------------------------------------------- */
+.playbar {
+  display: flex; align-items: center; gap: var(--space-3);
+  background: var(--surface); border-top: 1px solid var(--hair);
+  padding: var(--space-2) var(--space-4);
+}
+.playbar .np-meta { min-width: 0; display: flex; flex-direction: column; }
+.playbar .np-title { font-size: var(--text-body); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.playbar .np-artist { font-size: var(--text-caption); color: var(--muted); }
+.np-times { font-family: var(--font-mono); font-size: var(--text-meta); color: var(--muted); flex: none; }
+.progress { height: 4px; background: var(--hair); border-radius: var(--radius-pill); overflow: hidden; flex: 1 1 auto; min-width: 60px; }
+.progress-fill { height: 100%; background: var(--accent); }
+
+/* ---- Track rows ----------------------------------------------------------- */
+/* The same row pattern serves tracks (a release position) and recordings     */
+/* (distinct audio). Lean listening rows: number, title, duration; play       */
+/* affordance on hover; credits and chips live in the detail surface.         */
+.tracklist { display: flex; flex-direction: column; }
+.tr {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: 9px 2px; border-bottom: 1px solid var(--hair);
+  font-size: var(--text-row);
+}
+.tr .no { font-family: var(--font-mono); font-size: var(--text-meta); color: var(--muted); min-width: 18px; text-align: right; flex: none; }
+.tr .t { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+.tr .dur { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-meta); color: var(--muted); flex: none; }
+.tr .play-hover { display: none; width: 22px; height: 22px; color: var(--accent); flex: none; }
+.tr:hover .play-hover { display: inline-flex; }
+@media (hover: none) { .tr .play-hover { display: inline-flex; } }
+.tr-detail {
+  background: var(--surface); border-bottom: 1px solid var(--hair);
+  padding: var(--space-3) var(--space-4) var(--space-3) 40px;
+}
+.tr-detail .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--space-2); }
+.tr-detail .detail-line { font-size: var(--text-caption); color: var(--muted); line-height: 1.6; }
+.tr-detail .detail-line b { color: var(--text); font-weight: 600; }
+
+/* ---- Feedback ----------------------------------------------------------- */
+.skeleton {
+  border-radius: 6px; background: var(--elev);
+  animation: skeleton-pulse 1.6s var(--ease-out) infinite;
+}
+@keyframes skeleton-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
+
+.mark-pulse { animation: mark-pulse 1.2s ease-in-out infinite; }
+@keyframes mark-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .mark-pulse { animation: none; } }
+
+.empty { text-align: center; padding: var(--space-7) var(--space-4); }
+.empty .sistrum { margin: 0 auto var(--space-4); width: 30px; height: 45px; }
+.empty-title { font-family: var(--font-serif); font-size: 22px; font-weight: 600; }
+.empty-body { color: var(--muted); font-size: var(--text-body); margin-top: var(--space-2); }
+
+.toast {
+  background: var(--elev); color: var(--text);
+  border: 1px solid var(--hair); border-radius: var(--radius-tile);
+  padding: var(--space-3) var(--space-4); font-size: var(--text-body);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35); /* transient overlay: the one permitted shadow */
+}
+
+/* ---- States ------------------------------------------------------------- */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[disabled], .is-disabled { opacity: 0.45; pointer-events: none; }

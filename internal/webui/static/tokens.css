@@ -1,0 +1,126 @@
+/* ========================================================================== */
+/* ihy design system: Dendera                                                */
+/*                                                                            */
+/* Two dark grounds and one shared light theme:                              */
+/*   [data-theme="lapis"]   dark, deep lapis ground                          */
+/*   [data-theme="silt"]    dark, warm near-black ground                     */
+/*   [data-theme="papyrus"] the single light theme, shared by both            */
+/*                                                                            */
+/* Roles, not colors: bg / surface / elev are luminance steps, text and      */
+/* muted are the only text voices, accent is gold and carries identity and   */
+/* action. Chips are neutral containers; group hue is reserved for credit    */
+/* and graph surfaces, never for chrome.                                     */
+/*                                                                            */
+/* Design of record: internal/webui/DESIGN.md. Catalog: /ui/design.          */
+/* ========================================================================== */
+
+:root {
+  /* Typography. Serif speaks, sans works, mono tells the truth. */
+  --font-serif: "Literata", "Noto Serif JP", Georgia, serif;
+  --font-sans: "Instrument Sans", "Noto Sans JP", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Spline Sans Mono", "Noto Sans JP", ui-monospace, Menlo, monospace;
+
+  /* Type scale, rem-based so device DPI scales one root. */
+  --text-display: 2.125rem;      /* 34px: page titles */
+  --text-title: 1.625rem;        /* 26px: artist/entity names */
+  --text-title-mobile: 1.375rem; /* 22px: entity names on constrained widths */
+  --text-body: 0.875rem;         /* 14px: UI body, minimum size for UI text */
+  --text-reading: 0.9375rem;     /* 15px: longform reading surfaces */
+  --text-row: 0.8125rem;         /* 13px: track rows */
+  --text-caption: 0.75rem;       /* 12px: captions, role lines */
+  --text-meta: 0.71875rem;       /* 11.5px: mono metadata */
+  --text-chip: 0.65625rem;       /* 10.5px: chips */
+  --text-label: 0.625rem;        /* 10px: uppercase mono labels */
+
+  --track-display: -0.5px;  /* serif display tracking */
+  --track-title: -0.3px;    /* serif titles */
+  --track-label: 1.6px;     /* uppercase mono labels */
+
+  /* Spacing, 8px base. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 22px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Radius. Pills for actions and chips, soft cards, sharp covers. */
+  --radius-card: 14px;
+  --radius-tile: 10px;
+  --radius-cover: 6px;
+  --radius-pill: 999px;
+
+  /* Cover sizes. */
+  --cover-s: 32px;
+  --cover-m: 56px;
+  --cover-l: 96px;
+  --cover-xl: 160px;
+
+  /* Touch. Minimum target on constrained surfaces. */
+  --tap-min: 44px;
+
+  /* Motion. htmx-friendly, cause before effect. */
+  --motion-fast: 120ms;
+  --motion-swap: 220ms;
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Theme: Lapis. Dark, native. Night water; lapis is the ground itself.       */
+/* -------------------------------------------------------------------------- */
+[data-theme="lapis"] {
+  color-scheme: dark;
+
+  --bg: #0d1830;
+  --surface: #15223e;
+  --elev: #1c2b4e;
+  --text: #f2e9d2;
+  --muted: #a9a28c;
+  --hair: rgba(242, 233, 210, 0.14);
+  --chip-hair: rgba(242, 233, 210, 0.16);
+  --accent: #e3b94e;
+  --accent-ink: #0d1830;
+  --accent-soft: rgba(227, 185, 78, 0.14);
+  --negative: #e08a63; /* terracotta: errors and destructive actions */
+}
+
+/* -------------------------------------------------------------------------- */
+/* Theme: Silt. Dark, warm. Nile mud at night; lapis retreats into panels.    */
+/* Surface and elev stay lapis: cool panels on a warm ground.                 */
+/* -------------------------------------------------------------------------- */
+[data-theme="silt"] {
+  color-scheme: dark;
+
+  --bg: #16130e;
+  --surface: #15223e;
+  --elev: #1c2b4e;
+  --text: #f2e9d2;
+  --muted: #a9a28c;
+  --hair: rgba(242, 233, 210, 0.14);
+  --chip-hair: rgba(242, 233, 210, 0.16);
+  --accent: #e3b94e;
+  --accent-ink: #0d1830;
+  --accent-soft: rgba(227, 185, 78, 0.14);
+  --negative: #e08a63;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Theme: Papyrus. The one light theme, shared by both dark themes.           */
+/* Lapis ink on papyrus; ochre (gold, darkened for daylight) carries action.  */
+/* -------------------------------------------------------------------------- */
+[data-theme="papyrus"] {
+  color-scheme: light;
+
+  --bg: #f3ecda;
+  --surface: #f9f4e6;
+  --elev: #fffdf2;
+  --text: #1c2440;
+  --muted: #615f4f;
+  --hair: rgba(28, 36, 64, 0.14);
+  --chip-hair: rgba(34, 30, 20, 0.22);
+  --accent: #8a6810;
+  --accent-ink: #fffdf2;
+  --accent-soft: rgba(138, 104, 16, 0.12);
+  --negative: #a5462c;
+}

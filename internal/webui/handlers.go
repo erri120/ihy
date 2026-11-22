@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -23,6 +24,12 @@ const sessionCookie = "ihy_session"
 // Server holds the web UI handlers.
 type Server struct {
 	db *sql.DB
+	// Dev enables UI development mode: the design page hot-reloads
+	// static assets over SSE and full-reloads on server restarts.
+	Dev bool
+	// DevStatic serves static assets from this directory on disk
+	// instead of the embedded copies (dev only).
+	DevStatic string
 }
 
 func NewServer(db *sql.DB) *Server { return &Server{db: db} }
@@ -84,7 +91,11 @@ func (s *Server) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /ui/artists/{mbid}", s.auth(s.Artist))
 	mux.HandleFunc("GET /ui/release-groups/{mbid}", s.auth(s.ReleaseGroup))
 	mux.HandleFunc("GET /ui/recordings/{mbid}", s.auth(s.Recording))
-	mux.Handle("GET /ui/static/", s.auth(staticHandler().ServeHTTP))
+	mux.HandleFunc("GET /ui/design", s.auth(s.Design))
+	if s.Dev {
+		mux.HandleFunc("GET /ui/dev/refresh", s.auth(s.devRefresh))
+	}
+	mux.Handle("GET /ui/static/", s.auth(s.staticHandler().ServeHTTP))
 }
 
 // Mux builds the web UI as a standalone handler (tests).
@@ -94,8 +105,16 @@ func (s *Server) Mux() http.Handler {
 	return mux
 }
 
-// staticHandler serves embedded static assets.
-func staticHandler() http.Handler {
+// staticHandler serves static assets: embedded copies in production,
+// from disk in dev mode (no-store, so hot reload always revalidates).
+func (s *Server) staticHandler() http.Handler {
+	if s.DevStatic != "" {
+		fsys := os.DirFS(s.DevStatic)
+		return http.StripPrefix("/ui/static/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Cache-Control", "no-store")
+			http.FileServerFS(fsys).ServeHTTP(w, r)
+		}))
+	}
 	sub, err := fs.Sub(staticFS, "static")
 	if err != nil {
 		panic(err)

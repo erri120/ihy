@@ -16,9 +16,22 @@ test-e2e:
 # Run ihy in a dev environment: ephemeral Postgres, fixtures as
 # library. Override IHY_LIBRARIES for any read-only path.
 IHY_LIBRARIES ?= $(CURDIR)/examples
+DEV_ENV := DB_HOST=127.0.0.1 DB_PORT=5433 DB_USER=ihy DB_PASSWORD=ihy DB_DATABASE=postgres \
+	IHY_LIBRARIES=$(IHY_LIBRARIES) IHY_MB_REPLAYS=$(CURDIR)/internal/musicbrainz/testdata/replays
+
 dev: ui
 	docker compose -f docker-compose.dev.yml up -d --wait testdb
-	DB_HOST=127.0.0.1 DB_PORT=5433 DB_USER=ihy DB_PASSWORD=ihy DB_DATABASE=postgres IHY_LIBRARIES=$(IHY_LIBRARIES) IHY_MB_REPLAYS=$(CURDIR)/internal/musicbrainz/testdata/replays go run ./cmd/ihy
+	$(DEV_ENV) go run ./cmd/ihy
+
+# UI development: ihy with hot reload. templ regenerates on .templ
+# edits (air rebuilds and restarts the server on the generated Go);
+# static assets serve from disk and hot-swap in the browser via SSE
+# (design page: /ui/design).
+dev-ui: ui
+	docker compose -f docker-compose.dev.yml up -d --wait testdb
+	go tool templ generate --watch & templpid=$$!; \
+	trap 'kill $$templpid' EXIT; \
+	$(DEV_ENV) IHY_UI_DEV=1 IHY_UI_STATIC_DIR=$(CURDIR)/internal/webui/static go tool air -c .air.toml
 
 build: ui
 	CGO_ENABLED=0 go build -o ihy ./cmd/ihy

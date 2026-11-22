@@ -67,3 +67,45 @@ other = "{{.PluralCount}} recordings"
 
 [ComingSoon]
 other = "This page lands with the player milestone."
+
+[DesignSystem]
+other = "Design system"
+
+[DesignTagline]
+other = "Dendera: the component catalog of the ihy web UI. Specimens are generic; real data lives on the pages. The design of record is internal/webui/DESIGN.md."
+
+[Theme]
+other = "Theme"
+
+[DevHotReload]
+other = "dev · hot reload on"
+
+[DesignType]
+other = "Typography"
+
+[DesignButtons]
+other = "Buttons"
+
+[DesignInputs]
+other = "Inputs"
+
+[DesignTabs]
+other = "Tabs"
+
+[DesignCovers]
+other = "Covers"
+
+[DesignTrackRows]
+other = "Track rows"
+
+[DesignChips]
+other = "Chips"
+
+[DesignEmpty]
+other = "Empty state"
+
+[DesignIcons]
+other = "Icons"
+
+[DesignFeedback]
+other = "Feedback"
