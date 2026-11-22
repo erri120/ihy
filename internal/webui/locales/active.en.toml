@@ -109,3 +109,101 @@ other = "Icons"
 
 [DesignFeedback]
 other = "Feedback"
+
+[Play]
+other = "Play"
+
+[AddToQueue]
+other = "Add to queue"
+
+[Favorite]
+other = "Favorite"
+
+[PlayerComingSoon]
+other = "Playback lands with the player milestone."
+
+[ArtistSections]
+other = "Artist sections"
+
+[TabOverview]
+other = "Overview"
+
+[TabRecordings]
+other = "Recordings"
+
+[TabWorks]
+other = "Works"
+
+[TabCredits]
+other = "Credits"
+
+[MostPlayedAlbums]
+other = "Most played albums"
+
+[MostPlayedRecordings]
+other = "Most played recordings"
+
+[ShowAll]
+other = "show all →"
+
+[About]
+other = "About"
+
+[Aliases]
+other = "Aliases"
+
+[InYourLibrary]
+other = "In your library"
+
+[CreditsTotal]
+other = "Credits"
+
+[NRelationships]
+one = "{{.PluralCount}} relationship"
+other = "{{.PluralCount}} relationships"
+
+[StatsWorks]
+one = "{{.PluralCount}} work"
+other = "{{.PluralCount}} works"
+
+[ArtistTypePerson]
+other = "Person"
+
+[ArtistTypeGroup]
+other = "Group"
+
+[ArtistTypeCharacter]
+other = "Character"
+
+[Born]
+other = "born"
+
+[Formed]
+other = "formed"
+
+[Created]
+other = "created"
+
+[Formerly]
+other = "formerly"
+
+[Until]
+other = "until"
+
+[NoRecordings]
+other = "No recordings in the library yet."
+
+[NoWorks]
+other = "No works in the library scan."
+
+[NoCredits]
+other = "No credits in the library scan."
+
+[NoISWC]
+other = "no ISWC"
+
+[WorkLabel]
+other = "Work:"
+
+[NoDetails]
+other = "No credits or linked works for this recording."

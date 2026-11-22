@@ -1,36 +1,290 @@
+// The artist page: listening-first per DESIGN.md. The header (names,
+// meta, actions) is visible on all tabs; tab panels swap over htmx.
+// The header is data-driven by MB artist type (Person/Group/
+// Character); counts name their entity ("31 recordings", never
+// "songs"); credits and relationships live one interaction away
+// (expandable row detail, works and credits tabs).
 package webui
 
-templ ArtistPage(t *T, a ArtistVM) {
-	@Layout(t, a.Name) {
-		<header class="page-head">
-			<h1>{ a.Name }</h1>
-			<form method="post" action="/logout" class="logout">
-				<button type="submit">{ t.Msg("LogOut") }</button>
-			</form>
-		</header>
-		if a.Canonical != a.Name {
-			<p class="muted">{ t.Msg("Canonical") } { a.Canonical }</p>
-		}
-		if a.Meta != "" {
-			<p class="muted">{ a.Meta }</p>
-		}
-		<h2>{ t.Msg("Albums") }</h2>
-		if len(a.Albums) == 0 {
-			<p class="muted">{ t.Msg("NoAlbums") }</p>
-		} else {
-			<ul class="results">
-				for _, al := range a.Albums {
-					<li>
-						<a href={ templ.URL(al.Href()) }>{ al.Name }</a>
-						if al.FirstReleaseDate != "" {
-							<span class="muted">{ " " }{ al.FirstReleaseDate }</span>
-						}
-						if al.Relationship == "featured" {
-							<span class="badge">{ t.Plural("FeaturedOnTracks", al.FeaturedTracks) }</span>
-						}
-					</li>
+templ ArtistPage(t *T, vm ArtistVM, tab string) {
+	@Layout(t, vm.Name) {
+		<style>
+			.a-page { max-width: 760px; margin: 0 auto; padding: var(--space-6) var(--space-4) 96px; }
+			.a-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+			.a-title { font-family: var(--font-serif); font-size: var(--text-display); font-weight: 600; letter-spacing: var(--track-display); line-height: 1.1; }
+			.a-original { font-family: var(--font-serif); font-size: var(--text-title); font-weight: 600; letter-spacing: var(--track-title); color: var(--muted); margin-top: var(--space-1); }
+			.a-meta { color: var(--muted); font-size: var(--text-caption); margin-top: var(--space-2); }
+			.a-actions { display: flex; align-items: center; gap: var(--space-2); }
+			.a-logout .btn-ghost { padding: 4px 12px; font-size: var(--text-caption); }
+			.a-kicker { font-family: var(--font-mono); font-size: var(--text-label); text-transform: uppercase; letter-spacing: var(--track-label); color: var(--muted); margin: var(--space-6) 0 var(--space-3); }
+			.a-section { margin-top: var(--space-5); }
+			.a-section-head { display: flex; align-items: baseline; gap: var(--space-3); margin: var(--space-6) 0 var(--space-3); }
+			.a-section-link { font-family: var(--font-mono); font-size: var(--text-label); text-transform: uppercase; letter-spacing: var(--track-label); color: var(--muted); text-decoration: none; background: none; border: none; padding: 4px 0; cursor: pointer; }
+			.a-section-link:hover { color: var(--text); }
+			.a-show-all { margin-left: auto; font-size: var(--text-caption); color: var(--muted); text-decoration: none; }
+			.a-show-all:hover { color: var(--accent); }
+			.a-summary { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-top: var(--space-3); }
+			.a-cell { background: var(--surface); border-radius: var(--radius-tile); padding: var(--space-3) var(--space-4); }
+			.a-cell .k { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: var(--track-label); color: var(--muted); }
+			.a-cell .v { font-size: var(--text-body); margin-top: var(--space-1); line-height: 1.5; }
+			.a-work { display: flex; align-items: baseline; gap: var(--space-3); padding: 9px 2px; border-bottom: 1px solid var(--hair); font-size: var(--text-row); }
+			.a-work:last-child { border-bottom: none; }
+			.a-work .iswc { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-meta); color: var(--muted); flex: none; }
+			.a-credit { display: flex; align-items: baseline; gap: var(--space-3); padding: 9px 2px; border-bottom: 1px solid var(--hair); font-size: var(--text-row); }
+			.a-credit:last-child { border-bottom: none; }
+			.a-credit .count { margin-left: auto; font-family: var(--font-mono); font-size: var(--text-meta); color: var(--muted); flex: none; }
+			@media (max-width: 600px) {
+				.a-page { padding: var(--space-5) var(--space-4) 96px; }
+				.a-summary { grid-template-columns: 1fr; }
+			}
+		</style>
+		<div class="a-page">
+			<header class="a-head">
+				<div>
+					<h1 class="a-title">{ vm.Name }</h1>
+					if vm.Original != "" {
+						<div class="a-original">{ vm.Original }</div>
+					}
+					if vm.FormerName != "" {
+						<div class="a-original">{ vm.FormerName }</div>
+					}
+					<div class="a-meta">{ vm.Meta }</div>
+				</div>
+				<div class="a-actions">
+					<button class="btn" type="button" disabled title={ t.Msg("PlayerComingSoon") }>{ t.Msg("Play") }</button>
+					<button class="btn btn-ghost" type="button" disabled title={ t.Msg("PlayerComingSoon") }>{ t.Msg("AddToQueue") }</button>
+					<button class="btn-icon" type="button" disabled aria-label={ t.Msg("Favorite") }>@Icon("heart")</button>
+					<form method="post" action="/logout" class="a-logout">
+						<button class="btn btn-ghost" type="submit">{ t.Msg("LogOut") }</button>
+					</form>
+				</div>
+			</header>
+
+			<nav class="tabs" aria-label={ t.Msg("ArtistSections") }>
+				for _, tb := range vm.Tabs {
+					<a class={ "tab", templ.KV("is-active", tb.Active) }
+						href={ templ.URL(tb.URL) }
+						hx-get={ templ.URL(tb.Fragment) }
+						hx-target="#artist-panel"
+						hx-swap="outerHTML"
+					>{ tb.Label }</a>
 				}
-			</ul>
-		}
+			</nav>
+
+			<div id="artist-panel">
+				@ArtistPanel(t, vm, tab)
+			</div>
+		</div>
 	}
+}
+
+// ArtistPanel renders one tab's content; the tab fragment endpoint
+// swaps exactly this element (htmx outerHTML).
+templ ArtistPanel(t *T, vm ArtistVM, tab string) {
+	<div id="artist-panel">
+		if tab == "albums" {
+			@artistAlbums(t, vm)
+		} else if tab == "recordings" {
+			@artistRecordings(t, vm)
+		} else if tab == "works" {
+			@artistWorks(t, vm)
+		} else if tab == "credits" {
+			@artistCredits(t, vm)
+		} else {
+			@artistOverview(t, vm)
+		}
+	</div>
+}
+
+templ artistOverview(t *T, vm ArtistVM) {
+	<section class="a-section">
+		<div class="a-section-head">
+			<a class="a-section-link"
+				href={ templ.URL(tabURL(vm.Mbid, "albums")) }
+				hx-get={ templ.URL(tabFragment(vm.Mbid, "albums")) }
+				hx-target="#artist-panel" hx-swap="outerHTML">{ t.Msg("MostPlayedAlbums") }</a>
+			<a class="a-show-all" href={ templ.URL(tabURL(vm.Mbid, "albums")) }
+				hx-get={ templ.URL(tabFragment(vm.Mbid, "albums")) }
+				hx-target="#artist-panel" hx-swap="outerHTML">{ t.Msg("ShowAll") }</a>
+		</div>
+		if len(vm.Albums) == 0 {
+			@artistEmpty(t, t.Msg("NoAlbums"))
+		} else {
+			<div class="album-grid">
+				for i, al := range vm.Albums {
+					if i >= 8 {
+						break
+					}
+					<div class="album-card">
+						@Cover("", al.Name, "")
+						<div class="ac-title">{ al.Name }</div>
+						<div class="ac-meta">{ al.FirstReleaseDate } · { t.Msg("KindAlbum") }</div>
+						<a class="ac-link" href={ templ.URL(al.Href()) } aria-label={ al.Name }></a>
+					</div>
+				}
+			</div>
+		}
+	</section>
+
+	<section class="a-section">
+		<div class="a-section-head">
+			<a class="a-section-link"
+				href={ templ.URL(tabURL(vm.Mbid, "recordings")) }
+				hx-get={ templ.URL(tabFragment(vm.Mbid, "recordings")) }
+				hx-target="#artist-panel" hx-swap="outerHTML">{ t.Msg("MostPlayedRecordings") }</a>
+			<a class="a-show-all" href={ templ.URL(tabURL(vm.Mbid, "recordings")) }
+				hx-get={ templ.URL(tabFragment(vm.Mbid, "recordings")) }
+				hx-target="#artist-panel" hx-swap="outerHTML">{ t.Msg("ShowAll") }</a>
+		</div>
+		if len(vm.Recordings) == 0 {
+			@artistEmpty(t, t.Msg("NoRecordings"))
+		} else {
+			<div class="tracklist">
+				for i, rec := range vm.Recordings {
+					if i >= 5 {
+						break
+					}
+					@artistRow(vm.Mbid, itoa(i+1), rec)
+				}
+			</div>
+		}
+	</section>
+
+	<section class="a-section">
+		<div class="a-section-head">
+			<span class="a-section-link" style="cursor: default">{ t.Msg("About") }</span>
+		</div>
+		<div class="a-summary">
+			<div class="a-cell">
+				<div class="k">{ t.Msg("Aliases") }</div>
+				<div class="v">{ aliasSummary(vm.Aliases, 4) }</div>
+			</div>
+			<div class="a-cell">
+				<div class="k">{ artistTypeLabel(t, vm.Type) }</div>
+				<div class="v">{ vm.Origin }</div>
+			</div>
+			<div class="a-cell">
+				<div class="k">{ t.Msg("InYourLibrary") }</div>
+				<div class="v">{ librarySummary(t, vm) }</div>
+			</div>
+			<div class="a-cell">
+				<div class="k">{ t.Msg("CreditsTotal") }</div>
+				<div class="v">{ t.Plural("NRelationships", vm.CreditTotal) }</div>
+			</div>
+		</div>
+	</section>
+}
+
+templ artistAlbums(t *T, vm ArtistVM) {
+	<div class="a-section">
+		<div class="a-kicker">{ t.Msg("Albums") } · { itoa(len(vm.Albums)) }</div>
+		if len(vm.Albums) == 0 {
+			@artistEmpty(t, t.Msg("NoAlbums"))
+		} else {
+			<div class="album-grid">
+				for _, al := range vm.Albums {
+					<div class="album-card">
+						@Cover("", al.Name, "")
+						<div class="ac-title">{ al.Name }</div>
+						<div class="ac-meta">{ al.FirstReleaseDate } · { t.Msg("KindAlbum") }</div>
+						<a class="ac-link" href={ templ.URL(al.Href()) } aria-label={ al.Name }></a>
+					</div>
+				}
+			</div>
+		}
+	</div>
+}
+
+templ artistRecordings(t *T, vm ArtistVM) {
+	<div class="a-section">
+		<div class="a-kicker">{ t.Plural("StatsRecordings", len(vm.Recordings)) }</div>
+		if len(vm.Recordings) == 0 {
+			@artistEmpty(t, t.Msg("NoRecordings"))
+		} else {
+			<div class="tracklist">
+				for i, rec := range vm.Recordings {
+					@artistRow(vm.Mbid, itoa(i+1), rec)
+				}
+			</div>
+		}
+	</div>
+}
+
+// artistRow is one expandable recording row: clicking loads the
+// credit detail (roles verbatim + work) into the slot beneath it.
+templ artistRow(mbid, no string, rec RecordingVM) {
+	<div class="tr" hx-get={ templ.URL(recordingDetailFragment(mbid, rec.Mbid)) } hx-trigger="click" hx-target="next .a-detail-slot" hx-swap="innerHTML">
+		<span class="no">{ no }</span>
+		<span class="t">{ rec.Title }</span>
+		<span class="dur">{ rec.Length }</span>
+		<button class="btn-icon play-hover" type="button" disabled aria-label={ "Play" }>@Icon("play")</button>
+	</div>
+	<div class="a-detail-slot"></div>
+}
+
+templ artistWorks(t *T, vm ArtistVM) {
+	<div class="a-section">
+		<div class="a-kicker">{ t.Plural("StatsWorks", len(vm.Works)) }</div>
+		if len(vm.Works) == 0 {
+			@artistEmpty(t, t.Msg("NoWorks"))
+		} else {
+			<div class="card" style="padding: var(--space-2) var(--space-4)">
+				for _, w := range vm.Works {
+					<div class="a-work">
+						<span class="t">{ w.Title }</span>
+						if w.ISWC != "" {
+							<span class="iswc">{ w.ISWC }</span>
+						} else {
+							<span class="iswc">{ t.Msg("NoISWC") }</span>
+						}
+					</div>
+				}
+			</div>
+		}
+	</div>
+}
+
+templ artistCredits(t *T, vm ArtistVM) {
+	<div class="a-section">
+		<div class="a-kicker">{ t.Msg("CreditsTotal") }</div>
+		if len(vm.Credits) == 0 {
+			@artistEmpty(t, t.Msg("NoCredits"))
+		} else {
+			<div class="card" style="padding: var(--space-2) var(--space-4)">
+				for _, c := range vm.Credits {
+					<div class="a-credit">
+						<span class="t">{ c.Role }</span>
+						<span class="count">{ itoa(c.Count) }</span>
+					</div>
+				}
+			</div>
+		}
+	</div>
+}
+
+// ArtistRecordingDetail: the expandable detail beneath a recording
+// row: this artist's credit roles verbatim + the work line.
+templ ArtistRecordingDetail(t *T, roles []CreditVM, work *WorkVM) {
+	<div class="tr-detail">
+		if len(roles) > 0 {
+			<div class="chips">
+				for _, c := range roles {
+					@Chip(c.Role)
+				}
+			</div>
+		}
+		if work != nil {
+			<div class="detail-line">{ t.Msg("WorkLabel") } <b>{ work.Title }</b></div>
+		}
+		if len(roles) == 0 && work == nil {
+			<div class="detail-line">{ t.Msg("NoDetails") }</div>
+		}
+	</div>
+}
+
+templ artistEmpty(t *T, message string) {
+	<div class="empty">
+		<svg class="sistrum" viewBox="0 0 32 48" aria-hidden="true" style="color: var(--accent);"><use href="/ui/static/mark/sistrum-line.svg#mark"></use></svg>
+		<div class="empty-body">{ message }</div>
+	</div>
 }

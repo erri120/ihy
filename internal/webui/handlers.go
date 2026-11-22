@@ -6,10 +6,12 @@ package webui
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"io/fs"
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/a-h/templ"
@@ -76,8 +78,132 @@ func (a AlbumVM) Href() string {
 }
 
 type ArtistVM struct {
-	Name, Canonical, Meta string
-	Albums                []AlbumVM
+	Mbid, Name, Canonical, Meta string
+	// Type is the MB artist type (Person | Group | Character).
+	Type string
+	// Original is the canonical name when it differs from the display
+	// name (the second, muted line in the page head).
+	Original string
+	// FormerName renders as "formerly X (until Y)" (rename aliases
+	// with an end date; groups mainly).
+	FormerName string
+	// Origin is the type/area/life-span fact line for the about cell.
+	Origin string
+	// Play/queue actions land with the player milestone; the actions
+	// render disabled until then.
+	Albums     []AlbumVM
+	Recordings []RecordingVM
+	Works      []WorkVM
+	Credits    []CreditVM
+	Aliases    []display.Alias
+	CreditTotal int
+	Tabs       []TabVM
+}
+
+// RecordingVM is one recording row (distinct audio, DESIGN.md §2).
+type RecordingVM struct {
+	Mbid, Title, Length string
+}
+
+// WorkVM is one composition row (works tab).
+type WorkVM struct {
+	Mbid, Title, ISWC string
+}
+
+// CreditVM aggregates one relationship role (raw MB type, verbatim).
+type CreditVM struct {
+	Role  string
+	Count int
+}
+
+// TabVM is one artist page tab (label + full and fragment URLs).
+type TabVM struct {
+	Name, Label, URL, Fragment string
+	Active                     bool
+}
+
+func tabURL(mbid, tab string) string {
+	return "/ui/artists/" + url.PathEscape(mbid) + "?tab=" + tab
+}
+
+func tabFragment(mbid, tab string) string {
+	return "/ui/artists/" + url.PathEscape(mbid) + "/tab/" + tab
+}
+
+func recordingDetailFragment(mbid, recordingMbid string) string {
+	return "/ui/artists/" + url.PathEscape(mbid) + "/recordings/" + url.PathEscape(recordingMbid) + "/detail"
+}
+
+func itoa(n int) string { return strconv.Itoa(n) }
+
+// artistTabs builds the tab list with the active state.
+func artistTabs(mbid, active string, t *T) []TabVM {
+	names := []struct{ name, key string }{
+		{"overview", "TabOverview"},
+		{"albums", "Albums"},
+		{"recordings", "TabRecordings"},
+		{"works", "TabWorks"},
+		{"credits", "TabCredits"},
+	}
+	out := make([]TabVM, 0, len(names))
+	for _, n := range names {
+		out = append(out, TabVM{
+			Name:     n.name,
+			Label:    t.Msg(n.key),
+			URL:      tabURL(mbid, n.name),
+			Fragment: tabFragment(mbid, n.name),
+			Active:   n.name == active,
+		})
+	}
+	return out
+}
+
+// aliasSummary renders the about cell: "岡部啓一 (ja, primary) · ..." up
+// to limit entries, then "+N more".
+func aliasSummary(aliases []display.Alias, limit int) string {
+	if len(aliases) == 0 {
+		return ""
+	}
+	parts := []string{}
+	for i, a := range aliases {
+		if i >= limit {
+			break
+		}
+		s := a.Name
+		if a.Locale != "" {
+			s += " (" + a.Locale
+			if a.Primary {
+				s += ", primary"
+			}
+			s += ")"
+		}
+		parts = append(parts, s)
+	}
+	if rest := len(aliases) - limit; rest > 0 {
+		parts = append(parts, fmt.Sprintf("+%d more", rest))
+	}
+	return strings.Join(parts, " · ")
+}
+
+func artistTypeLabel(t *T, typ string) string {
+	switch typ {
+	case "Person":
+		return t.Msg("ArtistTypePerson")
+	case "Group":
+		return t.Msg("ArtistTypeGroup")
+	case "Character":
+		return t.Msg("ArtistTypeCharacter")
+	}
+	return t.Msg("KindArtist")
+}
+
+// librarySummary is the about cell: counts always name their entity.
+func librarySummary(t *T, vm ArtistVM) string {
+	parts := []string{t.Plural("StatsRecordings", len(vm.Recordings)), t.Plural("StatsAlbums", len(vm.Albums))}
+	if len(vm.Works) > 0 {
+		parts = append(parts, t.Plural("StatsWorks", len(vm.Works)))
+	}
+	return strings.Join(parts, " · ")
 }
 
 // Register mounts the web UI routes onto the main mux (specific
@@ -89,6 +215,8 @@ func (s *Server) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /logout", s.Logout)
 	mux.HandleFunc("GET /ui/search", s.auth(s.Search))
 	mux.HandleFunc("GET /ui/artists/{mbid}", s.auth(s.Artist))
+	mux.HandleFunc("GET /ui/artists/{mbid}/tab/{tab}", s.auth(s.ArtistTab))
+	mux.HandleFunc("GET /ui/artists/{mbid}/recordings/{recording}/detail", s.auth(s.ArtistRecordingDetail))
 	mux.HandleFunc("GET /ui/release-groups/{mbid}", s.auth(s.ReleaseGroup))
 	mux.HandleFunc("GET /ui/recordings/{mbid}", s.auth(s.Recording))
 	if s.Dev {
@@ -312,7 +440,8 @@ func (s *Server) search(q string) ([]hit, error) {
 	return out, nil
 }
 
-// Artist renders an artist page with albums.
+// Artist renders the artist page (tab from the ?tab= query, so tab
+// state survives a full page load and deep links).
 func (s *Server) Artist(w http.ResponseWriter, r *http.Request) {
 	t := NewTranslator(r.Header.Get("Accept-Language"))
 	user, ok := userFrom(r.Context())
@@ -321,69 +450,207 @@ func (s *Server) Artist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	mbid := r.PathValue("mbid")
-	prefs, err := display.PrefsFor(r.Context(), s.db, user.ID)
+	vm, err := s.artistVM(r.Context(), mbid, user, t)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		s.renderErr(w, err)
 		return
+	}
+	if vm == nil {
+		http.NotFound(w, r)
+		return
+	}
+	render(w, http.StatusOK, ArtistPage(t, *vm, tabName(r.URL.Query().Get("tab"))))
+}
+
+// ArtistTab serves one tab's panel fragment for htmx swaps.
+func (s *Server) ArtistTab(w http.ResponseWriter, r *http.Request) {
+	t := NewTranslator(r.Header.Get("Accept-Language"))
+	user, ok := userFrom(r.Context())
+	if !ok {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	vm, err := s.artistVM(r.Context(), r.PathValue("mbid"), user, t)
+	if err != nil {
+		s.renderErr(w, err)
+		return
+	}
+	if vm == nil {
+		http.NotFound(w, r)
+		return
+	}
+	render(w, http.StatusOK, ArtistPanel(t, *vm, tabName(r.PathValue("tab"))))
+}
+
+// ArtistRecordingDetail serves the expandable detail beneath one
+// recording row: this artist's credit roles on the recording (raw MB
+// types verbatim) plus the composition line.
+func (s *Server) ArtistRecordingDetail(w http.ResponseWriter, r *http.Request) {
+	t := NewTranslator(r.Header.Get("Accept-Language"))
+	if _, ok := userFrom(r.Context()); !ok {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	mbid := r.PathValue("mbid")
+	recordingMbid := r.PathValue("recording")
+
+	rows, err := s.db.QueryContext(r.Context(), `
+		SELECT role, count(DISTINCT subject_mbid)
+		FROM credit
+		WHERE subject_type = 'recording' AND subject_mbid = $2
+		  AND artist_mbid = $1 AND role <> 'artist-credit'
+		GROUP BY role ORDER BY count DESC, role`, mbid, recordingMbid)
+	if err != nil {
+		s.renderErr(w, err)
+		return
+	}
+	defer rows.Close()
+	var roles []CreditVM
+	for rows.Next() {
+		var c CreditVM
+		if err := rows.Scan(&c.Role, &c.Count); err != nil {
+			s.renderErr(w, err)
+			return
+		}
+		roles = append(roles, c)
+	}
+
+	var work *WorkVM
+	var title, iswc string
+	err = s.db.QueryRowContext(r.Context(), `
+		SELECT w.title, coalesce(w.iswc, '')
+		FROM recording_work rw JOIN work w ON w.mbid = rw.work_mbid
+		WHERE rw.recording_mbid = $1`, recordingMbid).
+		Scan(&title, &iswc)
+	if err != nil && err != sql.ErrNoRows {
+		s.renderErr(w, err)
+		return
+	}
+	if err == nil {
+		work = &WorkVM{Mbid: recordingMbid, Title: title, ISWC: iswc}
+	}
+	render(w, http.StatusOK, ArtistRecordingDetail(t, roles, work))
+}
+
+// tabName normalizes the ?tab= value; unknown tabs fall back to the
+// overview.
+func tabName(s string) string {
+	switch s {
+	case "albums", "recordings", "works", "credits":
+		return s
+	}
+	return "overview"
+}
+
+func (s *Server) renderErr(w http.ResponseWriter, err error) {
+	http.Error(w, err.Error(), http.StatusInternalServerError)
+}
+
+// artistVM loads the full artist page view model. A nil VM with a nil
+// error means no such artist.
+func (s *Server) artistVM(ctx context.Context, mbid string, user auth.User, t *T) (*ArtistVM, error) {
+	prefs, err := display.PrefsFor(ctx, s.db, user.ID)
+	if err != nil {
+		return nil, err
 	}
 	p := prefs["artist"]
 
 	var canonical, typ, country, begin, end string
-	err = s.db.QueryRowContext(r.Context(), `
+	err = s.db.QueryRowContext(ctx, `
 		SELECT name, coalesce(type, ''), coalesce(country, ''),
 		       coalesce(begin_date, ''), coalesce(end_date, '')
 		FROM artist WHERE mbid = $1`, mbid).
 		Scan(&canonical, &typ, &country, &begin, &end)
 	if err == sql.ErrNoRows {
-		http.NotFound(w, r)
-		return
+		return nil, nil
 	}
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
-	aliases, err := display.Aliases(r.Context(), s.db, "artist", mbid)
+	aliases, err := display.Aliases(ctx, s.db, "artist", mbid)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 
-	meta := strings.Join(nonEmpty(typ, country, begin, end), " · ")
-	vm := ArtistVM{
+	// Life-span wording is type-driven (DESIGN.md: artist header
+	// variants): person born, group formed, character created.
+	var lifeVerb string
+	switch typ {
+	case "Person":
+		lifeVerb = "Born"
+	case "Group":
+		lifeVerb = "Formed"
+	case "Character":
+		lifeVerb = "Created"
+	}
+	life := begin
+	if life != "" && lifeVerb != "" {
+		life = t.Msg(lifeVerb) + " " + life
+	}
+
+	vm := &ArtistVM{
+		Mbid:      mbid,
 		Name:      display.Name(p, canonical, aliases),
 		Canonical: canonical,
-		Meta:      meta,
+		Type:      typ,
+		Aliases:   aliases,
+		Origin:    strings.Join(nonEmpty(country, life), " · "),
+	}
+	if vm.Name != canonical {
+		vm.Original = canonical
+	}
+	for _, a := range aliases {
+		if a.End != "" {
+			vm.FormerName = t.Msg("Formerly") + " " + a.Name + " (" + t.Msg("Until") + " " + a.End + ")"
+			break
+		}
 	}
 
-	// Primary albums: release-group level credits.
+	// Recording count for the meta line: recordings with at least one
+	// file in the library.
+	var recordingCount int
+	if err := s.db.QueryRowContext(ctx, `
+		SELECT count(DISTINCT c.subject_mbid)
+		FROM credit c
+		WHERE c.subject_type = 'recording' AND c.artist_mbid = $1 AND c.role = 'artist-credit'
+		  AND EXISTS (SELECT 1 FROM file f WHERE f.recording_mbid = c.subject_mbid)`, mbid).
+		Scan(&recordingCount); err != nil {
+		return nil, err
+	}
+	meta := strings.Join(nonEmpty(artistTypeLabel(t, typ), country, life), " · ")
+	if recordingCount > 0 {
+		meta = strings.Join(nonEmpty(meta, t.Plural("StatsRecordings", recordingCount)), " · ")
+	}
+	vm.Meta = meta
+	vm.Tabs = artistTabs(mbid, "", t)
+
+	// Albums: primary release-group credits, then featured-on (the
+	// artist appears only on tracks of that release group).
 	type album struct {
 		mbid, title, date string
 	}
 	primary := map[string]bool{}
 	var albums []album
-	rows, err := s.db.QueryContext(r.Context(), `
+	rows, err := s.db.QueryContext(ctx, `
 		SELECT rg.mbid, rg.title, coalesce(rg.first_release_date, '')
 		FROM credit c JOIN release_group rg ON rg.mbid = c.subject_mbid
 		WHERE c.subject_type = 'release_group' AND c.artist_mbid = $1 AND c.role = 'artist-credit'
-		ORDER BY rg.first_release_date`, mbid)
+		ORDER BY rg.first_release_date DESC`, mbid)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 	for rows.Next() {
 		var a album
 		if err := rows.Scan(&a.mbid, &a.title, &a.date); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return nil, err
 		}
 		albums = append(albums, a)
 		primary[a.mbid] = true
 	}
 	rows.Close()
 
-	// Featured albums: the artist appears only on tracks.
 	featuredCount := map[string]int{}
-	rows, err = s.db.QueryContext(r.Context(), `
+	rows, err = s.db.QueryContext(ctx, `
 		SELECT rg.mbid, rg.title, coalesce(rg.first_release_date, ''), count(DISTINCT f.recording_mbid)
 		FROM credit c
 		JOIN file f ON f.recording_mbid = c.subject_mbid
@@ -392,15 +659,13 @@ func (s *Server) Artist(w http.ResponseWriter, r *http.Request) {
 		WHERE c.subject_type = 'recording' AND c.artist_mbid = $1
 		GROUP BY rg.mbid, rg.title, rg.first_release_date`, mbid)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 	for rows.Next() {
 		var a album
 		var featured int
 		if err := rows.Scan(&a.mbid, &a.title, &a.date, &featured); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return nil, err
 		}
 		featuredCount[a.mbid] = featured
 		if !primary[a.mbid] {
@@ -410,7 +675,7 @@ func (s *Server) Artist(w http.ResponseWriter, r *http.Request) {
 	rows.Close()
 
 	for _, a := range albums {
-		rgAliases, _ := display.Aliases(r.Context(), s.db, "release_group", a.mbid)
+		rgAliases, _ := display.Aliases(ctx, s.db, "release_group", a.mbid)
 		avm := AlbumVM{
 			Mbid:             a.mbid,
 			Name:             display.Name(prefs["release_group"], a.title, rgAliases),
@@ -428,7 +693,82 @@ func (s *Server) Artist(w http.ResponseWriter, r *http.Request) {
 		}
 		vm.Albums = append(vm.Albums, avm)
 	}
-	render(w, http.StatusOK, ArtistPage(t, vm))
+
+	// Recordings: distinct audio the artist is credited on and that
+	// has files in the library.
+	rows, err = s.db.QueryContext(ctx, `
+		SELECT r.mbid, r.title, r.length_ms
+		FROM recording r
+		WHERE EXISTS (SELECT 1 FROM file f WHERE f.recording_mbid = r.mbid)
+		  AND EXISTS (SELECT 1 FROM credit c
+		              WHERE c.subject_type = 'recording' AND c.subject_mbid = r.mbid
+		                AND c.artist_mbid = $1 AND c.role = 'artist-credit')
+		ORDER BY coalesce(r.first_release_date, '') DESC, r.title`, mbid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var rec RecordingVM
+		var ms sql.NullInt64
+		if err := rows.Scan(&rec.Mbid, &rec.Title, &ms); err != nil {
+			return nil, err
+		}
+		rec.Length = formatLength(ms)
+		vm.Recordings = append(vm.Recordings, rec)
+	}
+	rows.Close()
+
+	// Works: compositions reached through composer/writer/arranger
+	// relationships (works have no artist of their own).
+	rows, err = s.db.QueryContext(ctx, `
+		SELECT w.mbid, w.title, coalesce(w.iswc, '')
+		FROM work w
+		WHERE EXISTS (SELECT 1 FROM credit c
+		              WHERE c.subject_type = 'work' AND c.subject_mbid = w.mbid
+		                AND c.artist_mbid = $1)
+		ORDER BY w.title`, mbid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var w WorkVM
+		if err := rows.Scan(&w.Mbid, &w.Title, &w.ISWC); err != nil {
+			return nil, err
+		}
+		vm.Works = append(vm.Works, w)
+	}
+	rows.Close()
+
+	// Credits: role totals, raw relationship types verbatim.
+	rows, err = s.db.QueryContext(ctx, `
+		SELECT role, count(DISTINCT subject_type || subject_mbid::text)
+		FROM credit WHERE artist_mbid = $1
+		GROUP BY role ORDER BY count DESC, role`, mbid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var c CreditVM
+		if err := rows.Scan(&c.Role, &c.Count); err != nil {
+			return nil, err
+		}
+		vm.Credits = append(vm.Credits, c)
+		vm.CreditTotal += c.Count
+	}
+	return vm, nil
+}
+
+// formatLength renders milliseconds as m:ss; unknown lengths render
+// empty (the row just omits the duration).
+func formatLength(ms sql.NullInt64) string {
+	if !ms.Valid || ms.Int64 <= 0 {
+		return ""
+	}
+	total := ms.Int64 / 1000
+	return fmt.Sprintf("%d:%02d", total/60, total%60)
 }
 
 // nonEmpty filters out blank strings.
