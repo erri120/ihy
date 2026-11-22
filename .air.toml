@@ -10,4 +10,4 @@ tmp_dir = "/tmp/ihy-air"
   bin = "/tmp/ihy-dev"
   include_ext = ["go"]
   exclude_dir = ["examples", "data", "docs", "migrations", "ihy-air-tmp"]
-  delay = 300
+  delay = 1000
