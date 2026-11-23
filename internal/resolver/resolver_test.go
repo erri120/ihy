@@ -202,3 +202,113 @@ func TestConflictsRecorded(t *testing.T) {
 		t.Error("Eskimo Callboy vs Electric Callboy conflict not recorded")
 	}
 }
+
+// The graph is file-backed: entities exist because a file references
+// them, and the last file going away takes the entity and its
+// dependents with it.
+func TestPruneAfterFileRemoval(t *testing.T) {
+	db := setup(t)
+
+	// The release backed by the fewest files, plus what exists only
+	// through those files.
+	var relMBID string
+	var rgMBID string
+	var rgReleases int
+	if err := db.QueryRow(`
+		SELECT f.release_mbid, r.release_group_mbid,
+		       (SELECT count(*) FROM release r2 WHERE r2.release_group_mbid = r.release_group_mbid)
+		FROM file f JOIN release r ON r.mbid = f.release_mbid
+		GROUP BY f.release_mbid, r.release_group_mbid
+		ORDER BY count(*) LIMIT 1`).Scan(&relMBID, &rgMBID, &rgReleases); err != nil {
+		t.Fatalf("file-backed release: %v", err)
+	}
+	var recordings []string
+	rows, err := db.Query(`SELECT DISTINCT recording_mbid FROM file WHERE release_mbid = $1`, relMBID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for rows.Next() {
+		var m string
+		if err := rows.Scan(&m); err != nil {
+			t.Fatal(err)
+		}
+		recordings = append(recordings, m)
+	}
+	rows.Close()
+	if len(recordings) == 0 {
+		t.Fatal("release has no recordings via files")
+	}
+
+	// A stale conflict row must not block the file deletion: the FK
+	// to file cascades.
+	var fileID int64
+	if err := db.QueryRow(`SELECT id FROM file WHERE release_mbid = $1 LIMIT 1`, relMBID).Scan(&fileID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`INSERT INTO conflict (file_id, kind, tag_value, mb_value) VALUES ($1, 'recording-title', 'tag value', 'mb value')`, fileID); err != nil {
+		t.Fatal(err)
+	}
+
+	// Simulate the scanner noticing the files are gone.
+	if _, err := db.Exec(`DELETE FROM file WHERE release_mbid = $1`, relMBID); err != nil {
+		t.Fatalf("delete files: %v (conflict FK must not block this)", err)
+	}
+
+	rt, err := musicbrainz.NewReplayTransport(filepath.Join("..", "musicbrainz", "testdata", "replays"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	out, err := New(db, musicbrainz.NewClient(musicbrainz.DefaultBaseURL, "test", rt)).Resolve(context.Background())
+	if err != nil {
+		t.Fatalf("re-resolve: %v", err)
+	}
+	if out.Pruned.Releases == 0 || out.Pruned.Recordings == 0 {
+		t.Errorf("prune counts = %+v, want releases and recordings pruned", out.Pruned)
+	}
+
+	// The release and its recordings are gone.
+	if n := count(t, db, `SELECT count(*) FROM release WHERE mbid = $1`, relMBID); n != 0 {
+		t.Error("unbacked release survived pruning")
+	}
+	for _, m := range recordings {
+		if n := count(t, db, `SELECT count(*) FROM recording WHERE mbid = $1`, m); n != 0 {
+			t.Errorf("recording %s survived pruning", m)
+		}
+	}
+	// The release-group goes too when it lost its last release.
+	if rgReleases == 1 {
+		if n := count(t, db, `SELECT count(*) FROM release_group WHERE mbid = $1`, rgMBID); n != 0 {
+			t.Error("release-group without releases survived pruning")
+		}
+	}
+	// The stale conflict row went with its file.
+	if n := count(t, db, `SELECT count(*) FROM conflict WHERE file_id = $1`, fileID); n != 0 {
+		t.Error("conflict row survived its file")
+	}
+
+	// The invariant: nothing in the graph is unbacked.
+	if n := count(t, db, `SELECT count(*) FROM release r WHERE NOT EXISTS (SELECT 1 FROM file f WHERE f.release_mbid = r.mbid)`); n != 0 {
+		t.Errorf("%d releases without files", n)
+	}
+	if n := count(t, db, `SELECT count(*) FROM recording rec WHERE NOT EXISTS (SELECT 1 FROM file f WHERE f.recording_mbid = rec.mbid)`); n != 0 {
+		t.Errorf("%d recordings without files", n)
+	}
+}
+
+// Pruning is idempotent: a resolve pass over an intact library prunes
+// nothing.
+func TestPruneIsIdempotent(t *testing.T) {
+	db := setup(t)
+	rt, err := musicbrainz.NewReplayTransport(filepath.Join("..", "musicbrainz", "testdata", "replays"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	out, err := New(db, musicbrainz.NewClient(musicbrainz.DefaultBaseURL, "test", rt)).Resolve(context.Background())
+	if err != nil {
+		t.Fatalf("resolve: %v", err)
+	}
+	p := out.Pruned
+	if p.Releases+p.Recordings+p.Groups+p.Works+p.Artists != 0 {
+		t.Errorf("second resolve pruned %+v over an intact library", p)
+	}
+}

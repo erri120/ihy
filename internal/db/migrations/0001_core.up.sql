@@ -156,7 +156,10 @@ CREATE TABLE file (
 CREATE TABLE track (
     release_mbid   uuid NOT NULL REFERENCES release,
     recording_mbid uuid NOT NULL REFERENCES recording,
-    file_id        bigint NOT NULL UNIQUE REFERENCES file,
+    -- A track placement exists because its file exists: removing the
+    -- file removes the placement (scanner file deletions must never
+    -- fail on this FK).
+    file_id        bigint NOT NULL UNIQUE REFERENCES file ON DELETE CASCADE,
     medium_number  integer NOT NULL,       -- disc
     track_number   integer NOT NULL,
     PRIMARY KEY (release_mbid, medium_number, track_number)
@@ -215,7 +218,10 @@ CREATE INDEX event_user_time_idx ON event (user_id, occurred_at);
 -- Callboy"). Resolver-owned, fully rebuilt per resolve run.
 CREATE TABLE conflict (
     id           bigserial PRIMARY KEY,
-    file_id      bigint NOT NULL REFERENCES file,
+    -- Cascade: conflicts describe a file's tags; the file row may be
+    -- deleted by the scanner at any time and must not fail on them
+    -- (the resolver rebuilds the table per run anyway).
+    file_id      bigint NOT NULL REFERENCES file ON DELETE CASCADE,
     kind         text NOT NULL,        -- recording-title | artist-name | release-title | release-group-title
     tag_value    text NOT NULL,
     mb_value     text NOT NULL,

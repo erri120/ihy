@@ -56,6 +56,7 @@ type Result struct {
 	Aliases    int
 	Conflicts  int
 	NotFound   int // stale or missing MBIDs, skipped
+	Pruned     pruned
 }
 
 // Resolver links files into the graph.
@@ -164,10 +165,18 @@ func (r *Resolver) Resolve(ctx context.Context) (Result, error) {
 	if err := st.buildSearchVectors(ctx); err != nil {
 		return st.res, fmt.Errorf("resolve failed after %s: %w", time.Since(st.started).Round(time.Second), err)
 	}
-	log.Printf("resolver: finished in %s: %d artists, %d release-groups, %d releases, %d recordings, %d works, %d credits, %d aliases, %d conflicts, %d stale MBIDs",
+	// The graph is file-backed: entities whose last file disappeared
+	// go away with it.
+	p, err := st.prune(ctx)
+	if err != nil {
+		return st.res, fmt.Errorf("resolve failed after %s: %w", time.Since(st.started).Round(time.Second), err)
+	}
+	st.res.Pruned = p
+	log.Printf("resolver: finished in %s: %d artists, %d release-groups, %d releases, %d recordings, %d works, %d credits, %d aliases, %d conflicts, %d stale MBIDs; pruned %d releases, %d recordings, %d release-groups, %d works, %d artists",
 		time.Since(st.started).Round(time.Second),
 		st.res.Artists, st.res.Groups, st.res.Releases, st.res.Recordings,
-		st.res.Works, st.res.Credits, st.res.Aliases, st.res.Conflicts, st.res.NotFound)
+		st.res.Works, st.res.Credits, st.res.Aliases, st.res.Conflicts, st.res.NotFound,
+		p.Releases, p.Recordings, p.Groups, p.Works, p.Artists)
 	return st.res, nil
 }
 
