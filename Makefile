@@ -2,6 +2,12 @@
 ui:
 	go tool templ generate
 
+# Generate the API server interface and models from api/openapi.yaml
+# (committed generated files).
+api:
+	go tool oapi-codegen -config api/gen.yaml api/openapi.yaml
+	go mod tidy
+
 # Unit tests: no external dependencies. Postgres-backed tests skip
 # when no test database is configured. gotestsum prints testdox-style
 # names and a failure summary.
@@ -78,4 +84,4 @@ db-ui:
 record-replays:
 	IHY_MB_RECORD=1 IHY_FIXTURE_DIR=$(CURDIR)/examples go test ./internal/musicbrainz/ -run TestRecordReplays -count=1 -v
 
-.PHONY: ui test test-race vet fmt test-e2e dev dev-ui build db-ui record-replays
+.PHONY: ui api test test-race vet fmt test-e2e dev dev-ui build db-ui record-replays

@@ -6,8 +6,10 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	openapi_types "github.com/oapi-codegen/runtime/types"
@@ -15,6 +17,7 @@ import (
 	"ihy/internal/api/gen"
 	"ihy/internal/auth"
 	"ihy/internal/display"
+	"ihy/internal/stream"
 )
 
 // Compile-time interface assertion, per project convention.
@@ -22,12 +25,13 @@ var _ gen.ServerInterface = (*Server)(nil)
 
 // Server implements the generated API on top of the database.
 type Server struct {
-	db   *sql.DB
-	auth *Auth
+	db     *sql.DB
+	auth   *Auth
+	stream *stream.Service
 }
 
 func NewServer(db *sql.DB) *Server {
-	return &Server{db: db, auth: NewAuth(db)}
+	return &Server{db: db, auth: NewAuth(db), stream: stream.NewService(db)}
 }
 
 // ptr and uuidOf adapt strings to the generated optional/UUID types.
@@ -581,6 +585,34 @@ func (s *Server) GetRecording(w http.ResponseWriter, r *http.Request, mbid opena
 		return
 	}
 
+	// Playable file sources, ordered by release date so the first
+	// entry is the preferred one. A recording can map to several
+	// files across releases; the array is honest about that.
+	streams := []gen.StreamSource{}
+	rows, err = s.db.QueryContext(r.Context(), `
+		SELECT f.id, f.format, f.size_bytes
+		FROM file f JOIN release rel ON rel.mbid = f.release_mbid
+		WHERE f.recording_mbid = $1
+		ORDER BY rel.date NULLS LAST, f.id`, mbid)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	for rows.Next() {
+		var fileID, size int64
+		var format string
+		if err := rows.Scan(&fileID, &format, &size); err != nil {
+			writeErr(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		streams = append(streams, gen.StreamSource{
+			Url:       fmt.Sprintf("/stream/files/%d", fileID),
+			Format:    format,
+			SizeBytes: &size,
+		})
+	}
+	rows.Close()
+
 	out := gen.RecordingDetail{
 		Mbid:          mbid,
 		Name:          displayName(prefs["recording"], title, aliases),
@@ -589,8 +621,50 @@ func (s *Server) GetRecording(w http.ResponseWriter, r *http.Request, mbid opena
 		Aliases:       ptrToGenAliases(aliases),
 		Credits:       credits,
 		Work:          work,
+		Streams:       &streams,
 	}
 	writeOK(w, out)
+}
+
+// --- streaming ---
+
+// StreamFile serves the physical audio file behind a file row. The
+// auth middleware has already authenticated the request. Range, HEAD,
+// If-Modified-Since and If-Range come from http.ServeContent; the
+// advisory X-Ihy-Upcoming header triggers page-cache warming of the
+// client's queue head.
+func (s *Server) StreamFile(w http.ResponseWriter, r *http.Request, id int64, params gen.StreamFileParams) {
+	if _, err := s.userFromCtx(r.Context()); err != nil {
+		writeErr(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+	src, err := s.stream.Resolve(id)
+	if errors.Is(err, stream.ErrUnknownFile) {
+		writeErr(w, http.StatusNotFound, "unknown file")
+		return
+	}
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if params.XIhyUpcoming != nil {
+		// Advisory and fire-and-forget; runs on its own goroutine
+		// so it is not cancelled with this request.
+		s.stream.Warm(stream.ParseUpcoming(*params.XIhyUpcoming, id))
+	}
+	f, err := os.Open(src.AbsPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			writeErr(w, http.StatusNotFound, "file missing from disk")
+			return
+		}
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	defer f.Close()
+	w.Header().Set("Content-Type", stream.ContentType(src.Format))
+	w.Header().Set("ETag", src.ETag())
+	http.ServeContent(w, r, "", src.ModTime, f)
 }
 
 func ptrToGenAliases(aliases []display.Alias) *[]gen.Alias {

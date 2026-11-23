@@ -208,12 +208,46 @@ paths:
         '200':
           description: >-
             The recording: display name, credits with roles and
-            attributes, and the work behind it.
+            attributes, the work behind it, and the playable file
+            sources ordered by release date.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/RecordingDetail' }
         '404':
           description: Unknown recording.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /stream/files/{id}:
+    get:
+      operationId: streamFile
+      tags: [library]
+      security: [{ sessionOrToken: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+        - name: X-Ihy-Upcoming
+          in: header
+          required: false
+          schema: { type: string }
+          description: >-
+            Advisory. Comma-separated file ids the client expects to
+            stream next (its queue head). The server may prefetch them
+            into the OS page cache for gapless playback and NFS
+            smoothing, and may ignore, dedupe or truncate the list
+            (max 5). Client behavior must never depend on it.
+      responses:
+        '200':
+          description: >-
+            The audio bytes. Range, HEAD, If-Modified-Since and
+            If-Range are supported; Content-Type reflects the file
+            format.
+          content:
+            application/octet-stream: {}
+        '404':
+          description: Unknown file id, or the file row exists but the file is gone from disk.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
@@ -316,6 +350,21 @@ components:
         mbid: { type: string, format: uuid }
         name: { type: string, description: Display name }
         canonical_name: { type: string }
+    StreamSource:
+      type: object
+      required: [url, format]
+      properties:
+        url:
+          type: string
+          description: >-
+            Stream path, e.g. /stream/files/42. Supports Range,
+            HEAD and If-Modified-Since; send X-Ihy-Upcoming with the
+            next file ids for prefetch.
+        format:
+          type: string
+          description: >-
+            Raw container format from the scan, e.g. flac or mp3.
+        size_bytes: { type: integer, format: int64 }
     Artist:
       type: object
       required: [mbid, name, albums]
@@ -378,6 +427,13 @@ components:
         name: { type: string, description: Display name }
         canonical_name: { type: string }
         length_ms: { type: integer }
+        streams:
+          type: array
+          description: >-
+            Playable file sources for this recording, ordered by
+            release date; the first entry is the preferred one. Empty
+            when no scanned file is linked yet.
+          items: { $ref: '#/components/schemas/StreamSource' }
         aliases:
           type: array
           items: { $ref: '#/components/schemas/Alias' }
