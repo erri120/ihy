@@ -1,4 +1,4 @@
-# ihy
+![Banner](./assets/banner-line.png)
 
 A free, open-source, self-hosted music streaming server. ihy resolves
 your music library against [MusicBrainz](https://musicbrainz.org)
