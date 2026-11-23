@@ -34,7 +34,7 @@ templ SearchResults(t *T, results []SearchResultVM) {
 					<span class="kind">{ t.Msg(r.KindID()) }</span>
 					<a href={ templ.URL(r.Href()) }>{ r.Name }</a>
 					if r.Canonical != "" && r.Canonical != r.Name {
-						<span class="muted"> ({ r.Canonical })</span>
+						<span class="muted">({ r.Canonical })</span>
 					}
 				</li>
 			}

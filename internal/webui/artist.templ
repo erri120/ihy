@@ -59,10 +59,10 @@ templ ArtistPage(t *T, vm ArtistVM, tab string) {
 					</form>
 				</div>
 			</header>
-
 			<nav class="tabs" aria-label={ t.Msg("ArtistSections") }>
 				for _, tb := range vm.Tabs {
-					<a class={ "tab", templ.KV("is-active", tb.Active) }
+					<a
+						class={ "tab", templ.KV("is-active", tb.Active) }
 						href={ templ.URL(tb.URL) }
 						hx-get={ templ.URL(tb.Fragment) }
 						hx-target="#artist-panel"
@@ -70,7 +70,6 @@ templ ArtistPage(t *T, vm ArtistVM, tab string) {
 					>{ tb.Label }</a>
 				}
 			</nav>
-
 			<div id="artist-panel">
 				@ArtistPanel(t, vm, tab)
 			</div>
@@ -110,13 +109,20 @@ templ ArtistPanel(t *T, vm ArtistVM, tab string) {
 templ artistOverview(t *T, vm ArtistVM) {
 	<section class="a-section">
 		<div class="a-section-head">
-			<a class="a-section-link"
+			<a
+				class="a-section-link"
 				href={ templ.URL(tabURL(vm.Mbid, "albums")) }
 				hx-get={ templ.URL(tabFragment(vm.Mbid, "albums")) }
-				hx-target="#artist-panel" hx-swap="outerHTML">{ t.Msg("MostPlayedAlbums") }</a>
-			<a class="a-show-all" href={ templ.URL(tabURL(vm.Mbid, "albums")) }
+				hx-target="#artist-panel"
+				hx-swap="outerHTML"
+			>{ t.Msg("MostPlayedAlbums") }</a>
+			<a
+				class="a-show-all"
+				href={ templ.URL(tabURL(vm.Mbid, "albums")) }
 				hx-get={ templ.URL(tabFragment(vm.Mbid, "albums")) }
-				hx-target="#artist-panel" hx-swap="outerHTML">{ t.Msg("ShowAll") }</a>
+				hx-target="#artist-panel"
+				hx-swap="outerHTML"
+			>{ t.Msg("ShowAll") }</a>
 		</div>
 		if len(vm.Albums) == 0 {
 			@artistEmpty(t, t.Msg("NoAlbums"))
@@ -133,16 +139,22 @@ templ artistOverview(t *T, vm ArtistVM) {
 			</div>
 		}
 	</section>
-
 	<section class="a-section">
 		<div class="a-section-head">
-			<a class="a-section-link"
+			<a
+				class="a-section-link"
 				href={ templ.URL(tabURL(vm.Mbid, "recordings")) }
 				hx-get={ templ.URL(tabFragment(vm.Mbid, "recordings")) }
-				hx-target="#artist-panel" hx-swap="outerHTML">{ t.Msg("MostPlayedRecordings") }</a>
-			<a class="a-show-all" href={ templ.URL(tabURL(vm.Mbid, "recordings")) }
+				hx-target="#artist-panel"
+				hx-swap="outerHTML"
+			>{ t.Msg("MostPlayedRecordings") }</a>
+			<a
+				class="a-show-all"
+				href={ templ.URL(tabURL(vm.Mbid, "recordings")) }
 				hx-get={ templ.URL(tabFragment(vm.Mbid, "recordings")) }
-				hx-target="#artist-panel" hx-swap="outerHTML">{ t.Msg("ShowAll") }</a>
+				hx-target="#artist-panel"
+				hx-swap="outerHTML"
+			>{ t.Msg("ShowAll") }</a>
 		</div>
 		if len(vm.Recordings) == 0 {
 			@artistEmpty(t, t.Msg("NoRecordings"))
@@ -154,7 +166,6 @@ templ artistOverview(t *T, vm ArtistVM) {
 			</div>
 		}
 	</section>
-
 	<section class="a-section">
 		<div class="a-section-head">
 			<span class="a-section-link" style="cursor: default">{ t.Msg("About") }</span>
@@ -214,6 +225,7 @@ templ artistRecordings(t *T, vm ArtistVM) {
 		}
 	</div>
 }
+
 templ artistWorks(t *T, vm ArtistVM) {
 	<div class="a-section">
 		<div class="a-kicker">{ t.Plural("StatsWorks", len(vm.Works)) }</div>
