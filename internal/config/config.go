@@ -14,6 +14,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // musicbrainzDefaultBaseURL is the official MusicBrainz server.
@@ -53,6 +54,18 @@ type Config struct {
 	// TranscodeDir is the disposable transcode output mount
 	// (IHY_TRANSCODE_DIR, default "./data/transcode").
 	TranscodeDir string
+	// FFmpegPath is the ffmpeg binary used for transcoding
+	// (IHY_FFMPEG_PATH, default "ffmpeg" from PATH). The server
+	// refuses to start when the binary is missing or broken.
+	FFmpegPath string
+	// TranscodeMaxBytes caps the transcode cache (IHY_TRANSCODE_MAX_BYTES,
+	// oldest entries evicted first; 0 or unset = unlimited, relying
+	// on the mount's own size, e.g. a tmpfs in the deployment).
+	TranscodeMaxBytes int64
+	// TranscodeSpeculativeTTL is how long transcodes warmed for the
+	// queue but never played are kept
+	// (IHY_TRANSCODE_SPECULATIVE_TTL, default 24h).
+	TranscodeSpeculativeTTL time.Duration
 	// AdminPassword bootstraps the single "admin" account on first
 	// boot when no user exists (IHY_ADMIN_PASSWORD). Required for the
 	// first run; ignored afterwards.
@@ -142,6 +155,23 @@ func FromEnv() (Config, error) {
 
 	c.ArtworkDir = envDefault("IHY_ARTWORK_DIR", "./data/artwork")
 	c.TranscodeDir = envDefault("IHY_TRANSCODE_DIR", "./data/transcode")
+	c.FFmpegPath = envDefault("IHY_FFMPEG_PATH", "ffmpeg")
+	c.TranscodeMaxBytes = 0
+	if v := os.Getenv("IHY_TRANSCODE_MAX_BYTES"); v != "" {
+		n, err := strconv.ParseInt(v, 10, 64)
+		if err != nil || n < 0 {
+			return c, fmt.Errorf("IHY_TRANSCODE_MAX_BYTES must be a non-negative integer, got %q", v)
+		}
+		c.TranscodeMaxBytes = n
+	}
+	c.TranscodeSpeculativeTTL = 24 * time.Hour
+	if v := os.Getenv("IHY_TRANSCODE_SPECULATIVE_TTL"); v != "" {
+		d, err := time.ParseDuration(v)
+		if err != nil || d <= 0 {
+			return c, fmt.Errorf("IHY_TRANSCODE_SPECULATIVE_TTL must be a positive duration, got %q", v)
+		}
+		c.TranscodeSpeculativeTTL = d
+	}
 	c.AdminPassword = os.Getenv("IHY_ADMIN_PASSWORD")
 
 	c.UIDev = os.Getenv("IHY_UI_DEV") == "1"

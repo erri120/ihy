@@ -66,8 +66,9 @@ func VerifyPassword(phcHash, password string) (bool, error) {
 
 // User is a resolved authenticated identity.
 type User struct {
-	ID   int64
-	Name string
+	ID      int64
+	Name    string
+	IsAdmin bool
 }
 
 func newSecret() (raw, hash string) {
@@ -96,7 +97,7 @@ func EnsureAdminUser(ctx context.Context, db *sql.DB, name, password string) (bo
 	if err != nil {
 		return false, err
 	}
-	_, err = db.ExecContext(ctx, `INSERT INTO "user" (name, password_hash) VALUES ($1, $2)`, name, hash)
+	_, err = db.ExecContext(ctx, `INSERT INTO "user" (name, password_hash, is_admin) VALUES ($1, $2, true)`, name, hash)
 	return err == nil, err
 }
 
@@ -152,7 +153,7 @@ func userFromSecret(ctx context.Context, db *sql.DB, rawToken, table string) (Us
 	hash := hex.EncodeToString(sum[:])
 	// The session table stores its hash in token, the api_token table
 	// in token_hash. API tokens are valid until revoked.
-	query := fmt.Sprintf(`SELECT s.user_id, u.name FROM %s s JOIN "user" u ON u.id = s.user_id
+	query := fmt.Sprintf(`SELECT s.user_id, u.name, u.is_admin FROM %s s JOIN "user" u ON u.id = s.user_id
 		WHERE s.%s = $1`, table, map[string]string{
 		"session":   "token",
 		"api_token": "token_hash",
@@ -161,7 +162,7 @@ func userFromSecret(ctx context.Context, db *sql.DB, rawToken, table string) (Us
 		query += ` AND s.expires_at > now()`
 	}
 	var u User
-	err := db.QueryRowContext(ctx, query, hash).Scan(&u.ID, &u.Name)
+	err := db.QueryRowContext(ctx, query, hash).Scan(&u.ID, &u.Name, &u.IsAdmin)
 	if err == sql.ErrNoRows {
 		return User{}, fmt.Errorf("invalid or expired credentials")
 	}

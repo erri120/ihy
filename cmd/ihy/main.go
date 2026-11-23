@@ -25,6 +25,7 @@ import (
 	"ihy/internal/musicbrainz"
 	"ihy/internal/resolver"
 	"ihy/internal/scanner"
+	"ihy/internal/transcode"
 	"ihy/internal/webui"
 )
 
@@ -33,6 +34,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("config: %v", err)
 	}
+
+	// ffmpeg is not optional: the transcoder is a core feature. Fail
+	// loudly at boot, before the listener comes up.
+	if err := (transcode.FFmpeg{Bin: cfg.FFmpegPath}).Check(context.Background()); err != nil {
+		log.Fatalf("startup: %v (set IHY_FFMPEG_PATH to the ffmpeg binary; the deployment image bundles it)", err)
+	}
+	log.Printf("ffmpeg: %s", cfg.FFmpegPath)
 
 	schemaVersion, err := db.Migrate(cfg.DSN())
 	if err != nil {
@@ -112,7 +120,15 @@ func main() {
 	// Generated API handlers, wrapped in the auth middleware: the
 	// public auth routes (login/logout) pass through, everything else
 	// requires a session or API token.
-	server := api.NewServer(conn)
+	server, err := api.NewServer(conn, api.Options{
+		FFmpegPath:        cfg.FFmpegPath,
+		TranscodeDir:      cfg.TranscodeDir,
+		TranscodeMaxBytes: cfg.TranscodeMaxBytes,
+		SpeculativeTTL:    cfg.TranscodeSpeculativeTTL,
+	})
+	if err != nil {
+		log.Fatalf("api server: %v", err)
+	}
 	mux.Handle("/", api.NewAuth(conn).Middleware(gen.Handler(server)))
 
 	// Web UI routes: server-rendered templ pages with htmx. Specific

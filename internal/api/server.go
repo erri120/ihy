@@ -11,13 +11,16 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 
 	"ihy/internal/api/gen"
 	"ihy/internal/auth"
 	"ihy/internal/display"
 	"ihy/internal/stream"
+	"ihy/internal/transcode"
 )
 
 // Compile-time interface assertion, per project convention.
@@ -25,13 +28,33 @@ var _ gen.ServerInterface = (*Server)(nil)
 
 // Server implements the generated API on top of the database.
 type Server struct {
-	db     *sql.DB
-	auth   *Auth
-	stream *stream.Service
+	db        *sql.DB
+	auth      *Auth
+	stream    *stream.Service
+	transcode *transcode.Service
 }
 
-func NewServer(db *sql.DB) *Server {
-	return &Server{db: db, auth: NewAuth(db), stream: stream.NewService(db)}
+// Options configures the API server beyond the database.
+type Options struct {
+	FFmpegPath        string
+	TranscodeDir      string
+	TranscodeMaxBytes int64
+	SpeculativeTTL    time.Duration
+	TTL               time.Duration
+	// Encoder overrides the ffmpeg implementation (tests).
+	Encoder transcode.Encoder
+}
+
+func NewServer(db *sql.DB, opts Options) (*Server, error) {
+	enc := opts.Encoder
+	if enc == nil {
+		enc = transcode.FFmpeg{Bin: opts.FFmpegPath}
+	}
+	svc, err := transcode.New(opts.TranscodeDir, enc, opts.TranscodeMaxBytes, opts.SpeculativeTTL, opts.TTL)
+	if err != nil {
+		return nil, err
+	}
+	return &Server{db: db, auth: NewAuth(db), stream: stream.NewService(db), transcode: svc}, nil
 }
 
 // ptr and uuidOf adapt strings to the generated optional/UUID types.
@@ -647,10 +670,10 @@ func (s *Server) StreamFile(w http.ResponseWriter, r *http.Request, id int64, pa
 		writeErr(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if params.XIhyUpcoming != nil {
+	if params.Upcoming != nil {
 		// Advisory and fire-and-forget; runs on its own goroutine
 		// so it is not cancelled with this request.
-		s.stream.Warm(stream.ParseUpcoming(*params.XIhyUpcoming, id))
+		s.stream.Warm(stream.ParseUpcoming(*params.Upcoming, id))
 	}
 	f, err := os.Open(src.AbsPath)
 	if err != nil {
@@ -665,6 +688,238 @@ func (s *Server) StreamFile(w http.ResponseWriter, r *http.Request, id int64, pa
 	w.Header().Set("Content-Type", stream.ContentType(src.Format))
 	w.Header().Set("ETag", src.ETag())
 	http.ServeContent(w, r, "", src.ModTime, f)
+}
+
+// --- transcoding ---
+
+// requireAdmin authenticates and enforces the admin gate for
+// server-wide settings (transcode profiles).
+func (s *Server) requireAdmin(w http.ResponseWriter, r *http.Request) (auth.User, bool) {
+	user, err := s.userFromCtx(r.Context())
+	if err != nil {
+		writeErr(w, http.StatusUnauthorized, err.Error())
+		return user, false
+	}
+	if !user.IsAdmin {
+		writeErr(w, http.StatusForbidden, "admin required")
+		return user, false
+	}
+	return user, true
+}
+
+// loadProfile resolves a profile by name.
+func (s *Server) loadProfile(name string) (transcode.Profile, error) {
+	var p transcode.Profile
+	err := s.db.QueryRow(`
+		SELECT id, name, container, codec, bitrate_kbps
+		FROM transcode_profile WHERE name = $1`, name).
+		Scan(&p.ID, &p.Name, &p.Container, &p.Codec, &p.BitrateKbps)
+	return p, err
+}
+
+func profileInputError(in gen.TranscodeProfileInput) string {
+	if strings.TrimSpace(in.Name) == "" {
+		return "name must not be empty"
+	}
+	if strings.TrimSpace(in.Container) == "" {
+		return "container must not be empty"
+	}
+	if strings.TrimSpace(in.Codec) == "" {
+		return "codec must not be empty"
+	}
+	if in.BitrateKbps <= 0 {
+		return "bitrate_kbps must be positive"
+	}
+	return ""
+}
+
+func (s *Server) ListTranscodeProfiles(w http.ResponseWriter, r *http.Request) {
+	if _, err := s.userFromCtx(r.Context()); err != nil {
+		writeErr(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+	rows, err := s.db.QueryContext(r.Context(), `
+		SELECT id, name, container, codec, bitrate_kbps
+		FROM transcode_profile ORDER BY name`)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	defer rows.Close()
+	out := []gen.TranscodeProfile{}
+	for rows.Next() {
+		var p gen.TranscodeProfile
+		if err := rows.Scan(&p.Id, &p.Name, &p.Container, &p.Codec, &p.BitrateKbps); err != nil {
+			writeErr(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+		out = append(out, p)
+	}
+	writeOK(w, out)
+}
+
+func (s *Server) CreateTranscodeProfile(w http.ResponseWriter, r *http.Request) {
+	if _, ok := s.requireAdmin(w, r); !ok {
+		return
+	}
+	var in gen.TranscodeProfileInput
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		writeErr(w, http.StatusBadRequest, "invalid JSON body")
+		return
+	}
+	if msg := profileInputError(in); msg != "" {
+		writeErr(w, http.StatusBadRequest, msg)
+		return
+	}
+	var id int64
+	err := s.db.QueryRowContext(r.Context(), `
+		INSERT INTO transcode_profile (name, container, codec, bitrate_kbps)
+		VALUES ($1, $2, $3, $4)
+		ON CONFLICT (name) DO NOTHING
+		RETURNING id`, in.Name, in.Container, in.Codec, in.BitrateKbps).Scan(&id)
+	if errors.Is(err, sql.ErrNoRows) {
+		writeErr(w, http.StatusConflict, "profile name already exists")
+		return
+	}
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(gen.TranscodeProfile{
+		Id: id, Name: in.Name, Container: in.Container, Codec: in.Codec, BitrateKbps: in.BitrateKbps,
+	})
+}
+
+func (s *Server) UpdateTranscodeProfile(w http.ResponseWriter, r *http.Request, id int64) {
+	if _, ok := s.requireAdmin(w, r); !ok {
+		return
+	}
+	var in gen.TranscodeProfileInput
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		writeErr(w, http.StatusBadRequest, "invalid JSON body")
+		return
+	}
+	if msg := profileInputError(in); msg != "" {
+		writeErr(w, http.StatusBadRequest, msg)
+		return
+	}
+	err := s.db.QueryRowContext(r.Context(), `
+		UPDATE transcode_profile
+		SET name = $1, container = $2, codec = $3, bitrate_kbps = $4
+		WHERE id = $5
+		RETURNING id`, in.Name, in.Container, in.Codec, in.BitrateKbps, id).Scan(&id)
+	if errors.Is(err, sql.ErrNoRows) {
+		writeErr(w, http.StatusNotFound, "unknown profile")
+		return
+	}
+	if isUniqueViolation(err) {
+		writeErr(w, http.StatusConflict, "profile name already exists")
+		return
+	}
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	writeOK(w, gen.TranscodeProfile{
+		Id: id, Name: in.Name, Container: in.Container, Codec: in.Codec, BitrateKbps: in.BitrateKbps,
+	})
+}
+
+func (s *Server) DeleteTranscodeProfile(w http.ResponseWriter, r *http.Request, id int64) {
+	if _, ok := s.requireAdmin(w, r); !ok {
+		return
+	}
+	res, err := s.db.ExecContext(r.Context(), `DELETE FROM transcode_profile WHERE id = $1`, id)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		writeErr(w, http.StatusNotFound, "unknown profile")
+		return
+	}
+	writeOK(w, gen.Status{Status: "deleted"})
+}
+
+// TranscodeFile serves the file transcoded per a server-provided
+// profile. First request of a key transcodes synchronously (client
+// disconnect kills ffmpeg), later requests are cache hits. The
+// advisory upcoming list pre-transcodes the queue head speculatively.
+func (s *Server) TranscodeFile(w http.ResponseWriter, r *http.Request, id int64, params gen.TranscodeFileParams) {
+	if _, err := s.userFromCtx(r.Context()); err != nil {
+		writeErr(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+	if strings.TrimSpace(params.Profile) == "" {
+		writeErr(w, http.StatusBadRequest, "profile must not be empty")
+		return
+	}
+	src, err := s.stream.Resolve(id)
+	if errors.Is(err, stream.ErrUnknownFile) {
+		writeErr(w, http.StatusNotFound, "unknown file")
+		return
+	}
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	p, err := s.loadProfile(params.Profile)
+	if errors.Is(err, sql.ErrNoRows) {
+		writeErr(w, http.StatusNotFound, "unknown profile")
+		return
+	}
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if params.Upcoming != nil {
+		ids := stream.ParseUpcoming(*params.Upcoming, id)
+		items := make([]transcode.WarmItem, 0, len(ids))
+		for _, upID := range ids {
+			upSrc, err := s.stream.Resolve(upID)
+			if err != nil {
+				continue // advisory: skip quietly
+			}
+			items = append(items, transcode.WarmItem{SrcPath: upSrc.AbsPath, Mtime: upSrc.ModTime, Profile: p})
+		}
+		s.transcode.Warm(items)
+	}
+
+	out, err := s.transcode.Get(r.Context(), src.AbsPath, src.ModTime, p)
+	if err != nil {
+		// A cancelled context means the client hung up; nothing to
+		// report to it. Anything else is a transcode failure.
+		if r.Context().Err() == nil {
+			writeErr(w, http.StatusInternalServerError, err.Error())
+		}
+		return
+	}
+	f, err := os.Open(out)
+	if err != nil {
+		if os.IsNotExist(err) {
+			writeErr(w, http.StatusNotFound, "transcode output missing")
+			return
+		}
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	defer f.Close()
+	st, err := f.Stat()
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", stream.ContentType(p.Container))
+	w.Header().Set("ETag", fmt.Sprintf(`"%s-%x"`, transcode.WarmItem{SrcPath: src.AbsPath, Mtime: src.ModTime, Profile: p}.Key(), st.Size()))
+	http.ServeContent(w, r, "", st.ModTime(), f)
+}
+
+// isUniqueViolation reports a Postgres unique-constraint failure.
+func isUniqueViolation(err error) bool {
+	var pgErr *pgconn.PgError
+	return errors.As(err, &pgErr) && pgErr.Code == "23505"
 }
 
 func ptrToGenAliases(aliases []display.Alias) *[]gen.Alias {

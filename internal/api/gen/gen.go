@@ -287,13 +287,43 @@ type StreamSource struct {
 	Format    string `json:"format"`
 	SizeBytes *int64 `json:"size_bytes,omitempty"`
 
-	// Url Stream path, e.g. /stream/files/42. Supports Range, HEAD and If-Modified-Since; send X-Ihy-Upcoming with the next file ids for prefetch.
+	// Url Stream path, e.g. /stream/files/42. Supports Range, HEAD and If-Modified-Since; pass ?upcoming= with the next file ids for prefetch. For transcoded playback use /stream/files/42/transcode?profile=...
 	Url string `json:"url"`
 }
 
 // TokenRequest defines model for TokenRequest.
 type TokenRequest struct {
 	Name *string `json:"name,omitempty"`
+}
+
+// TranscodeProfile defines model for TranscodeProfile.
+type TranscodeProfile struct {
+	// BitrateKbps Target bitrate in kbit/s; VBR target for codecs with a VBR mode.
+	BitrateKbps int `json:"bitrate_kbps"`
+
+	// Codec Audio codec, verbatim ffmpeg encoder name (e.g. libopus).
+	Codec string `json:"codec"`
+
+	// Container Container, verbatim ffmpeg muxer name (e.g. ogg).
+	Container string `json:"container"`
+	Id        int64  `json:"id"`
+
+	// Name Stable name clients reference, e.g. opus-128.
+	Name string `json:"name"`
+}
+
+// TranscodeProfileInput defines model for TranscodeProfileInput.
+type TranscodeProfileInput struct {
+	BitrateKbps int `json:"bitrate_kbps"`
+
+	// Codec Audio codec, verbatim ffmpeg encoder name (e.g. libopus).
+	Codec string `json:"codec"`
+
+	// Container Container, verbatim ffmpeg muxer name (e.g. ogg).
+	Container string `json:"container"`
+
+	// Name Stable name clients reference, e.g. opus-128.
+	Name string `json:"name"`
 }
 
 // PutDisplayPrefsJSONBody defines body for PutDisplayPrefs for application/json ContentType.
@@ -306,8 +336,17 @@ type SearchParams struct {
 
 // StreamFileParams defines parameters for StreamFile.
 type StreamFileParams struct {
-	// XIhyUpcoming Advisory. Comma-separated file ids the client expects to stream next (its queue head). The server may prefetch them into the OS page cache for gapless playback and NFS smoothing, and may ignore, dedupe or truncate the list (max 5). Client behavior must never depend on it.
-	XIhyUpcoming *string `json:"X-Ihy-Upcoming,omitempty"`
+	// Upcoming Advisory. Comma-separated file ids the client expects to stream next (its queue head). The server may prefetch them into the OS page cache for gapless playback and NFS smoothing, and may ignore, dedupe or truncate the list (max 5). Client behavior must never depend on it.
+	Upcoming *string `form:"upcoming,omitempty" json:"upcoming,omitempty"`
+}
+
+// TranscodeFileParams defines parameters for TranscodeFile.
+type TranscodeFileParams struct {
+	// Profile Name of a server-provided transcode profile (see /transcode-profiles), e.g. opus-128.
+	Profile string `form:"profile" json:"profile"`
+
+	// Upcoming Advisory. Comma-separated file ids the client expects to stream next with this profile. The server may pre-transcode them into its cache (speculatively, evicted if never played) and may ignore, dedupe or truncate the list.
+	Upcoming *string `form:"upcoming,omitempty" json:"upcoming,omitempty"`
 }
 
 // LoginJSONRequestBody defines body for Login for application/json ContentType.
@@ -318,6 +357,12 @@ type CreateTokenJSONRequestBody = TokenRequest
 
 // PutDisplayPrefsJSONRequestBody defines body for PutDisplayPrefs for application/json ContentType.
 type PutDisplayPrefsJSONRequestBody = PutDisplayPrefsJSONBody
+
+// CreateTranscodeProfileJSONRequestBody defines body for CreateTranscodeProfile for application/json ContentType.
+type CreateTranscodeProfileJSONRequestBody = TranscodeProfileInput
+
+// UpdateTranscodeProfileJSONRequestBody defines body for UpdateTranscodeProfile for application/json ContentType.
+type UpdateTranscodeProfileJSONRequestBody = TranscodeProfileInput
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -357,6 +402,21 @@ type ServerInterface interface {
 
 	// (GET /stream/files/{id})
 	StreamFile(w http.ResponseWriter, r *http.Request, id int64, params StreamFileParams)
+
+	// (GET /stream/files/{id}/transcode)
+	TranscodeFile(w http.ResponseWriter, r *http.Request, id int64, params TranscodeFileParams)
+
+	// (GET /transcode-profiles)
+	ListTranscodeProfiles(w http.ResponseWriter, r *http.Request)
+
+	// (POST /transcode-profiles)
+	CreateTranscodeProfile(w http.ResponseWriter, r *http.Request)
+
+	// (DELETE /transcode-profiles/{id})
+	DeleteTranscodeProfile(w http.ResponseWriter, r *http.Request, id int64)
+
+	// (PUT /transcode-profiles/{id})
+	UpdateTranscodeProfile(w http.ResponseWriter, r *http.Request, id int64)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -607,29 +667,156 @@ func (siw *ServerInterfaceWrapper) StreamFile(w http.ResponseWriter, r *http.Req
 	// Parameter object where we will unmarshal all parameters from the context
 	var params StreamFileParams
 
-	headers := r.Header
+	// ------------- Optional query parameter "upcoming" -------------
 
-	// ------------- Optional header parameter "X-Ihy-Upcoming" -------------
-	if valueList, found := headers[http.CanonicalHeaderKey("X-Ihy-Upcoming")]; found {
-		var XIhyUpcoming string
-		n := len(valueList)
-		if n != 1 {
-			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-Ihy-Upcoming", Count: n})
-			return
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "upcoming", r.URL.Query(), &params.Upcoming, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "upcoming"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "upcoming", Err: err})
 		}
-
-		err = runtime.BindStyledParameterWithOptions("simple", "X-Ihy-Upcoming", valueList[0], &XIhyUpcoming, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""})
-		if err != nil {
-			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-Ihy-Upcoming", Err: err})
-			return
-		}
-
-		params.XIhyUpcoming = &XIhyUpcoming
-
+		return
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.StreamFile(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// TranscodeFile operation middleware
+func (siw *ServerInterfaceWrapper) TranscodeFile(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params TranscodeFileParams
+
+	// ------------- Required query parameter "profile" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "profile", r.URL.Query(), &params.Profile, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "profile"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "profile", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "upcoming" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "upcoming", r.URL.Query(), &params.Upcoming, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "upcoming"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "upcoming", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.TranscodeFile(w, r, id, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListTranscodeProfiles operation middleware
+func (siw *ServerInterfaceWrapper) ListTranscodeProfiles(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListTranscodeProfiles(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateTranscodeProfile operation middleware
+func (siw *ServerInterfaceWrapper) CreateTranscodeProfile(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTranscodeProfile(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteTranscodeProfile operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTranscodeProfile(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteTranscodeProfile(w, r, id)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateTranscodeProfile operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTranscodeProfile(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "id" -------------
+	var id int64
+
+	err = runtime.BindStyledParameterWithOptions("simple", "id", r.PathValue("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64", ValueIsUnescaped: true})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "id", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateTranscodeProfile(w, r, id)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -771,6 +958,11 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/release-groups/{mbid}", wrapper.GetReleaseGroup)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/recordings/{mbid}", wrapper.GetRecording)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/stream/files/{id}", wrapper.StreamFile)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/stream/files/{id}/transcode", wrapper.TranscodeFile)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/transcode-profiles", wrapper.ListTranscodeProfiles)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/transcode-profiles", wrapper.CreateTranscodeProfile)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/transcode-profiles/{id}", wrapper.DeleteTranscodeProfile)
+	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/transcode-profiles/{id}", wrapper.UpdateTranscodeProfile)
 
 	return m
 }
@@ -780,49 +972,57 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 // const string: with thousands of chunks the chained `+` fold is several
 // times slower for the Go compiler than parsing a slice literal.
 var swaggerSpec = []string{
-	"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",
-	"tzcPvp9axd1vLlR7v9tdV1erfw8A",
+	"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",
 }
 
 // decodeSpec returns the embedded OpenAPI spec as raw JSON bytes,

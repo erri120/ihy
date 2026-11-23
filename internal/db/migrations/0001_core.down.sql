@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS event;
 DROP TABLE IF EXISTS display_pref;
+DROP TABLE IF EXISTS transcode_profile;
 DROP TABLE IF EXISTS api_token;
 DROP TABLE IF EXISTS session;
 DROP TABLE IF EXISTS "user";

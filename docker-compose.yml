@@ -16,7 +16,8 @@
 #   * The library is mounted READ-ONLY; the app never writes to it.
 #     Multiple roots: add more :ro volume lines and extend IHY_LIBRARIES.
 #   * Album art is stored as server-generated thumbnails (never
-#     full-size); transcode output is a disposable cache.
+#     full-size); transcode output is a disposable cache on a tmpfs
+#     (size via IHY_TRANSCODE_TMPFS_SIZE).
 #   * If the postgres data volume lives on NFS, use a `hard` client
 #     mount and export it with `sync` on the server; postgres supports
 #     NFS under exactly those conditions.
@@ -42,7 +43,12 @@ services:
     volumes:
       - ${IHY_LIBRARY:?set in .env}:/music:ro
       - artwork:/data/artwork
-      - transcode:/data/transcode
+    tmpfs:
+      # Transcode output is a disposable cache: keep it off persistent
+      # storage and size it explicitly. The app also evicts oldest
+      # entries first; IHY_TRANSCODE_MAX_BYTES caps it further if you
+      # point IHY_TRANSCODE_DIR at a real filesystem instead.
+      - /data/transcode:size=${IHY_TRANSCODE_TMPFS_SIZE:-1g}
     depends_on:
       db:
         condition: service_healthy
@@ -65,4 +71,3 @@ services:
 volumes:
   dbdata:
   artwork:
-  transcode:

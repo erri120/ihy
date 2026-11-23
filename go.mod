@@ -12,6 +12,7 @@ require (
 	github.com/oapi-codegen/runtime v1.9.1
 	go.senan.xyz/taglib v0.0.0-00010101000000-000000000000
 	golang.org/x/crypto v0.59.0
+	golang.org/x/sys v0.50.0
 	golang.org/x/text v0.44.0
 )
 
@@ -60,7 +61,6 @@ require (
 	golang.org/x/mod v0.43.0 // indirect
 	golang.org/x/net v0.63.0 // indirect
 	golang.org/x/sync v0.25.0 // indirect
-	golang.org/x/sys v0.50.0 // indirect
 	golang.org/x/term v0.48.0 // indirect
 	golang.org/x/tools v0.53.0 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect

@@ -27,6 +27,15 @@ import (
 
 func setupAPI(t *testing.T) *httptest.Server {
 	t.Helper()
+	srv, _ := setupAPIServer(t, Options{TranscodeDir: t.TempDir()})
+	return srv
+}
+
+// setupAPIServer is the full harness: migrate + admin + scan + resolve
+// the fixtures, then serve the API with the given options. Returns the
+// connection for direct SQL manipulation in tests.
+func setupAPIServer(t *testing.T, opts Options) (*httptest.Server, *sql.DB) {
+	t.Helper()
 	fixtureDir := filepath.Join("..", "..", "examples")
 	if _, err := os.Stat(fixtureDir); err != nil {
 		t.Skipf("fixtures unavailable: %v", err)
@@ -57,10 +66,16 @@ func setupAPI(t *testing.T) *httptest.Server {
 		t.Fatalf("resolve: %v", err)
 	}
 
-	server := NewServer(conn)
+	if opts.TranscodeDir == "" {
+		opts.TranscodeDir = t.TempDir()
+	}
+	server, err := NewServer(conn, opts)
+	if err != nil {
+		t.Fatalf("server: %v", err)
+	}
 	mux := http.NewServeMux()
 	mux.Handle("/", NewAuth(conn).Middleware(gen.Handler(server)))
-	return httptest.NewServer(mux)
+	return httptest.NewServer(mux), conn
 }
 
 func TestDisplayNamesAndBrowse(t *testing.T) {

@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"testing"
+	"time"
 )
 
 func setenv(t *testing.T, k, v string) {
@@ -117,5 +118,49 @@ func TestFromEnvDefaultsAndLibraries(t *testing.T) {
 	}
 	if len(c.Libraries) != 3 || c.Libraries[0] != "/music/flac" || c.Libraries[1] != "/music/ogg" || c.Libraries[2] != ".local/" {
 		t.Errorf("Libraries = %q, want trimmed three-element list", c.Libraries)
+	}
+	if c.FFmpegPath != "ffmpeg" {
+		t.Errorf("FFmpegPath = %q, want default", c.FFmpegPath)
+	}
+	if c.TranscodeMaxBytes != 0 {
+		t.Errorf("TranscodeMaxBytes = %d, want 0 (uncapped)", c.TranscodeMaxBytes)
+	}
+	if c.TranscodeSpeculativeTTL != 24*time.Hour {
+		t.Errorf("TranscodeSpeculativeTTL = %v, want default 24h", c.TranscodeSpeculativeTTL)
+	}
+}
+
+func TestFromEnvTranscodeSettings(t *testing.T) {
+	setenv(t, "DB_HOST", "db")
+	setenv(t, "DB_DATABASE", "ihy")
+	setenv(t, "IHY_FFMPEG_PATH", "/opt/ffmpeg/bin/ffmpeg")
+	setenv(t, "IHY_TRANSCODE_MAX_BYTES", "2147483648")
+	setenv(t, "IHY_TRANSCODE_SPECULATIVE_TTL", "2h")
+
+	c, err := FromEnv()
+	if err != nil {
+		t.Fatalf("FromEnv: %v", err)
+	}
+	if c.FFmpegPath != "/opt/ffmpeg/bin/ffmpeg" {
+		t.Errorf("FFmpegPath = %q", c.FFmpegPath)
+	}
+	if c.TranscodeMaxBytes != 1<<31 {
+		t.Errorf("TranscodeMaxBytes = %d", c.TranscodeMaxBytes)
+	}
+	if c.TranscodeSpeculativeTTL != 2*time.Hour {
+		t.Errorf("TranscodeSpeculativeTTL = %v", c.TranscodeSpeculativeTTL)
+	}
+
+	for _, bad := range []struct{ key, value string }{
+		{"IHY_TRANSCODE_MAX_BYTES", "-1"},
+		{"IHY_TRANSCODE_MAX_BYTES", "abc"},
+		{"IHY_TRANSCODE_SPECULATIVE_TTL", "-5m"},
+		{"IHY_TRANSCODE_SPECULATIVE_TTL", "soon"},
+	} {
+		setenv(t, bad.key, bad.value)
+		if _, err := FromEnv(); err == nil {
+			t.Errorf("%s=%q accepted", bad.key, bad.value)
+		}
+		setenv(t, bad.key, "")
 	}
 }

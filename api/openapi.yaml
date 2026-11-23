@@ -228,8 +228,8 @@ paths:
           in: path
           required: true
           schema: { type: integer, format: int64 }
-        - name: X-Ihy-Upcoming
-          in: header
+        - name: upcoming
+          in: query
           required: false
           schema: { type: string }
           description: >-
@@ -248,6 +248,143 @@ paths:
             application/octet-stream: {}
         '404':
           description: Unknown file id, or the file row exists but the file is gone from disk.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /stream/files/{id}/transcode:
+    get:
+      operationId: transcodeFile
+      tags: [library]
+      security: [{ sessionOrToken: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+        - name: profile
+          in: query
+          required: true
+          schema: { type: string, minLength: 1 }
+          description: >-
+            Name of a server-provided transcode profile (see
+            /transcode-profiles), e.g. opus-128.
+        - name: upcoming
+          in: query
+          required: false
+          schema: { type: string }
+          description: >-
+            Advisory. Comma-separated file ids the client expects to
+            stream next with this profile. The server may pre-transcode
+            them into its cache (speculatively, evicted if never
+            played) and may ignore, dedupe or truncate the list.
+      responses:
+        '200':
+          description: >-
+            The transcoded audio bytes. Range, HEAD,
+            If-Modified-Since and If-Range are supported; the first
+            request of a key transcodes synchronously, later ones are
+            served from the cache.
+          content:
+            application/octet-stream: {}
+        '404':
+          description: Unknown file id or unknown profile name.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /transcode-profiles:
+    get:
+      operationId: listTranscodeProfiles
+      tags: [library]
+      security: [{ sessionOrToken: [] }]
+      responses:
+        '200':
+          description: The server's transcode profiles.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/TranscodeProfile' }
+    post:
+      operationId: createTranscodeProfile
+      tags: [library]
+      security: [{ sessionOrToken: [] }]
+      description: Admins only; non-admins get 403.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TranscodeProfileInput' }
+      responses:
+        '201':
+          description: Created.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TranscodeProfile' }
+        '403':
+          description: Not an admin.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '409':
+          description: Profile name already exists.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+  /transcode-profiles/{id}:
+    put:
+      operationId: updateTranscodeProfile
+      tags: [library]
+      security: [{ sessionOrToken: [] }]
+      description: Admins only; non-admins get 403.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TranscodeProfileInput' }
+      responses:
+        '200':
+          description: Updated.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TranscodeProfile' }
+        '403':
+          description: Not an admin.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Unknown profile id.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+    delete:
+      operationId: deleteTranscodeProfile
+      tags: [library]
+      security: [{ sessionOrToken: [] }]
+      description: Admins only; non-admins get 403.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Deleted.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Status' }
+        '403':
+          description: Not an admin.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '404':
+          description: Unknown profile id.
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
@@ -350,6 +487,38 @@ components:
         mbid: { type: string, format: uuid }
         name: { type: string, description: Display name }
         canonical_name: { type: string }
+    TranscodeProfile:
+      type: object
+      required: [id, name, container, codec, bitrate_kbps]
+      properties:
+        id: { type: integer, format: int64 }
+        name:
+          type: string
+          description: Stable name clients reference, e.g. opus-128.
+        container:
+          type: string
+          description: Container, verbatim ffmpeg muxer name (e.g. ogg).
+        codec:
+          type: string
+          description: Audio codec, verbatim ffmpeg encoder name (e.g. libopus).
+        bitrate_kbps:
+          type: integer
+          description: Target bitrate in kbit/s; VBR target for codecs with a VBR mode.
+    TranscodeProfileInput:
+      type: object
+      required: [name, container, codec, bitrate_kbps]
+      properties:
+        name:
+          type: string
+          description: Stable name clients reference, e.g. opus-128.
+        container:
+          type: string
+          description: Container, verbatim ffmpeg muxer name (e.g. ogg).
+        codec:
+          type: string
+          description: Audio codec, verbatim ffmpeg encoder name (e.g. libopus).
+        bitrate_kbps:
+          type: integer
     StreamSource:
       type: object
       required: [url, format]
@@ -358,8 +527,9 @@ components:
           type: string
           description: >-
             Stream path, e.g. /stream/files/42. Supports Range,
-            HEAD and If-Modified-Since; send X-Ihy-Upcoming with the
-            next file ids for prefetch.
+            HEAD and If-Modified-Since; pass ?upcoming= with the next
+            file ids for prefetch. For transcoded playback use
+            /stream/files/42/transcode?profile=...
         format:
           type: string
           description: >-

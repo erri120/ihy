@@ -170,6 +170,9 @@ CREATE TABLE "user" (
     id            bigserial PRIMARY KEY,
     name          text NOT NULL UNIQUE,
     password_hash text NOT NULL,
+    -- The bootstrapped account is the admin: manages transcode
+    -- profiles and other server-wide settings.
+    is_admin      boolean NOT NULL DEFAULT false,
     created_at    timestamptz NOT NULL DEFAULT now()
 );
 
@@ -187,6 +190,24 @@ CREATE TABLE api_token (
     name       text NOT NULL DEFAULT '',
     created_at timestamptz NOT NULL DEFAULT now()
 );
+
+-- Transcode profiles: server-wide, admin-managed; clients pick one by
+-- name. Values are verbatim ffmpeg-style strings (container and codec
+-- names), deliberately not a closed enum. Bitrate is the target for
+-- codecs with a VBR mode (libopus defaults to VBR). The migration
+-- seeds the two starting presets; admins can edit or delete them
+-- (seeded rows are NOT recreated, DO NOTHING keeps their edits).
+CREATE TABLE transcode_profile (
+    id           bigserial PRIMARY KEY,
+    name         text NOT NULL UNIQUE,
+    container    text NOT NULL,           -- ogg | ...
+    codec        text NOT NULL,           -- libopus | ...
+    bitrate_kbps integer NOT NULL CHECK (bitrate_kbps > 0)
+);
+
+INSERT INTO transcode_profile (name, container, codec, bitrate_kbps)
+VALUES ('opus-96', 'ogg', 'libopus', 96), ('opus-128', 'ogg', 'libopus', 128)
+ON CONFLICT (name) DO NOTHING;
 
 -- Display-name preferences: ordered locale chain per entity type +
 -- name-history policy for artists (current | at_release | pinned).
