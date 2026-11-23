@@ -50,22 +50,12 @@ templ ArtistPage(t *T, vm ArtistVM, tab string) {
 					<div class="a-meta">{ vm.Meta }</div>
 				</div>
 				<div class="a-actions">
-					<button class="btn" type="button" disabled title={ t.Msg("PlayerComingSoon") }>{ t.Msg("Play") }</button>
-					<button class="btn btn-ghost" type="button" disabled title={ t.Msg("PlayerComingSoon") }>{ t.Msg("AddToQueue") }</button>
-					<button class="btn-icon" type="button" disabled aria-label={ t.Msg("Favorite") }>@Icon("heart")</button>
+					@Button(t, t.Msg("Play"), "", templ.Attributes{"disabled": true, "title": t.Msg("PlayerComingSoon")})
+					@Button(t, t.Msg("AddToQueue"), "ghost", templ.Attributes{"disabled": true, "title": t.Msg("PlayerComingSoon")})
+					@IconButton(t, "heart", false, templ.Attributes{"disabled": true, "aria-label": t.Msg("Favorite")})
 				</div>
 			</header>
-			<nav class="tabs" aria-label={ t.Msg("ArtistSections") }>
-				for _, tb := range vm.Tabs {
-					<a
-						class={ "tab", templ.KV("is-active", tb.Active) }
-						href={ templ.URL(tb.URL) }
-						hx-get={ templ.URL(tb.Fragment) }
-						hx-target="#artist-panel"
-						hx-swap="outerHTML"
-					>{ tb.Label }</a>
-				}
-			</nav>
+			@TabsNav(t, vm.Tabs, t.Msg("ArtistSections"), "artist-panel")
 			<div id="artist-panel">
 				@ArtistPanel(t, vm, tab)
 			</div>
@@ -121,16 +111,11 @@ templ artistOverview(t *T, vm ArtistVM) {
 			>{ t.Msg("ShowAll") }</a>
 		</div>
 		if len(vm.Albums) == 0 {
-			@artistEmpty(t, t.Msg("NoAlbums"))
+			@Empty(t, "", t.Msg("NoAlbums"))
 		} else {
 			<div class="album-grid">
 				for _, al := range limited(vm.Albums, 8) {
-					<div class="album-card">
-						@Cover("", al.Name, "")
-						<div class="ac-title">{ al.Name }</div>
-						<div class="ac-meta">{ al.FirstReleaseDate } · { t.Msg("KindAlbum") }</div>
-						<a class="ac-link" href={ templ.URL(al.Href()) } aria-label={ al.Name }></a>
-					</div>
+					@AlbumCard(t, al, "")
 				}
 			</div>
 		}
@@ -153,7 +138,7 @@ templ artistOverview(t *T, vm ArtistVM) {
 			>{ t.Msg("ShowAll") }</a>
 		</div>
 		if len(vm.Recordings) == 0 {
-			@artistEmpty(t, t.Msg("NoRecordings"))
+			@Empty(t, "", t.Msg("NoRecordings"))
 		} else {
 			<div class="tracklist">
 				for i, rec := range limited(vm.Recordings, 10) {
@@ -191,16 +176,11 @@ templ artistAlbums(t *T, vm ArtistVM) {
 	<div class="a-section">
 		<div class="a-kicker">{ t.Msg("Albums") } · { itoa(len(vm.Albums)) }</div>
 		if len(vm.Albums) == 0 {
-			@artistEmpty(t, t.Msg("NoAlbums"))
+			@Empty(t, "", t.Msg("NoAlbums"))
 		} else {
 			<div class="album-grid">
 				for _, al := range vm.Albums {
-					<div class="album-card">
-						@Cover("", al.Name, "")
-						<div class="ac-title">{ al.Name }</div>
-						<div class="ac-meta">{ al.FirstReleaseDate } · { t.Msg("KindAlbum") }</div>
-						<a class="ac-link" href={ templ.URL(al.Href()) } aria-label={ al.Name }></a>
-					</div>
+					@AlbumCard(t, al, "")
 				}
 			</div>
 		}
@@ -211,7 +191,7 @@ templ artistRecordings(t *T, vm ArtistVM) {
 	<div class="a-section">
 		<div class="a-kicker">{ t.Plural("StatsRecordings", len(vm.Recordings)) }</div>
 		if len(vm.Recordings) == 0 {
-			@artistEmpty(t, t.Msg("NoRecordings"))
+			@Empty(t, "", t.Msg("NoRecordings"))
 		} else {
 			<div class="tracklist">
 				for i, rec := range vm.Recordings {
@@ -226,7 +206,7 @@ templ artistWorks(t *T, vm ArtistVM) {
 	<div class="a-section">
 		<div class="a-kicker">{ t.Plural("StatsWorks", len(vm.Works)) }</div>
 		if len(vm.Works) == 0 {
-			@artistEmpty(t, t.Msg("NoWorks"))
+			@Empty(t, "", t.Msg("NoWorks"))
 		} else {
 			<div class="card" style="padding: var(--space-2) var(--space-4)">
 				for _, w := range vm.Works {
@@ -248,7 +228,7 @@ templ artistCredits(t *T, vm ArtistVM) {
 	<div class="a-section">
 		<div class="a-kicker">{ t.Msg("CreditsTotal") }</div>
 		if len(vm.Credits) == 0 {
-			@artistEmpty(t, t.Msg("NoCredits"))
+			@Empty(t, "", t.Msg("NoCredits"))
 		} else {
 			<div class="card" style="padding: var(--space-2) var(--space-4)">
 				for _, c := range vm.Credits {
@@ -263,28 +243,8 @@ templ artistCredits(t *T, vm ArtistVM) {
 }
 
 // ArtistRecordingDetail: the expandable detail beneath a recording
-// row: this artist's credit roles verbatim + the work line.
+// row: this artist's credit roles verbatim + the work line, composed
+// by the TrackDetail atom.
 templ ArtistRecordingDetail(t *T, roles []CreditVM, work *WorkVM) {
-	<div class="tr-detail">
-		if len(roles) > 0 {
-			<div class="chips">
-				for _, c := range roles {
-					@Chip(c.Role)
-				}
-			</div>
-		}
-		if work != nil {
-			<div class="detail-line">{ t.Msg("WorkLabel") } <b>{ work.Title }</b></div>
-		}
-		if len(roles) == 0 && work == nil {
-			<div class="detail-line">{ t.Msg("NoDetails") }</div>
-		}
-	</div>
-}
-
-templ artistEmpty(t *T, message string) {
-	<div class="empty">
-		<svg class="sistrum" viewBox="0 0 32 48" aria-hidden="true" style="color: var(--accent);"><use href="/ui/static/mark/sistrum-line.svg#mark"></use></svg>
-		<div class="empty-body">{ message }</div>
-	</div>
+	@TrackDetail(t, creditRoleNames(roles), workTitle(work))
 }

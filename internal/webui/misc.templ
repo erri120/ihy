@@ -3,6 +3,6 @@ package webui
 templ ComingSoonPage(t *T, title string) {
 	@Layout(t, title, "library") {
 		<h1 class="page-title">{ title }</h1>
-		<p class="muted">{ t.Msg("ComingSoon") }</p>
+		@Empty(t, title, t.Msg("ComingSoon"))
 	}
 }

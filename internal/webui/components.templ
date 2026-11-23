@@ -3,7 +3,7 @@
 // page (/ui/design) catalogs them.
 package webui
 
-// Icon renders a system icon from the 12-icon set (static/icons/).
+// Icon renders a system icon from the 13-icon set (static/icons/).
 templ Icon(name string) {
 	<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href={ templ.URL("/ui/static/icons/" + name + ".svg#icon") }></use></svg>
 }
@@ -74,6 +74,118 @@ templ Nav(t *T, active string) {
 			</form>
 		</div>
 	</nav>
+}
+
+// Button renders a labelled action. Variant: "" (primary gold fill),
+// "ghost", "danger". Everything else (disabled, title, hx wiring)
+// rides in attrs so pages never hand-roll class strings.
+templ Button(t *T, label, variant string, attrs templ.Attributes) {
+	<button
+		class={ "btn", templ.KV("btn-"+variant, variant != "") }
+		type="button"
+		{ attrs... }
+	>{ label }</button>
+}
+
+// IconButton renders an icon-only action; active carries the .is-active
+// state (gold icon). Icons come from the system set by name.
+templ IconButton(t *T, icon string, active bool, attrs templ.Attributes) {
+	<button
+		class={ "btn-icon", templ.KV("is-active", active) }
+		type="button"
+		{ attrs... }
+	>@Icon(icon)</button>
+}
+
+// TabsNav renders the tab navigation: one markup, hx-wired against
+// targetID's panel (outerHTML) with full-URL fallback for deep links.
+// An empty targetID renders a static specimen (the catalog) with no
+// behavior; an empty Fragment renders a plain link.
+templ TabsNav(t *T, tabs []TabVM, label, targetID string) {
+	<nav class="tabs" aria-label={ label }>
+		for _, tb := range tabs {
+			if targetID == "" {
+				<a class={ "tab", templ.KV("is-active", tb.Active) } href={ templ.URL(tb.URL) }>{ tb.Label }</a>
+			} else {
+				<a
+					class={ "tab", templ.KV("is-active", tb.Active) }
+					href={ templ.URL(tb.URL) }
+					hx-get={ templ.URL(tb.Fragment) }
+					hx-target={ "#" + targetID }
+					hx-swap="outerHTML"
+				>{ tb.Label }</a>
+			}
+		}
+	</nav>
+}
+
+// Empty renders the designed empty state: the sistrum mark above a
+// serif title (optional) and a muted body line.
+templ Empty(t *T, title, body string) {
+	<div class="empty">
+		<svg class="sistrum" viewBox="0 0 32 48" aria-hidden="true" style="color: var(--accent);"><use href="/ui/static/mark/sistrum-line.svg#mark"></use></svg>
+		if title != "" {
+			<div class="empty-title">{ title }</div>
+		}
+		<div class="empty-body">{ body }</div>
+	</div>
+}
+
+// AlbumCard is the browse-grid unit for albums: cover, title, optional
+// artist line (omitted where the page context names the artist), meta
+// line, a link that stretches over the tile, and the gold play circle
+// on the cover's lower right (revealed on hover and focus, always
+// visible where hover is absent). The primary click is a play intent,
+// like every listening row; an empty Mbid renders a static specimen.
+templ AlbumCard(t *T, vm AlbumVM, artist string) {
+	if vm.Mbid == "" {
+		<div class="album-card">
+			@Cover("", vm.Name, "")
+			<div class="ac-title">{ vm.Name }</div>
+			if artist != "" {
+				<div class="ac-artist">{ artist }</div>
+			}
+			<div class="ac-meta">{ vm.FirstReleaseDate } · { vm.Kind(t) }</div>
+		</div>
+	} else {
+		<div class="album-card">
+			@Cover("", vm.Name, "")
+			<div class="ac-title">{ vm.Name }</div>
+			if artist != "" {
+				<div class="ac-artist">{ artist }</div>
+			}
+			<div class="ac-meta">{ vm.FirstReleaseDate } · { vm.Kind(t) }</div>
+			<a class="ac-link" href={ templ.URL(vm.Href()) } aria-label={ vm.Name }></a>
+			<button
+				class="btn-icon btn-play ac-play"
+				type="button"
+				aria-label={ t.Msg("Play") }
+				hx-post={ templ.URL(playAlbumURL(vm.Mbid)) }
+				hx-swap="none"
+			>@Icon("play")</button>
+		</div>
+	}
+}
+
+// TrackDetail is the detail surface beneath a listening row: credit
+// roles verbatim as chips, the work line beneath, or the no-details
+// line when neither exists.
+templ TrackDetail(t *T, roles []string, work string) {
+	<div class="tr-detail">
+		if len(roles) > 0 {
+			<div class="chips">
+				for _, r := range roles {
+					@Chip(r)
+				}
+			</div>
+		}
+		if work != "" {
+			<div class="detail-line">{ t.Msg("WorkLabel") } <b>{ work }</b></div>
+		}
+		if len(roles) == 0 && work == "" {
+			<div class="detail-line">{ t.Msg("NoDetails") }</div>
+		}
+	</div>
 }
 
 // TrackRow is the listening row: number, title, duration, play

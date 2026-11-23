@@ -122,6 +122,108 @@ func TestNavAtom(t *testing.T) {
 	})
 }
 
+func TestButtonAtom(t *testing.T) {
+	primary := renderComponent(t, Button(NewTranslator("en"), "Play", "", nil))
+	if !strings.Contains(primary, `class="btn"`) || !strings.Contains(primary, ">Play</button>") {
+		t.Errorf("primary button wrong: %s", primary)
+	}
+	ghost := renderComponent(t, Button(NewTranslator("en"), "Add to queue", "ghost", nil))
+	if !strings.Contains(ghost, `class="btn btn-ghost"`) {
+		t.Errorf("ghost variant wrong: %s", ghost)
+	}
+	disabled := renderComponent(t, Button(NewTranslator("en"), "Queued", "", templ.Attributes{"disabled": true, "title": "later"}))
+	if !strings.Contains(disabled, "disabled") || !strings.Contains(disabled, `title="later"`) {
+		t.Errorf("attrs not carried: %s", disabled)
+	}
+}
+
+func TestIconButtonAtom(t *testing.T) {
+	idle := renderComponent(t, IconButton(NewTranslator("en"), "heart", false, nil))
+	if !strings.Contains(idle, `class="btn-icon"`) || !strings.Contains(idle, "heart.svg#icon") {
+		t.Errorf("icon button wrong: %s", idle)
+	}
+	active := renderComponent(t, IconButton(NewTranslator("en"), "heart-filled", true, templ.Attributes{"aria-label": "Favorited"}))
+	if !strings.Contains(active, `class="btn-icon is-active"`) || !strings.Contains(active, `aria-label="Favorited"`) {
+		t.Errorf("active state wrong: %s", active)
+	}
+}
+
+func TestTabsNavAtom(t *testing.T) {
+	tabs := []TabVM{
+		{Name: "one", Label: "Tab 1", URL: "/x?tab=one", Fragment: "/x/tab/one", Active: true},
+		{Name: "two", Label: "Tab 2", URL: "/x?tab=two", Fragment: "/x/tab/two"},
+	}
+	wired := renderComponent(t, TabsNav(NewTranslator("en"), tabs, "Sections", "panel"))
+	for _, want := range []string{
+		`class="tab is-active" href="/x?tab=one"`,
+		`hx-get="/x/tab/two"`,
+		`hx-target="#panel"`,
+		`hx-swap="outerHTML"`,
+	} {
+		if !strings.Contains(wired, want) {
+			t.Errorf("wired tabs missing %s: %s", want, wired)
+		}
+	}
+	static := renderComponent(t, TabsNav(NewTranslator("en"), tabs, "Sections", ""))
+	if strings.Contains(static, "hx-get") {
+		t.Errorf("static specimen must carry no htmx wiring: %s", static)
+	}
+}
+
+func TestEmptyAtom(t *testing.T) {
+	withTitle := renderComponent(t, Empty(NewTranslator("en"), "Nothing here yet", "Body line."))
+	if !strings.Contains(withTitle, `class="empty-title">Nothing here yet<`) || !strings.Contains(withTitle, "sistrum-line.svg#mark") {
+		t.Errorf("empty with title wrong: %s", withTitle)
+	}
+	titleless := renderComponent(t, Empty(NewTranslator("en"), "", "Body line."))
+	if strings.Contains(titleless, "empty-title") || !strings.Contains(titleless, `class="empty-body">Body line.<`) {
+		t.Errorf("titleless empty must omit the title line: %s", titleless)
+	}
+}
+
+func TestAlbumCardAtom(t *testing.T) {
+	t.Run("static specimen has no behavior", func(t *testing.T) {
+		html := renderComponent(t, AlbumCard(NewTranslator("en"), AlbumVM{Name: "Album", FirstReleaseDate: "2017"}, "Artist"))
+		if strings.Contains(html, "ac-link") || strings.Contains(html, "hx-post") {
+			t.Errorf("static card must carry no link or play intent: %s", html)
+		}
+		if !strings.Contains(html, `class="ac-artist">Artist<`) {
+			t.Errorf("artist line missing: %s", html)
+		}
+	})
+	t.Run("wired card links and posts a play intent", func(t *testing.T) {
+		vm := AlbumVM{Mbid: "rg-1", Name: "Album", FirstReleaseDate: "2017"}
+		html := renderComponent(t, AlbumCard(NewTranslator("en"), vm, ""))
+		for _, want := range []string{
+			`href="/ui/release-groups/rg-1"`,
+			`hx-post="/ui/play?release-group=rg-1"`,
+			`hx-swap="none"`,
+			`class="btn-icon btn-play ac-play"`,
+		} {
+			if !strings.Contains(html, want) {
+				t.Errorf("wired card missing %s: %s", want, html)
+			}
+		}
+		if strings.Contains(html, "ac-artist") {
+			t.Errorf("empty artist must omit the artist line: %s", html)
+		}
+	})
+}
+
+func TestTrackDetailAtom(t *testing.T) {
+	full := renderComponent(t, TrackDetail(NewTranslator("en"), []string{"performance", "arranger"}, "Weight of the World"))
+	if !strings.Contains(full, `class="chip">performance<`) || !strings.Contains(full, `class="chip">arranger<`) {
+		t.Errorf("roles must render verbatim as chips: %s", full)
+	}
+	if !strings.Contains(full, `Work:</span> <b>Weight of the World</b>`) && !strings.Contains(full, "Work:") {
+		t.Errorf("work line missing: %s", full)
+	}
+	none := renderComponent(t, TrackDetail(NewTranslator("en"), nil, ""))
+	if !strings.Contains(none, "No credits or linked works") {
+		t.Errorf("empty detail must render the no-details line: %s", none)
+	}
+}
+
 // ---- Stylesheet contract -------------------------------------------------
 
 func designCSS(t *testing.T, name string) string {
@@ -157,6 +259,8 @@ func TestCSSAffordanceContract(t *testing.T) {
 	cssRule(t, css, `.shell-nav`, "position: sticky; top: 0;")
 	cssRule(t, css, `.nav-item.is-active`, "color: var(--text); background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }")
 	cssRule(t, css, `body.with-shell`, "display: block; padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }")
+	// The play circle is always the gold action (roles, not colors).
+	cssRule(t, css, `.btn-play`, "background: var(--accent); color: var(--accent-ink); width: 44px;")
 }
 
 // ---- Contrast budgets (DESIGN.md §3, verified pairs) ----------------------

@@ -79,16 +79,16 @@ templ DesignPage(t *T) {
 				<div class="d-spec">
 					<div class="d-row">
 						<span class="d-label">.btn / .btn-ghost / .btn-danger</span>
-						<button class="btn" type="button">Play</button>
-						<button class="btn btn-ghost" type="button">Add to queue</button>
-						<button class="btn btn-danger" type="button">Remove</button>
-						<button class="btn" type="button" disabled>Queued</button>
+						@Button(t, t.Msg("Play"), "", nil)
+						@Button(t, t.Msg("AddToQueue"), "ghost", nil)
+						@Button(t, "Remove", "danger", nil)
+						@Button(t, "Queued", "", templ.Attributes{"disabled": true})
 					</div>
 					<div class="d-row">
 						<span class="d-label">.btn-icon / .is-active / .btn-play</span>
-						<button class="btn-icon" type="button" aria-label="Favorite">@Icon("heart")</button>
-						<button class="btn-icon is-active" type="button" aria-label="Favorited">@Icon("heart-filled")</button>
-						<button class="btn-icon btn-play" type="button" aria-label="Play" style="background: var(--accent); color: var(--accent-ink);">@Icon("play")</button>
+						@IconButton(t, "heart", false, templ.Attributes{"aria-label": "Favorite"})
+						@IconButton(t, "heart-filled", true, templ.Attributes{"aria-label": "Favorited"})
+						<button class="btn-icon btn-play" type="button" aria-label="Play">@Icon("play")</button>
 					</div>
 				</div>
 			</section>
@@ -122,11 +122,11 @@ templ DesignPage(t *T) {
 				<p class="d-note">.tabs + .tab (+ .is-active)</p>
 				<div class="d-spec">
 					<div class="d-row" style="display: block;">
-						<nav class="tabs" style="border-bottom: none;">
-							<button class="tab is-active" type="button">Tab 1</button>
-							<button class="tab" type="button">Tab 2</button>
-							<button class="tab" type="button">Tab 3</button>
-						</nav>
+						@TabsNav(t, []TabVM{
+							{Name: "one", Label: "Tab 1", Active: true},
+							{Name: "two", Label: "Tab 2"},
+							{Name: "three", Label: "Tab 3"},
+						}, t.Msg("SampleTabs"), "")
 					</div>
 				</div>
 			</section>
@@ -144,21 +144,8 @@ templ DesignPage(t *T) {
 					<div class="d-row">
 						<span class="d-label">.album-grid + .album-card</span>
 						<div class="album-grid" style="flex: 1;">
-							<div class="album-card">
-								<div class="cover cover-empty"></div>
-								<div class="ac-title">Album title</div>
-								<div class="ac-artist">Artist name</div>
-								<div class="ac-meta">2017 · Album</div>
-								<a class="ac-link" href="#" aria-label="Open album"></a>
-								<button class="btn-icon btn-play ac-play" type="button" aria-label="Play album" style="background: var(--accent); color: var(--accent-ink);">@Icon("play")</button>
-							</div>
-							<div class="album-card">
-								<div class="cover cover-empty"></div>
-								<div class="ac-title">Album title</div>
-								<div class="ac-meta">2012 · Compilation</div>
-								<a class="ac-link" href="#" aria-label="Open album"></a>
-								<button class="btn-icon btn-play ac-play" type="button" aria-label="Play album" style="background: var(--accent); color: var(--accent-ink);">@Icon("play")</button>
-							</div>
+							@AlbumCard(t, AlbumVM{Name: "Album title", FirstReleaseDate: "2017"}, "Artist name")
+							@AlbumCard(t, AlbumVM{Name: "Album title", FirstReleaseDate: "2012"}, "")
 						</div>
 					</div>
 				</div>
@@ -171,13 +158,7 @@ templ DesignPage(t *T) {
 						<div class="tracklist">
 							@TrackRow(t, "1", "Track title", "5:44", "", "", nil)
 							@TrackRow(t, "2", "別のトラック・タイトル", "3:33", "", "", nil)
-							<div class="tr-detail">
-								<div class="chips">
-									@Chip("performance")
-									@Chip("arranger")
-								</div>
-								<div class="detail-line">{ t.Msg("WorkLabel") } <b>{ t.Msg("SampleWork") }</b> · { t.Msg("SampleComposer") } <b>Composer name</b></div>
-							</div>
+							@TrackDetail(t, []string{"performance", "arranger"}, t.Msg("SampleWork"))
 							@TrackRow(t, "3", "Third track title", "2:39", "", "", nil)
 						</div>
 					</div>
@@ -207,17 +188,13 @@ templ DesignPage(t *T) {
 				<p class="d-note">.empty + .sistrum + .empty-title + .empty-body</p>
 				<div class="d-spec">
 					<div class="d-row" style="display: block;">
-						<div class="empty">
-							<svg class="sistrum" viewBox="0 0 32 48" aria-hidden="true" style="color: var(--accent);"><use href="/ui/static/mark/sistrum-line.svg#mark"></use></svg>
-							<div class="empty-title">Nothing here yet</div>
-							<div class="empty-body">Empty states speak in the serif voice, with the mark above.</div>
-						</div>
+						@Empty(t, "Nothing here yet", "Empty states speak in the serif voice, with the mark above.")
 					</div>
 				</div>
 			</section>
 			<section class="d-section">
 				<h2>{ t.Msg("DesignIcons") }</h2>
-				<p class="d-note">static/icons/&lt;name&gt;.svg, referenced via &lt;use&gt; (12 icon set)</p>
+				<p class="d-note">static/icons/&lt;name&gt;.svg, referenced via &lt;use&gt; (13 icon set)</p>
 				<div class="d-icon-grid">
 					<div class="d-icon-cell">@Icon("search")<span class="d-label">search</span></div>
 					<div class="d-icon-cell">@Icon("play")<span class="d-label">play</span></div>

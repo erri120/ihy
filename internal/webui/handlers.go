@@ -78,6 +78,12 @@ func (a AlbumVM) Href() string {
 	return "/ui/release-groups/" + url.PathEscape(a.Mbid)
 }
 
+// Kind names the entity the card counts ("Album"); counts always name
+// their entity (DESIGN.md §2).
+func (a AlbumVM) Kind(t *T) string {
+	return t.Msg("KindAlbum")
+}
+
 type ArtistVM struct {
 	Mbid, Name, Canonical, Meta string
 	// Type is the MB artist type (Person | Group | Character).
@@ -148,6 +154,12 @@ func limited[T any](s []T, n int) []T {
 // playURL is the play intent target for one recording.
 func playURL(recordingMbid string) string {
 	return "/ui/play?recording=" + url.PathEscape(recordingMbid)
+}
+
+// playAlbumURL is the play intent target for a release group (album
+// cards): the same accepted-intent contract as rows.
+func playAlbumURL(rgMbid string) string {
+	return "/ui/play?release-group=" + url.PathEscape(rgMbid)
 }
 
 // artistTabs builds the tab list with the active state.
@@ -583,13 +595,34 @@ func (s *Server) ArtistRecordingDetail(w http.ResponseWriter, r *http.Request) {
 	render(w, http.StatusOK, ArtistRecordingDetail(t, roles, work))
 }
 
-// PlayRecording accepts a play intent for a recording (track row
-// clicks). Playback lands with the player milestone; until then the
+// PlayRecording accepts a play intent (track row clicks, album card
+// plays). Playback lands with the player milestone; until then the
 // intent is accepted and intentionally does nothing, keeping the
 // interaction contract (click = play) wired.
 func (s *Server) PlayRecording(w http.ResponseWriter, r *http.Request) {
-	log.Printf("play intent: recording %s (player milestone pending)", r.FormValue("recording"))
+	if rg := r.FormValue("release-group"); rg != "" {
+		log.Printf("play intent: release-group %s (player milestone pending)", rg)
+	} else {
+		log.Printf("play intent: recording %s (player milestone pending)", r.FormValue("recording"))
+	}
 	w.WriteHeader(http.StatusAccepted)
+}
+
+// creditRoleNames maps credit rows to their raw role names (the
+// detail surface renders the raw upstream types verbatim).
+func creditRoleNames(roles []CreditVM) []string {
+	out := make([]string, 0, len(roles))
+	for _, c := range roles {
+		out = append(out, c.Role)
+	}
+	return out
+}
+
+func workTitle(work *WorkVM) string {
+	if work == nil {
+		return ""
+	}
+	return work.Title
 }
 
 // tabName normalizes the ?tab= value; unknown tabs fall back to the

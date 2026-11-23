@@ -223,5 +223,5 @@ other = "No credits or linked works for this recording."
 [SampleWork]
 other = "Work title"
 
-[SampleComposer]
-other = "composed by"
+[SampleTabs]
+other = "Sample tabs"
