@@ -3,3 +3,5 @@ examples/
 /ihy
 *.test
 /data/
+
+**/*_templ.go
