@@ -31,7 +31,7 @@ fmt:
 # E2E tests: real Postgres (dev compose) + fixture library.
 test-e2e:
 	docker compose -f docker-compose.dev.yml up -d --wait testdb
-	IHY_TEST_DSN=postgres://ihy:ihy@127.0.0.1:5433/postgres?sslmode=disable IHY_FIXTURE_DIR=$(CURDIR)/examples go test ./internal/db/ ./internal/dbtest/ ./internal/scanner/ ./internal/resolver/ ./internal/auth/ ./internal/api/ -count=1
+	IHY_TEST_DSN=postgres://ihy:ihy@127.0.0.1:5433/postgres?sslmode=disable IHY_FIXTURE_DIR=$(CURDIR)/examples go test ./internal/db/ ./internal/dbtest/ ./internal/scanner/ ./internal/resolver/ ./internal/auth/ ./internal/api/ ./internal/jobs/ -count=1
 	docker compose -f docker-compose.dev.yml down
 
 # Run ihy in a dev environment: ephemeral Postgres, fixtures as

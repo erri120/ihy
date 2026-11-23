@@ -10,6 +10,8 @@ require (
 	github.com/jackc/pgx/v5 v5.13.0
 	github.com/nicksnyder/go-i18n/v2 v2.7.0
 	github.com/oapi-codegen/runtime v1.9.1
+	github.com/riverqueue/river v0.51.2
+	github.com/riverqueue/river/riverdriver/riverpgxv5 v0.51.2
 	go.senan.xyz/taglib v0.0.0-00010101000000-000000000000
 	golang.org/x/crypto v0.59.0
 	golang.org/x/sys v0.50.0
@@ -38,7 +40,7 @@ require (
 	github.com/gohugoio/hugo v0.164.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa // indirect
+	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/puddle/v2 v2.2.3 // indirect
@@ -51,12 +53,19 @@ require (
 	github.com/oasdiff/yaml3 v0.0.16 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
+	github.com/riverqueue/river/riverdriver v0.51.2 // indirect
+	github.com/riverqueue/river/rivershared v0.51.2 // indirect
+	github.com/riverqueue/river/rivertype v0.51.2 // indirect
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cast v1.10.0 // indirect
 	github.com/tdewolff/parse/v2 v2.8.12 // indirect
 	github.com/tetratelabs/wazero v1.12.0 // indirect
 	github.com/theory/jsonpath v0.12.3 // indirect
+	github.com/tidwall/gjson v1.20.0 // indirect
+	github.com/tidwall/match v1.2.0 // indirect
+	github.com/tidwall/pretty v1.2.1 // indirect
+	github.com/tidwall/sjson v1.2.5 // indirect
 	go.yaml.in/yaml/v4 v4.0.0 // indirect
 	golang.org/x/mod v0.43.0 // indirect
 	golang.org/x/net v0.63.0 // indirect

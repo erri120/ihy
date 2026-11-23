@@ -15,13 +15,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/riverqueue/river"
 
 	"ihy/internal/api"
 	"ihy/internal/api/gen"
 	"ihy/internal/auth"
 	"ihy/internal/config"
 	"ihy/internal/db"
+	"ihy/internal/jobs"
 	"ihy/internal/musicbrainz"
 	"ihy/internal/resolver"
 	"ihy/internal/scanner"
@@ -53,6 +56,24 @@ func main() {
 		log.Fatalf("open database: %v", err)
 	}
 	defer conn.Close()
+
+	// Durable background jobs (offline exports today; scans,
+	// enrichment, artwork later). River manages its own schema, needs
+	// a pgx pool (not database/sql), and runs one exports worker.
+	pool, err := pgxpool.New(context.Background(), cfg.DSN())
+	if err != nil {
+		log.Fatalf("open job pool: %v", err)
+	}
+	defer pool.Close()
+	runner, err := jobs.NewRunner(context.Background(), pool, river.NewWorkers())
+	if err != nil {
+		log.Fatalf("job runner: %v", err)
+	}
+	defer runner.Stop()
+	if err := runner.Start(context.Background()); err != nil {
+		log.Fatalf("start job runner: %v", err)
+	}
+	log.Printf("job runner: started (queue: exports)")
 	// Bootstrap the single admin account (first boot only).
 	created, err := auth.EnsureAdminUser(context.Background(), conn, "admin", cfg.AdminPassword)
 	switch {
