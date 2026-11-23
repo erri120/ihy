@@ -7,7 +7,7 @@
 package webui
 
 templ ArtistPage(t *T, vm ArtistVM, tab string) {
-	@Layout(t, vm.Name) {
+	@Layout(t, vm.Name, "library") {
 		<style>
 			.a-page { max-width: 760px; margin: 0 auto; padding: var(--space-6) var(--space-4) 96px; }
 			.a-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
@@ -15,7 +15,6 @@ templ ArtistPage(t *T, vm ArtistVM, tab string) {
 			.a-original { font-family: var(--font-serif); font-size: var(--text-title); font-weight: 600; letter-spacing: var(--track-title); color: var(--muted); margin-top: var(--space-1); }
 			.a-meta { color: var(--muted); font-size: var(--text-caption); margin-top: var(--space-2); }
 			.a-actions { display: flex; align-items: center; gap: var(--space-2); }
-			.a-logout .btn-ghost { padding: 4px 12px; font-size: var(--text-caption); }
 			.a-kicker { font-family: var(--font-mono); font-size: var(--text-label); text-transform: uppercase; letter-spacing: var(--track-label); color: var(--muted); margin: var(--space-6) 0 var(--space-3); }
 			.a-section { margin-top: var(--space-5); }
 			.a-section-head { display: flex; align-items: baseline; gap: var(--space-3); margin: var(--space-6) 0 var(--space-3); }
@@ -54,9 +53,6 @@ templ ArtistPage(t *T, vm ArtistVM, tab string) {
 					<button class="btn" type="button" disabled title={ t.Msg("PlayerComingSoon") }>{ t.Msg("Play") }</button>
 					<button class="btn btn-ghost" type="button" disabled title={ t.Msg("PlayerComingSoon") }>{ t.Msg("AddToQueue") }</button>
 					<button class="btn-icon" type="button" disabled aria-label={ t.Msg("Favorite") }>@Icon("heart")</button>
-					<form method="post" action="/logout" class="a-logout">
-						<button class="btn btn-ghost" type="submit">{ t.Msg("LogOut") }</button>
-					</form>
 				</div>
 			</header>
 			<nav class="tabs" aria-label={ t.Msg("ArtistSections") }>

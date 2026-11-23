@@ -6,7 +6,7 @@
 package webui
 
 templ DesignPage(t *T) {
-	@Layout(t, t.Msg("DesignSystem")) {
+	@Layout(t, t.Msg("DesignSystem"), "") {
 		<style>
 			.d-page { max-width: 860px; margin: 0 auto; padding: var(--space-6) var(--space-4) 96px; }
 			.d-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
@@ -29,6 +29,7 @@ templ DesignPage(t *T) {
 			.d-icon-cell { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); padding: var(--space-3); background: var(--surface); border-radius: var(--radius-tile); }
 			.d-icon-cell .icon { color: var(--text); }
 			.d-icon-cell .d-label { min-width: 0; }
+			.d-nav-spec .shell-nav { position: static; height: auto; width: 240px; max-width: 100%; border: 1px solid var(--chip-hair); border-radius: var(--radius-tile); }
 		</style>
 		<div class="d-page">
 			<header class="d-head">
@@ -59,6 +60,17 @@ templ DesignPage(t *T) {
 					<div class="d-row"><span class="d-label">--text-caption</span><span style="font-size: var(--text-caption); color: var(--muted);">Role line · caption</span></div>
 					<div class="d-row"><span class="d-label">--text-meta</span><span style="font-family: var(--font-mono); font-size: var(--text-meta); color: var(--muted);">2017 · Album · 36 recordings · 5:44</span></div>
 					<div class="d-row"><span class="d-label">--text-label</span><span style="font-family: var(--font-mono); font-size: var(--text-label); text-transform: uppercase; letter-spacing: var(--track-label); color: var(--muted);">Section kicker</span></div>
+				</div>
+			</section>
+			<section class="d-section">
+				<h2>{ t.Msg("DesignShell") }</h2>
+				<p class="d-note">Nav: .shell-nav + .shell-brand + .nav-items/.nav-item (+ .is-active), .shell-logout; sidebar >= 600px, bottom bar below; composed in Layout, outside the swap region</p>
+				<div class="d-spec">
+					<div class="d-row" style="display: block;">
+						<div class="d-nav-spec">
+							@Nav(t, "library")
+						</div>
+					</div>
 				</div>
 			</section>
 			<section class="d-section">

@@ -17,7 +17,6 @@ body {
 main { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
 h1 { font-size: 1.4rem; margin: 0; }
 h2 { font-size: 1.05rem; color: var(--muted); margin: 2rem 0 0.5rem; }
-.page-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
 .muted { color: var(--muted); }
 a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
@@ -36,7 +35,6 @@ button {
 	border-radius: 6px; padding: 0.45rem 0.9rem; font: inherit; cursor: pointer;
 }
 button:hover { filter: brightness(1.1); }
-.logout button { background: var(--card); color: var(--muted); padding: 0.3rem 0.6rem; }
 .error { color: #f7768e; }
 
 /* search */

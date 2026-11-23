@@ -1,13 +1,13 @@
 package webui
 
 templ LoginPage(t *T, errMsg string) {
-	@Layout(t, t.Msg("LogIn")) {
+	@Layout(t, t.Msg("LogIn"), "") {
 		<div class="login">
-			<h1>ihy</h1>
+			<h1 class="page-title">ihy</h1>
 			if errMsg != "" {
 				<p class="error">{ errMsg }</p>
 			}
-			<form method="post" action="/login">
+			<form method="post" action="/login" hx-boost="false">
 				<label>
 					{ t.Msg("Username") }
 					<input type="text" name="username" required autocomplete="username"/>

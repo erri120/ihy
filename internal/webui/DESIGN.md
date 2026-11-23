@@ -154,6 +154,15 @@ Papyrus; it is a fixture affordance, not a product component.
 
 ### Core component rules
 
+### The app shell (navigation)
+- One component, one markup: Nav (components.templ) renders the brand wordmark, the item list and the logout action; CSS (`.shell-nav`) renders it as a sticky sidebar at 600px and wider and as a fixed bottom bar below. No per-device markup.
+- Items are listening surfaces, never entity types: Library and Search today; Playlists and Settings join when their pages land. The nav never links a dead destination.
+- Entity pages (artist, and later release, recording, work) highlight Library: they are library content. The active state renders server-side and stays in step across boosted navigation by a structural rule in the layout: the item whose href prefixes the current path wins, "/" is the fallback.
+- Logout is a quiet ghost action in the sidebar footer and is omitted from the mobile bar until Settings lands (single-admin server, sessions expire; revisit then). The brand is the wordmark in the serif voice; the sistrum mark stays out of chrome (details only).
+- Boosted navigation swaps the response body (htmx boost semantics): the nav carries hx-preserve with the stable id shell-nav, so htmx keeps the live element across swaps and the layout's sync script keeps its active state in step with the URL. Auth forms opt out of boost: a post-login 303 must land as a real navigation or the new shell would be dropped.
+- Search is a first-class surface: /ui/search is the page (deep-linkable with ?q=), /ui/search/results is the live fragment the debounced input fetches.
+- Page titles are the serif display voice (.page-title); page heads carry no chrome: global actions belong to the shell.
+
 ### Cards and panels
 - Card: `--surface` background, `--radius-card`, no border on the outside; separation is a luminance step (and in Silt, a temperature step).
 - Album tile: `--surface`, `--radius-tile`, 12px padding, cover at `--radius-cover` (56px on desktop rows).

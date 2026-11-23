@@ -16,6 +16,15 @@ other = "Falscher Benutzername oder falsches Passwort."
 [Library]
 other = "Bibliothek"
 
+[Search]
+other = "Suchen"
+
+[NavLabel]
+other = "Navigation"
+
+[DesignShell]
+other = "Shell"
+
 [SearchPlaceholder]
 other = "Titel, Künstler, Aliasse durchsuchen ..."
 

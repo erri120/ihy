@@ -18,6 +18,15 @@ other = "Wrong username or password."
 [Library]
 other = "Library"
 
+[Search]
+other = "Search"
+
+[NavLabel]
+other = "Navigation"
+
+[DesignShell]
+other = "Shell"
+
 [SearchPlaceholder]
 other = "Search titles, artists, aliases..."
 

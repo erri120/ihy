@@ -40,12 +40,29 @@ func TestDevRefreshDevOnly(t *testing.T) {
 // EventSource; outside dev, none.
 func TestLayoutDevHotReload(t *testing.T) {
 	devT := &T{Lang: language.English, Dev: true}
-	dev := renderComponent(t, Layout(devT, "Test"))
+	dev := renderComponent(t, Layout(devT, "Test", ""))
 	if !strings.Contains(dev, "EventSource('/ui/dev/refresh')") || !strings.Contains(dev, "__ihyHotReload") {
 		t.Error("dev layout must carry the guarded hot reload hookup")
 	}
-	prod := renderComponent(t, Layout(&T{Lang: language.English}, "Test"))
+	prod := renderComponent(t, Layout(&T{Lang: language.English}, "Test", ""))
 	if strings.Contains(prod, "EventSource") {
 		t.Error("non-dev layout must not carry the hot reload hookup")
+	}
+}
+
+// The shell composes the nav outside the content swap region and pins
+// boosted navigation to #content, so chrome persists across pages.
+// Shell-less pages (login, catalog) render no nav at all.
+func TestLayoutShell(t *testing.T) {
+	tt := NewTranslator("en")
+	shelled := renderComponent(t, Layout(tt, "Test", "library"))
+	for _, want := range []string{`class="with-shell"`, `hx-boost="true"`, `id="shell-nav"`, `hx-preserve="true"`} {
+		if !strings.Contains(shelled, want) {
+			t.Errorf("shelled layout missing %s", want)
+		}
+	}
+	bare := renderComponent(t, Layout(tt, "Test", ""))
+	if strings.Contains(bare, "shell-nav") || strings.Contains(bare, "with-shell") {
+		t.Error("shell-less layout (login, catalog) must not render the nav")
 	}
 }

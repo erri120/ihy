@@ -1,0 +1,56 @@
+// The search page: the primary "find music to play" surface, reachable
+// from the shell. /ui/search renders the page (and, with ?q=, the
+// results server-side for deep links); /ui/search/results is the live
+// fragment the debounced input fetches.
+package webui
+
+templ SearchPage(t *T, q string, results []SearchResultVM) {
+	@Layout(t, t.Msg("Search"), "search") {
+		<style>
+			.s-page { max-width: 640px; margin: 0 auto; padding: var(--space-6) var(--space-4) 96px; }
+			.s-input { margin: var(--space-5) 0 var(--space-4); }
+			.s-input .search { max-width: none; }
+		</style>
+		<div class="s-page">
+			<h1 class="page-title">{ t.Msg("Search") }</h1>
+			<div class="s-input">
+				<div class="search">
+					@Icon("search")
+					<input
+						type="search"
+						name="q"
+						value={ q }
+						placeholder={ t.Msg("SearchPlaceholder") }
+						autofocus
+						hx-get="/ui/search/results"
+						hx-trigger="input changed delay:300ms, search"
+						hx-target="#search-results"
+					/>
+				</div>
+			</div>
+			<div id="search-results">
+				if q != "" {
+					@SearchResults(t, results)
+				}
+			</div>
+		</div>
+	}
+}
+
+templ SearchResults(t *T, results []SearchResultVM) {
+	if len(results) == 0 {
+		<p class="muted">{ t.Msg("NothingFound") }</p>
+	} else {
+		<ul class="results">
+			for _, r := range results {
+				<li class={ "hit", "hit-"+r.Type }>
+					<span class="kind">{ t.Msg(r.KindID()) }</span>
+					<a href={ templ.URL(r.Href()) }>{ r.Name }</a>
+					if r.Canonical != "" && r.Canonical != r.Name {
+						<span class="muted">({ r.Canonical })</span>
+					}
+				</li>
+			}
+		</ul>
+	}
+}

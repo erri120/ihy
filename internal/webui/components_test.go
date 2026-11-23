@@ -94,6 +94,34 @@ func TestTrackRowAtom(t *testing.T) {
 	})
 }
 
+func TestNavAtom(t *testing.T) {
+	t.Run("real destinations, active state, no htmx wiring", func(t *testing.T) {
+		html := renderComponent(t, Nav(NewTranslator("en"), "search"))
+		for _, want := range []string{
+			`id="shell-nav"`,
+			`hx-preserve="true"`,
+			`class="shell-brand" href="/"`,
+			`class="nav-item is-active" href="/ui/search"`,
+			`class="nav-item" href="/"`,
+			`/ui/static/icons/search.svg#icon`,
+			`/ui/static/icons/library.svg#icon`,
+		} {
+			if !strings.Contains(html, want) {
+				t.Errorf("nav missing %s, got: %s", want, html)
+			}
+		}
+		if strings.Contains(html, "hx-get") || strings.Contains(html, "hx-post") {
+			t.Errorf("nav links must rely on boosted navigation, got: %s", html)
+		}
+	})
+	t.Run("logout opts out of boost", func(t *testing.T) {
+		html := renderComponent(t, Nav(NewTranslator("en"), ""))
+		if !strings.Contains(html, `action="/logout"`) || !strings.Contains(html, `hx-boost="false"`) {
+			t.Errorf("logout must be a real (unboosted) navigation, got: %s", html)
+		}
+	})
+}
+
 // ---- Stylesheet contract -------------------------------------------------
 
 func designCSS(t *testing.T, name string) string {
@@ -123,6 +151,12 @@ func TestCSSAffordanceContract(t *testing.T) {
 	cssRule(t, css, `:focus-visible`, "outline: 2px solid var(--accent);")
 	cssRule(t, css, `.tr.is-playing`, "background: var(--accent-soft); }")
 	cssRule(t, css, `[disabled], .is-disabled`, "opacity: 0.45;")
+	// Shell: the nav is one markup rendered as a sticky sidebar, and
+	// the active item carries the accent; the mobile bar clears the
+	// viewport edge (safe area) for tap targets.
+	cssRule(t, css, `.shell-nav`, "position: sticky; top: 0;")
+	cssRule(t, css, `.nav-item.is-active`, "color: var(--text); background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }")
+	cssRule(t, css, `body.with-shell`, "display: block; padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }")
 }
 
 // ---- Contrast budgets (DESIGN.md §3, verified pairs) ----------------------

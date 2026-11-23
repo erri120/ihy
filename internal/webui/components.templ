@@ -30,6 +30,52 @@ templ Cover(src, alt, size string) {
 	}
 }
 
+// NavItem is one shell navigation destination. Items are listening
+// surfaces, never entity types; Playlists and Settings join when their
+// pages land (design-plan phases 7/8): the nav never links a dead
+// destination.
+type NavItem struct {
+	ID, Label, Href, Icon string
+}
+
+// navItems is the shell's item list. Entity pages (artist, release,
+// recording) highlight "library": they are library content.
+func navItems(t *T) []NavItem {
+	return []NavItem{
+		{ID: "library", Label: t.Msg("Library"), Href: "/", Icon: "library"},
+		{ID: "search", Label: t.Msg("Search"), Href: "/ui/search", Icon: "search"},
+	}
+}
+
+// Nav is the app shell: brand wordmark, item list, logout. One markup,
+// two shells: CSS renders it as a sticky sidebar >= 600px and a fixed
+// bottom bar below (no per-device markup). Boosted navigation swaps
+// the response body (htmx boost semantics), so the nav carries
+// hx-preserve with a stable id: htmx keeps the live nav element and
+// the layout's sync script keeps its active state in step with the
+// URL. Auth forms opt out of boost: a post-logout redirect must be a
+// real navigation.
+templ Nav(t *T, active string) {
+	<nav id="shell-nav" class="shell-nav" hx-preserve="true" aria-label={ t.Msg("NavLabel") }>
+		<a class="shell-brand" href="/">ihy</a>
+		<ul class="nav-items">
+			for _, item := range navItems(t) {
+				<li>
+					<a class={ "nav-item", templ.KV("is-active", item.ID == active) } href={ templ.URL(item.Href) }>
+						@Icon(item.Icon)
+						<span>{ item.Label }</span>
+					</a>
+				</li>
+			}
+		</ul>
+		<div class="shell-logout">
+			<form method="post" action="/logout" hx-boost="false">
+				<button class="btn btn-ghost" type="submit">{ t.Msg("LogOut") }</button>
+			</form>
+		</div>
+	</nav>
+}
+
 // TrackRow is the listening row: number, title, duration, play
 // affordance on hover; the row's primary click posts a play intent
 // (hx-swap none: playback has no document payload), the info

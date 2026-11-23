@@ -1,13 +1,8 @@
 package webui
 
 templ HomePage(t *T, stats StatsVM) {
-	@Layout(t, t.Msg("Library")) {
-		<header class="page-head">
-			<h1>{ t.Msg("Library") }</h1>
-			<form method="post" action="/logout" class="logout">
-				<button type="submit">{ t.Msg("LogOut") }</button>
-			</form>
-		</header>
+	@Layout(t, t.Msg("Library"), "library") {
+		<h1 class="page-title">{ t.Msg("Library") }</h1>
 		<p class="muted">
 			{ t.Plural("StatsFiles", stats.Files) } · { t.Plural("StatsArtists", stats.Artists) } · { t.Plural("StatsAlbums", stats.ReleaseGroups) } · { t.Plural("StatsRecordings", stats.Recordings) }
 		</p>
@@ -16,28 +11,10 @@ templ HomePage(t *T, stats StatsVM) {
 			name="q"
 			placeholder={ t.Msg("SearchPlaceholder") }
 			autofocus
-			hx-get="/ui/search"
+			hx-get="/ui/search/results"
 			hx-trigger="input changed delay:300ms, search"
 			hx-target="#search-results"
 		/>
 		<div id="search-results"></div>
-	}
-}
-
-templ SearchResults(t *T, results []SearchResultVM) {
-	if len(results) == 0 {
-		<p class="muted">{ t.Msg("NothingFound") }</p>
-	} else {
-		<ul class="results">
-			for _, r := range results {
-				<li class={ "hit", "hit-"+r.Type }>
-					<span class="kind">{ t.Msg(r.KindID()) }</span>
-					<a href={ templ.URL(r.Href()) }>{ r.Name }</a>
-					if r.Canonical != "" && r.Canonical != r.Name {
-						<span class="muted">({ r.Canonical })</span>
-					}
-				</li>
-			}
-		</ul>
 	}
 }

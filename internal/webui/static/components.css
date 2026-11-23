@@ -116,9 +116,18 @@ button:hover { filter: none; } /* legacy app.css brightens on hover */
 .tab:hover { color: var(--text); }
 .tab.is-active { color: var(--text); border-bottom-color: var(--accent); }
 
-/* ---- Navigation ----------------------------------------------------------- */
-/* >= 600px: sidebar. < 600px: bottom bar. Same items, two shells. */
-.nav-items { display: flex; flex-direction: column; gap: 2px; list-style: none; }
+/* ---- Navigation (app shell) ------------------------------------------------ */
+/* One component, one markup: sticky sidebar >= 600px, fixed bottom bar below.
+   Layout composes it outside the content swap region (DESIGN.md §5, §6). */
+body.with-shell { display: flex; min-height: 100vh; }
+main#content { flex: 1 1 auto; min-width: 0; }
+.shell-nav { position: sticky; top: 0; align-self: flex-start; display: flex; flex-direction: column; width: 240px; height: 100vh; box-sizing: border-box; padding: var(--space-4); background: var(--bg); border-right: 1px solid var(--hair); }
+.shell-brand {
+  font-family: var(--font-serif); font-size: var(--text-title); font-weight: 600;
+  letter-spacing: var(--track-title); color: var(--text); text-decoration: none;
+  padding: var(--space-2) var(--space-3);
+}
+.nav-items { display: flex; flex-direction: column; gap: 2px; list-style: none; margin: var(--space-4) 0 0; padding: 0; }
 .nav-item {
   display: flex; align-items: center; gap: var(--space-3);
   padding: 8px 12px; border-radius: 8px;
@@ -126,20 +135,29 @@ button:hover { filter: none; } /* legacy app.css brightens on hover */
 }
 .nav-item:hover { color: var(--text); background: var(--elev); }
 .nav-item.is-active { color: var(--text); background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--accent); }
-.sidebar { width: 240px; padding: var(--space-4); background: var(--bg); }
+.shell-logout { margin-top: auto; }
+.shell-logout .btn-ghost { padding: 4px 12px; font-size: var(--text-caption); }
 
-.bottombar {
-  display: none;
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
-  background: var(--surface); border-top: 1px solid var(--hair);
-}
-.bottombar .nav-items { flex-direction: row; }
-.bottombar .nav-item { flex: 1; flex-direction: column; gap: 2px; padding: 8px 4px; font-size: 10px; justify-content: center; }
-.bottombar .nav-item.is-active { background: none; box-shadow: inset 0 2px 0 var(--accent); }
 @media (max-width: 600px) {
-  .sidebar { display: none; }
-  .bottombar { display: block; }
-  body { padding-bottom: 64px; } /* room for the bar */
+  body.with-shell { display: block; padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); } /* room for the bar */
+  .shell-nav {
+    position: fixed; top: auto; bottom: 0; left: 0; right: 0; align-self: auto;
+    width: auto; height: auto; flex-direction: row; align-items: center;
+    padding: 0 var(--space-2); background: var(--surface);
+    border-right: none; border-top: 1px solid var(--hair);
+  }
+  .shell-brand, .shell-logout { display: none; } /* logout returns with Settings (single-admin server) */
+  .nav-items { flex-direction: row; flex: 1; margin: 0; }
+  .nav-item { flex: 1; flex-direction: column; gap: 2px; padding: 8px 4px; font-size: 10px; justify-content: center; }
+  .nav-item.is-active { background: none; box-shadow: inset 0 2px 0 var(--accent); }
+}
+
+/* ---- Page head ------------------------------------------------------------ */
+/* Page titles voice the entity in the serif display; chrome does not
+   appear in page heads (the shell owns global actions). */
+.page-title {
+  font-family: var(--font-serif); font-size: var(--text-display); font-weight: 600;
+  letter-spacing: var(--track-display); line-height: 1.1; margin: 0;
 }
 
 /* ---- Now playing bar ---------------------------------------------------- */

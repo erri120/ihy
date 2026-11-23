@@ -228,7 +228,8 @@ func (s *Server) Register(mux *http.ServeMux) {
 	mux.HandleFunc("POST /login", s.Login)
 	mux.HandleFunc("POST /logout", s.Logout)
 	mux.HandleFunc("POST /ui/play", s.auth(s.PlayRecording))
-	mux.HandleFunc("GET /ui/search", s.auth(s.Search))
+	mux.HandleFunc("GET /ui/search", s.auth(s.SearchPage))
+	mux.HandleFunc("GET /ui/search/results", s.auth(s.SearchResultsFragment))
 	mux.HandleFunc("GET /ui/artists/{mbid}", s.auth(s.Artist))
 	mux.HandleFunc("GET /ui/artists/{mbid}/tab/{tab}", s.auth(s.ArtistTab))
 	mux.HandleFunc("GET /ui/artists/{mbid}/recordings/{recording}/detail", s.auth(s.ArtistRecordingDetail))
@@ -380,8 +381,9 @@ func (s *Server) Home(w http.ResponseWriter, r *http.Request) {
 	render(w, http.StatusOK, HomePage(t, stats))
 }
 
-// Search serves the live results fragment.
-func (s *Server) Search(w http.ResponseWriter, r *http.Request) {
+// SearchPage renders the search page. With ?q= the results render
+// server-side so deep links work; live typing fetches the fragment.
+func (s *Server) SearchPage(w http.ResponseWriter, r *http.Request) {
 	t := s.translator(r)
 	user, ok := userFrom(r.Context())
 	if !ok {
@@ -389,23 +391,49 @@ func (s *Server) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	q := strings.TrimSpace(r.URL.Query().Get("q"))
-	if q == "" {
-		render(w, http.StatusOK, SearchResults(t, nil))
+	results, err := s.resultVMs(r.Context(), user, q)
+	if err != nil {
+		s.renderErr(w, err)
 		return
 	}
-	prefs, err := display.PrefsFor(r.Context(), s.db, user.ID)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	render(w, http.StatusOK, SearchPage(t, q, results))
+}
+
+// SearchResultsFragment serves the live results list for the debounced
+// search input (GET /ui/search/results).
+func (s *Server) SearchResultsFragment(w http.ResponseWriter, r *http.Request) {
+	t := s.translator(r)
+	user, ok := userFrom(r.Context())
+	if !ok {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
+	}
+	q := strings.TrimSpace(r.URL.Query().Get("q"))
+	results, err := s.resultVMs(r.Context(), user, q)
+	if err != nil {
+		s.renderErr(w, err)
+		return
+	}
+	render(w, http.StatusOK, SearchResults(t, results))
+}
+
+// resultVMs resolves a query into display-name-resolved view models.
+// An empty query returns nothing without touching the database.
+func (s *Server) resultVMs(ctx context.Context, user auth.User, q string) ([]SearchResultVM, error) {
+	if q == "" {
+		return nil, nil
+	}
+	prefs, err := display.PrefsFor(ctx, s.db, user.ID)
+	if err != nil {
+		return nil, err
 	}
 	hits, err := s.search(q)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 	out := make([]SearchResultVM, 0, len(hits))
 	for _, h := range hits {
-		aliases, _ := display.Aliases(r.Context(), s.db, h.Type, h.Mbid)
+		aliases, _ := display.Aliases(ctx, s.db, h.Type, h.Mbid)
 		out = append(out, SearchResultVM{
 			Type:      h.Type,
 			Mbid:      h.Mbid,
@@ -413,7 +441,7 @@ func (s *Server) Search(w http.ResponseWriter, r *http.Request) {
 			Canonical: h.Name,
 		})
 	}
-	render(w, http.StatusOK, SearchResults(t, out))
+	return out, nil
 }
 
 type hit struct {

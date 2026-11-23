@@ -2,7 +2,7 @@
 // updates. Design of record: internal/webui/DESIGN.md (Dendera).
 package webui
 
-templ Layout(t *T, title string) {
+templ Layout(t *T, title string, active string) {
 	<!DOCTYPE html>
 	<html lang={ t.Lang.String() }>
 		<head>
@@ -16,7 +16,39 @@ templ Layout(t *T, title string) {
 			<link rel="stylesheet" href="/ui/static/tokens.css"/>
 			<link rel="stylesheet" href="/ui/static/components.css"/>
 		</head>
-		<body data-theme="lapis" hx-boost="true">
+		<body data-theme="lapis" class={ templ.KV("with-shell", active != "") } hx-boost="true">
+			if active != "" {
+				@Nav(t, active)
+				<script>
+					// The nav is preserved across boosted swaps
+					// (hx-preserve), so its server-rendered active state
+					// never changes: keep it in step with the URL. The
+					// rule is structural (it survives new items): the
+					// item whose href prefixes the current path wins;
+					// "/" is the fallback, so entity pages keep Library
+					// highlighted. The body's innerHTML is swapped on
+					// every navigation, so the guard keeps one set of
+					// listeners.
+					(function () {
+						if (window.__ihyNavSync) return;
+						window.__ihyNavSync = true;
+						function sync() {
+							var path = location.pathname, best = null, fallback = null;
+							document.querySelectorAll('.nav-item').forEach(function (a) {
+								var href = a.getAttribute('href');
+								if (href === '/') fallback = a;
+								if (href !== '/' && (path === href || path.indexOf(href + '/') === 0)) best = a;
+							});
+							var winner = best || fallback;
+							document.querySelectorAll('.nav-item').forEach(function (a) {
+								a.classList.toggle('is-active', a === winner);
+							});
+						}
+						document.body.addEventListener('htmx:afterSettle', sync);
+						document.body.addEventListener('htmx:historyRestore', sync);
+					})();
+				</script>
+			}
 			<main id="content">
 				{ children... }
 			</main>
