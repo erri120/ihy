@@ -92,13 +92,13 @@ type ArtistVM struct {
 	Origin string
 	// Play/queue actions land with the player milestone; the actions
 	// render disabled until then.
-	Albums     []AlbumVM
-	Recordings []RecordingVM
-	Works      []WorkVM
-	Credits    []CreditVM
-	Aliases    []display.Alias
+	Albums      []AlbumVM
+	Recordings  []RecordingVM
+	Works       []WorkVM
+	Credits     []CreditVM
+	Aliases     []display.Alias
 	CreditTotal int
-	Tabs       []TabVM
+	Tabs        []TabVM
 }
 
 // RecordingVM is one recording row (distinct audio, DESIGN.md §2).
@@ -299,6 +299,14 @@ func userFrom(ctx context.Context) (auth.User, bool) {
 	return u, ok
 }
 
+// translator builds the per-request translator. Dev mode rides on T
+// so every page's layout can hook up hot reload.
+func (s *Server) translator(r *http.Request) *T {
+	t := NewTranslator(r.Header.Get("Accept-Language"))
+	t.Dev = s.Dev
+	return t
+}
+
 func render(w http.ResponseWriter, status int, c templ.Component) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(status)
@@ -311,7 +319,7 @@ func (s *Server) LoginPage(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("error") != "" {
 		msg = "Wrong username or password."
 	}
-	render(w, http.StatusOK, LoginPage(NewTranslator(r.Header.Get("Accept-Language")), msg))
+	render(w, http.StatusOK, LoginPage(s.translator(r), msg))
 }
 
 // Login handles the login form. Failures redirect back to the form
@@ -368,13 +376,13 @@ func (s *Server) Home(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	t := NewTranslator(r.Header.Get("Accept-Language"))
+	t := s.translator(r)
 	render(w, http.StatusOK, HomePage(t, stats))
 }
 
 // Search serves the live results fragment.
 func (s *Server) Search(w http.ResponseWriter, r *http.Request) {
-	t := NewTranslator(r.Header.Get("Accept-Language"))
+	t := s.translator(r)
 	user, ok := userFrom(r.Context())
 	if !ok {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -458,7 +466,7 @@ func (s *Server) search(q string) ([]hit, error) {
 // Artist renders the artist page (tab from the ?tab= query, so tab
 // state survives a full page load and deep links).
 func (s *Server) Artist(w http.ResponseWriter, r *http.Request) {
-	t := NewTranslator(r.Header.Get("Accept-Language"))
+	t := s.translator(r)
 	user, ok := userFrom(r.Context())
 	if !ok {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -479,7 +487,7 @@ func (s *Server) Artist(w http.ResponseWriter, r *http.Request) {
 
 // ArtistTab serves one tab's panel fragment for htmx swaps.
 func (s *Server) ArtistTab(w http.ResponseWriter, r *http.Request) {
-	t := NewTranslator(r.Header.Get("Accept-Language"))
+	t := s.translator(r)
 	user, ok := userFrom(r.Context())
 	if !ok {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -501,7 +509,7 @@ func (s *Server) ArtistTab(w http.ResponseWriter, r *http.Request) {
 // recording row: this artist's credit roles on the recording (raw MB
 // types verbatim) plus the composition line.
 func (s *Server) ArtistRecordingDetail(w http.ResponseWriter, r *http.Request) {
-	t := NewTranslator(r.Header.Get("Accept-Language"))
+	t := s.translator(r)
 	if _, ok := userFrom(r.Context()); !ok {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
@@ -808,11 +816,11 @@ func nonEmpty(ss ...string) []string {
 
 // ReleaseGroup and Recording are stubs for the player milestone.
 func (s *Server) ReleaseGroup(w http.ResponseWriter, r *http.Request) {
-	t := NewTranslator(r.Header.Get("Accept-Language"))
+	t := s.translator(r)
 	render(w, http.StatusOK, ComingSoonPage(t, t.Msg("KindAlbum")))
 }
 
 func (s *Server) Recording(w http.ResponseWriter, r *http.Request) {
-	t := NewTranslator(r.Header.Get("Accept-Language"))
+	t := s.translator(r)
 	render(w, http.StatusOK, ComingSoonPage(t, t.Msg("KindTrack")))
 }

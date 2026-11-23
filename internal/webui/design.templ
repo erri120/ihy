@@ -1,11 +1,11 @@
 // The Dendera component catalog: the live design of record for the
 // web UI (internal/webui/DESIGN.md). Specimen content is generic;
-// page designs carry the real data. With IHY_UI_DEV=1 the page hot-
+// page designs carry the real data. In dev mode every page hot-
 // reloads static assets over SSE and full-reloads when the dev
-// server restarts (make dev-ui).
+// server restarts (make dev-ui); see layout.templ.
 package webui
 
-templ DesignPage(t *T, dev bool) {
+templ DesignPage(t *T) {
 	@Layout(t, t.Msg("DesignSystem")) {
 		<style>
 			.d-page { max-width: 860px; margin: 0 auto; padding: var(--space-6) var(--space-4) 96px; }
@@ -42,12 +42,11 @@ templ DesignPage(t *T, dev bool) {
 						<label><input type="radio" name="d-theme" value="silt"/><span>Silt</span></label>
 						<label><input type="radio" name="d-theme" value="papyrus"/><span>Papyrus</span></label>
 					</div>
-					if dev {
+					if t.Dev {
 						<span class="d-badge">{ t.Msg("DevHotReload") }</span>
 					}
 				</div>
 			</header>
-
 			<section class="d-section">
 				<h2>{ t.Msg("DesignType") }</h2>
 				<p class="d-note">--text-display, --text-title, --text-reading, --text-body, --text-row, --text-caption, --text-meta, --text-label</p>
@@ -62,7 +61,6 @@ templ DesignPage(t *T, dev bool) {
 					<div class="d-row"><span class="d-label">--text-label</span><span style="font-family: var(--font-mono); font-size: var(--text-label); text-transform: uppercase; letter-spacing: var(--track-label); color: var(--muted);">Section kicker</span></div>
 				</div>
 			</section>
-
 			<section class="d-section">
 				<h2>{ t.Msg("DesignButtons") }</h2>
 				<p class="d-note">.btn, .btn-ghost, .btn-danger, .btn-icon (+ .is-active), .btn-play, [disabled]</p>
@@ -82,7 +80,6 @@ templ DesignPage(t *T, dev bool) {
 					</div>
 				</div>
 			</section>
-
 			<section class="d-section">
 				<h2>{ t.Msg("DesignInputs") }</h2>
 				<p class="d-note">.search, .field + .input (+ aria-invalid, .field-error)</p>
@@ -108,7 +105,6 @@ templ DesignPage(t *T, dev bool) {
 					</div>
 				</div>
 			</section>
-
 			<section class="d-section">
 				<h2>{ t.Msg("DesignTabs") }</h2>
 				<p class="d-note">.tabs + .tab (+ .is-active)</p>
@@ -122,7 +118,6 @@ templ DesignPage(t *T, dev bool) {
 					</div>
 				</div>
 			</section>
-
 			<section class="d-section">
 				<h2>{ t.Msg("DesignCovers") }</h2>
 				<p class="d-note">.cover-s/m/l/xl, .cover-empty; artwork pages pass real image sources</p>
@@ -156,7 +151,6 @@ templ DesignPage(t *T, dev bool) {
 					</div>
 				</div>
 			</section>
-
 			<section class="d-section">
 				<h2>{ t.Msg("DesignTrackRows") }</h2>
 				<p class="d-note">TrackRow: .tracklist + .tr (+ .play-hover, .tr-detail-slot); detail surface: .tr-detail with .chip s</p>
@@ -177,7 +171,6 @@ templ DesignPage(t *T, dev bool) {
 					</div>
 				</div>
 			</section>
-
 			<section class="d-section">
 				<h2>{ t.Msg("DesignChips") }</h2>
 				<p class="d-note">.chip, .chip .dot (raw relationship types verbatim)</p>
@@ -197,7 +190,6 @@ templ DesignPage(t *T, dev bool) {
 					</div>
 				</div>
 			</section>
-
 			<section class="d-section">
 				<h2>{ t.Msg("DesignEmpty") }</h2>
 				<p class="d-note">.empty + .sistrum + .empty-title + .empty-body</p>
@@ -211,7 +203,6 @@ templ DesignPage(t *T, dev bool) {
 					</div>
 				</div>
 			</section>
-
 			<section class="d-section">
 				<h2>{ t.Msg("DesignIcons") }</h2>
 				<p class="d-note">static/icons/&lt;name&gt;.svg, referenced via &lt;use&gt; (12 icon set)</p>
@@ -223,7 +214,7 @@ templ DesignPage(t *T, dev bool) {
 					<div class="d-icon-cell">@Icon("next")<span class="d-label">next</span></div>
 					<div class="d-icon-cell">@Icon("heart")<span class="d-label">heart</span></div>
 					<div class="d-icon-cell">@Icon("heart-filled")<span class="d-label">heart-filled</span></div>
-				<div class="d-icon-cell">@Icon("info")<span class="d-label">info</span></div>
+					<div class="d-icon-cell">@Icon("info")<span class="d-label">info</span></div>
 					<div class="d-icon-cell">@Icon("trash")<span class="d-label">trash</span></div>
 					<div class="d-icon-cell">@Icon("home")<span class="d-label">home</span></div>
 					<div class="d-icon-cell">@Icon("library")<span class="d-label">library</span></div>
@@ -231,7 +222,6 @@ templ DesignPage(t *T, dev bool) {
 					<div class="d-icon-cell">@Icon("close")<span class="d-label">close</span></div>
 				</div>
 			</section>
-
 			<section class="d-section">
 				<h2>{ t.Msg("DesignFeedback") }</h2>
 				<p class="d-note">.skeleton, .toast</p>
@@ -250,29 +240,11 @@ templ DesignPage(t *T, dev bool) {
 				</div>
 			</section>
 		</div>
-
 		<script>
 			// Fixture affordance: theme switch (not a product component).
 			document.addEventListener('change', function (e) {
 				if (e.target.name === 'd-theme') document.body.dataset.theme = e.target.value;
 			});
 		</script>
-		if dev {
-			<script>
-				// Dev hot reload: swap stylesheets on asset changes; full
-				// reload when the dev server restarted (connection dropped).
-				(function () {
-					var es = new EventSource('/ui/dev/refresh');
-					var down = false;
-					es.addEventListener('change', function () {
-						document.querySelectorAll('link[rel="stylesheet"]').forEach(function (l) {
-							l.href = l.href.split('?')[0] + '?t=' + Date.now();
-						});
-					});
-					es.onerror = function () { down = true; };
-					es.onopen = function () { if (down) location.reload(); };
-				})();
-			</script>
-		}
 	}
 }

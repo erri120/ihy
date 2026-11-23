@@ -20,6 +20,27 @@ templ Layout(t *T, title string) {
 			<main id="content">
 				{ children... }
 			</main>
+			if t.Dev {
+				<script>
+					// Dev hot reload (make dev-ui): swap stylesheets on
+					// asset changes; full reload when the dev server
+					// restarted (connection dropped). The window guard
+					// keeps one EventSource across hx-boost swaps.
+					(function () {
+						if (window.__ihyHotReload) return;
+						window.__ihyHotReload = true;
+						var es = new EventSource('/ui/dev/refresh');
+						var down = false;
+						es.addEventListener('change', function () {
+							document.querySelectorAll('link[rel="stylesheet"]').forEach(function (l) {
+								l.href = l.href.split('?')[0] + '?t=' + Date.now();
+							});
+						});
+						es.onerror = function () { down = true; };
+						es.onopen = function () { if (down) location.reload(); };
+					})();
+				</script>
+			}
 		</body>
 	</html>
 }

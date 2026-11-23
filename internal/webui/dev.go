@@ -12,8 +12,8 @@ import (
 
 // Design shows the Dendera component catalog (/ui/design).
 func (s *Server) Design(w http.ResponseWriter, r *http.Request) {
-	t := NewTranslator(r.Header.Get("Accept-Language"))
-	render(w, http.StatusOK, DesignPage(t, s.Dev))
+	t := s.translator(r)
+	render(w, http.StatusOK, DesignPage(t))
 }
 
 // devRefresh streams server-sent events whenever a static asset
@@ -76,4 +76,3 @@ func scanStatic(root string, modified map[string]time.Time) bool {
 	}
 	return changed
 }
-

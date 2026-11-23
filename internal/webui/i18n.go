@@ -42,6 +42,9 @@ func init() {
 type T struct {
 	localizer *i18n.Localizer
 	Lang      language.Tag
+	// Dev enables UI development mode (hot reload hookup in the
+	// layout); it is a per-request copy of Server.Dev.
+	Dev bool
 }
 
 // NewTranslator matches the Accept-Language header against the loaded
