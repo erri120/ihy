@@ -4,10 +4,19 @@
 # rebuild here.
 root = "."
 tmp_dir = "/tmp/ihy-air"
+# Build failures land in <tmp_dir>/build-errors.log instead of
+# scrolling away, so the last failure stays readable.
+log = "build-errors.log"
 
 [build]
   cmd = "go build -o /tmp/ihy-dev ./cmd/ihy"
   bin = "/tmp/ihy-dev"
   include_ext = ["go"]
   exclude_dir = ["examples", "data", "docs", "migrations", "ihy-air-tmp"]
+  # Test-file edits must not rebuild and restart the server.
+  exclude_regex = [".*_test\\.go"]
   delay = 1000
+
+[screen]
+  clear_on_rebuild = false
+  keep_scroll = true

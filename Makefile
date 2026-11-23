@@ -3,9 +3,24 @@ ui:
 	go tool templ generate
 
 # Unit tests: no external dependencies. Postgres-backed tests skip
-# when no test database is configured.
+# when no test database is configured. gotestsum prints testdox-style
+# names and a failure summary.
 test:
-	go test ./... -count=1
+	go tool gotestsum -- -count=1 ./...
+
+# Race detector over the whole suite; slower, run when touching
+# concurrent code (scanner, resolver, caches).
+test-race:
+	go tool gotestsum -- -race -count=1 ./...
+
+vet:
+	go vet ./...
+
+# Format committed sources: Go and templ. Generated _templ.go files
+# are produced by `make ui`.
+fmt:
+	go fmt ./...
+	go tool templ fmt .
 
 # E2E tests: real Postgres (dev compose) + fixture library.
 test-e2e:
@@ -63,4 +78,4 @@ db-ui:
 record-replays:
 	IHY_MB_RECORD=1 IHY_FIXTURE_DIR=$(CURDIR)/examples go test ./internal/musicbrainz/ -run TestRecordReplays -count=1 -v
 
-.PHONY: ui test test-e2e dev build db-ui record-replays
+.PHONY: ui test test-race vet fmt test-e2e dev dev-ui build db-ui record-replays
